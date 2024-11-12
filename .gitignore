@@ -3,6 +3,7 @@
 #/public/build
 /public/hot
 /public/storage
+/resources/js/utils
 /storage/*.key
 /vendor
 .env
@@ -19,5 +20,4 @@ yarn-error.log
 /.vscode
 GAD IS Tables.txt
 *.sql
-
 .vercel
