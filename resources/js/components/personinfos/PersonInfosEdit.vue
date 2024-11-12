@@ -52,7 +52,7 @@
                             <option value="">-Select Gender-</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
-                            <option value="lgbtq">LGBTQ</option>
+                            <option value="lgbtqia+">LGBTQIA+</option>
                         </select>
                         <span class="text-sm text-red-600" v-if="errors?.gender">{{ errors.gender[0] }}</span>
                     </div>

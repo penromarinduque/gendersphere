@@ -3,7 +3,7 @@
 #/public/build
 /public/hot
 /public/storage
-/resources/js/utils
+/resources/js/utils/axios.js
 /storage/*.key
 /vendor
 .env
