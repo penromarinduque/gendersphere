@@ -14,9 +14,24 @@ class PersonInfoController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return PersonInfoResource::collection(PersonInfo::where('person_type',1)->get());
+        $searchkey = $request->searchkey;
+
+        $personinfo_qry = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
+            ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
+            ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
+            ->join('provinces', 'provinces.id', 'municipalities.province_id')
+            ->where('person_type',1);
+        if ($searchkey!="") {
+            $personinfo_qry->where(function ($qry) use ($searchkey) {
+                $qry->where('lastname','LIKE',"%{$searchkey}%")
+                    ->orWhere('firstname','LIKE',"%{$searchkey}%")
+                    ->orWhere('birthdate','LIKE',"%{$searchkey}%");
+            });
+        }
+        $personinfos = $personinfo_qry->get();
+        return PersonInfoResource::collection($personinfos);
     }
 
     /**
