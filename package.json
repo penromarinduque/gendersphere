@@ -21,6 +21,7 @@
         "@meforma/vue-toaster": "^1.3.0",
         "@tinymce/tinymce-vue": "^4.0.7",
         "@vueuse/core": "^11.1.0",
+        "laravel-vue-pagination": "^4.1.3",
         "primevue": "^4.0.7",
         "quill": "^2.0.2",
         "tinymce": "^7.3.0",

@@ -30,7 +30,10 @@ class PersonInfoController extends Controller
                     ->orWhere('birthdate','LIKE',"%{$searchkey}%");
             });
         }
-        $personinfos = $personinfo_qry->get();
+        $personinfos = $personinfo_qry->orderBy('person_infos.lastname', 'ASC')
+            ->paginate(15)
+            ->withQueryString();
+        // $personinfos->appends(['searchkey' => $searchkey]);
         return PersonInfoResource::collection($personinfos);
     }
 

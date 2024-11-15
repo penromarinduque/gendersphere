@@ -19,10 +19,10 @@ export default function useCommittees() {
         // max:
     });
 
-    const getCommittees = async () => {
-        let response = await axios.get('/api/committees')
-        // console.log(response)
-        committees.value = response.data.data
+    const getCommittees = async (page = 1, year = null) => {
+        let response = await axios.get('/api/committees', {params: { page:page, year:year }})
+        console.log(response.data)
+        committees.value = response.data
     }
  
     const getCommittee = async (id) => {

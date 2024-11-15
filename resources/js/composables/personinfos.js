@@ -19,9 +19,10 @@ export default function usePersonInfos() {
         // max:
      });
  
-    const getPersonInfos = async (searchkey = "") => {
-        let response = await axios.get('/api/personinfos', { params: { searchkey:searchkey } })
-        personinfos.value = response.data.data
+    const getPersonInfos = async (page = 1, searchkey = "") => {
+        let response = await axios.get('/api/personinfos', { params: { page:page, searchkey:searchkey } })
+        console.log(response.data)
+        personinfos.value = response.data
     }
  
     const getPersonInfo = async (id) => {

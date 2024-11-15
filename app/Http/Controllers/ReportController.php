@@ -241,13 +241,13 @@ class ReportController extends Controller
         $str .= '</tbody>
         </table>';
 
-        return $str;
+        // return $str;
 
-        // return view('pages.reports.gadplanbudgets', [
-        //     'year' => $year,
-        //     'goals' => $goals,
-        //     'planbudgets' => $planbudgets,
-        // ]);
+        return view('pages.reports.gadplanbudgets', [
+            'year' => $year,
+            'goals' => $goals,
+            'planbudgets' => $planbudgets,
+        ]);
     }
 
     public function sexAggregated(Request $request)

@@ -12,15 +12,21 @@ class CommitteeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $year = ($request->year==null) ? date('Y') : $request->year;
+
         $committees = Committee::select('committees.id', 'committees.person_info_id', 'committees.year_covered', 'committees.committee_position_id', 'person_infos.lastname', 'person_infos.firstname', 'person_infos.middlename', 'person_infos.extname', 'person_infos.gender', 'person_infos.birthdate', 'person_infos.age', 'person_infos.height', 'person_infos.weight', 'person_infos.blood_type', 'barangays.barangay_name', 'municipalities.municipality_name', 'provinces.province_name', 'committee_positions.position_title')
             ->join('person_infos', 'person_infos.id', 'committees.person_info_id')
             ->leftJoin('provinces', 'provinces.id', 'person_infos.province_id')
             ->leftJoin('municipalities', 'municipalities.id', 'person_infos.municipality_id')
             ->leftJoin('barangays', 'barangays.id', 'person_infos.barangay_id')
             ->join('committee_positions', 'committee_positions.id', 'committees.committee_position_id')
+            ->where('committees.year_covered', $year)
             ->get();
+            // ->paginate(15)
+            // ->withQueryString();
+        // $committees->appends(['year' => $year]);
         return CommitteeResource::collection($committees);
     }
 
