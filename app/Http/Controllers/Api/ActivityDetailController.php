@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ActivityDetailResource;
 use App\Models\ActivityDetail;
+use App\Models\Attendee;
 use Illuminate\Http\Request;
 
 class ActivityDetailController extends Controller
@@ -15,10 +16,12 @@ class ActivityDetailController extends Controller
     public function index(Request $request)
     {
         $_activitydetail = new ActivityDetail;
+        
 
         $ga_id = $request->ga_id;
 
         $activitydetails = $_activitydetail->getActivityDetailsByGA($ga_id);
+
         return ActivityDetailResource::collection($activitydetails);
     }
 
@@ -57,8 +60,30 @@ class ActivityDetailController extends Controller
     public function show($id)
     {
         $_activitydetail = new ActivityDetail;
+        $_attendee = new Attendee;
 
         $activitydetail = $_activitydetail->getActivityDetail($id);
+        $attendees = $_attendee->getByActivityDetailId($id);
+
+        $male = 0;
+        $female = 0;
+        $lgbtqia = 0;
+        if (!empty($attendees)) {
+            foreach ($attendees as $attendee) {
+                if ($attendee->gender=="male") {
+                    $male++;
+                }
+                if ($attendee->gender=="female") {
+                    $female++;
+                }
+                if ($attendee->gender=="lgbtqia+") {
+                    $lgbtqia++;
+                }
+            }
+        }
+
+        ActivityDetail::find($id)->update(['actual_women' => $female, 'actual_men' => $male, 'actual_lgbtq'=>$lgbtqia]);
+
         return new ActivityDetailResource($activitydetail);
     }
 

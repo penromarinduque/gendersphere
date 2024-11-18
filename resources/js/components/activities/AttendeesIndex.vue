@@ -1,14 +1,20 @@
 <template>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
         <div>
-            <h3 class="text-lg"><b>Attendees of <span><u>{{ activity.gad_activity }}</u></span></b></h3>
+            <h3 class="text-lg"><b>Attendees of: </b>
+                <span v-if="activitydetail.sub_activity===null">Main Activity - <u>{{ activitydetail.main_activity }}</u></span>
+                <span v-if="activitydetail.sub_activity!==null"><u><span v-html="activitydetail.sub_activity"></span></u></span>
+                <p v-if="activitydetail.sub_activity===null">Targets:
+                    <u><span v-if="activitydetail.sub_activity===null" v-html="activitydetail.targets"></span></u>
+                </p>
+            </h3>
         </div>
         <div class="flex mb-4 place-content-end">
-            <button class="inline-flex items-center mr-1 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
-                <router-link :to="{ name: 'attendees.create', params: { id: activity.id } }" class="text-sm font-medium">Add Attendee</router-link>
+            <button class="inline-flex items-center h-8 mr-1 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
+                <router-link :to="{ name: 'attendees.create', params: { id: props.id, ga_id: props.ga_id } }" class="text-sm font-medium">Add Attendee</router-link>
             </button>
-            <button class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
-                <router-link :to="{ name: 'activities.index' }" class="text-sm font-medium">Back to Activities</router-link>
+            <button class="inline-flex items-center h-8 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
+                <router-link :to="{ name: 'activitydetails.index', params: { ga_id: props.ga_id } }" class="text-sm font-medium">Back to Activity Details</router-link>
             </button>
         </div>
     </div>    
@@ -41,7 +47,7 @@
             <template v-for="item in attendees" :key="item.id">
                 <tr class="bg-white">
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.lastname+', '+item.firstname+' '+item.middlename+' '+item.extname }}</span>
+                        <span style="text-transform: capitalize;">{{ item.lastname+', '+item.firstname+' '+item.middlename+' ' }}</span><span v-if="item.extname!==null">{{ item.extname }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <span style="text-transform: capitalize;">{{ item.gender }}</span>
@@ -57,8 +63,8 @@
                         <span v-if="item.person_type==2" style="text-transform: capitalize;">{{ item.organization }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <router-link :to="{ name: 'attendees.edit', params: { id: activity.id, person_info_id: item.person_info_id } }" v-if="item.person_type==2" class="inline-flex items-center mr-2 px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
-                        <button @click="removeAttendee(item.attendee_id, activity.id)" class="inline-flex items-center px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
+                        <router-link :to="{ name: 'attendees.edit', params: { id: activitydetail.id, ga_id: props.ga_id, person_info_id: item.person_info_id } }" v-if="item.person_type==2" class="inline-flex items-center mr-2 px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
+                        <button @click="removeAttendee(item.attendee_id, activitydetail.id)" class="inline-flex items-center px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
                             Remove</button>
                     </td>
                 </tr>
@@ -69,19 +75,27 @@
 </template>
 
 <script setup>
-import useActivities from '../../composables/activities'
+// import useActivities from '../../composables/activities'
+import useActivityDetails from '../../composables/activitydetails'
+import useAttendees from '../../composables/attendees';
 import { onMounted } from 'vue'
 
-const { errors, activity, attendees, getActivity, getAttendees, destroyAttendee } = useActivities()
+const { errors, attendees, getAttendees, destroyAttendee } = useAttendees()
+const { activitydetail, getActivityDetail } = useActivityDetails()
 
 const props = defineProps({
     id: {
         required: true,
         type: String
+    },
+    ga_id: {
+        required: true,
+        type: String
     }
 })
 
-onMounted(() => getActivity(props.id))
+// onMounted(() => getActivity(props.id))
+onMounted(() => getActivityDetail(props.id))
 onMounted(() => getAttendees(props.id))
 const removeAttendee = async (id, activity_id) => {
     // console.log(id);

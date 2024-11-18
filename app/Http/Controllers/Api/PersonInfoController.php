@@ -100,7 +100,7 @@ class PersonInfoController extends Controller
             'municipality_id' => ['required'],
             'barangay_id' => ['required'],
             'education_level' => [$education_level_nullable],
-            'contact_no' => ['required', 'max:12'],
+            'contact_no' => ['nullable', 'max:12'],
             'email_add' => [$email_add_nullable, 'string', 'lowercase', 'email', 'max:150'],
             'position' => [$position_nullable, 'string']
         ]);

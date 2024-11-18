@@ -1,11 +1,17 @@
 <template>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
         <div class="mb-5">
-            <h2 class="text-lg"><b>Add New Attendee for: <span><u>{{ activity.gad_activity }}</u></span></b></h2>
+            <h2 class="text-lg"><b>Add New Attendee for: </b>
+                <span v-if="activitydetail.sub_activity===null">Main Activity - <u>{{ activitydetail.main_activity }}</u></span>
+                <span v-if="activitydetail.sub_activity!==null"><u><span v-html="activitydetail.sub_activity"></span></u></span>
+                <p v-if="activitydetail.sub_activity===null">Targets:
+                    <u><span v-if="activitydetail.sub_activity===null" v-html="activitydetail.targets"></span></u>
+                </p>
+            </h2>
         </div>
         <div class="flex mb-4 place-content-end">
-            <button class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
-                <router-link :to="{ name: 'activities.attendees', params: activity.id }" class="text-sm font-medium">Back to Attendees List</router-link>
+            <button class="inline-flex items-center h-8 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
+                <router-link :to="{ name: 'activitydetails.attendees', params: { id: props.id, ga_id: props.ga_id} }" class="text-sm font-medium">Back to Attendees List</router-link>
             </button>
         </div>
     </div>
@@ -21,7 +27,7 @@
                     <div class="mt-1">
                         <select name="person_info_id" id="person_info_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="text-transform: capitalize;" v-model="formp.person_info_id">
                             <option value="">-Select Employee-</option>
-                            <option v-for="item in personinfos" :key="item.id" :value="item.id">{{ item.lastname+', '+item.firstname+' '+item.middlename+' '+item.extname }}</option>
+                            <option v-for="item in personinfos" :key="item.id" :value="item.id">{{ item.lastname+', '+item.firstname+' '+item.middlename+' ' }}<span v-if="item.extname!==null">{{ item.extname }}</span></option>
                         </select>
                         <span class="text-sm text-red-600" v-if="errors?.person_info_id">{{ errors.person_info_id[0] }}</span>
                     </div>
@@ -81,6 +87,7 @@
                                 <option value="">-Select Gender-</option>
                                 <option value="male">Male</option>
                                 <option value="female">Female</option>
+                                <option value="lgbtqia+">LGBTQIA+</option>
                             </select>
                             <span class="text-sm text-red-600" v-if="errors?.gender">{{ errors.gender[0] }}</span>
                         </div>
@@ -145,7 +152,7 @@
                 <input type="hidden" name="person_type" id="person_type" v-model="form.person_type" >
                 <input type="hidden" name="activity_id" id="activity_id" v-model="form.activity_id" >
                 <button type="button" class="inline-flex items-center px-4 py-2 mr-5 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md ring-gray-300 hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring disabled:opacity-25">
-                    <router-link :to="{ name: 'activities.attendees', params: activity.id }" class="text-sm font-medium">Cancel</router-link>
+                    <router-link :to="{ name: 'activitydetails.attendees', params: {id: activitydetail.id, ga_id: props.ga_id } }" class="text-sm font-medium">Cancel</router-link>
                 </button>
                 <button type="submit" class="inline-flex items-center px-4 py-2 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md ring-indigo-300 hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring disabled:opacity-25">
                     SAVE
@@ -158,12 +165,19 @@
 
 <script setup>
 import useActivities from '../../composables/activities'
+import useActivityDetails from '../../composables/activitydetails'
+import useAttendees from '../../composables/attendees';
 import { reactive, onMounted } from 'vue'
 
-const { errors, activity, personinfos, provinces, municipalities, barangays, getActivity, getPersonInfos, getProvinces, getMunicipalities, getBarangays, storeAttendee } = useActivities()
+const { errors, personinfos, provinces, municipalities, barangays, getPersonInfos, getProvinces, getMunicipalities, getBarangays, storeAttendee } = useAttendees()
+const { activitydetail, getActivityDetail } = useActivityDetails()
 
 const props = defineProps({
     id: {
+        required: true,
+        type: String
+    },
+    ga_id: {
         required: true,
         type: String
     }
@@ -172,7 +186,8 @@ const props = defineProps({
 const formp = reactive({
     person_info_id: '',
     person_type: 1,
-    activity_id: props.id
+    activity_id: props.id,
+    ga_id: props.ga_id
 })
  
 const form = reactive({
@@ -188,11 +203,13 @@ const form = reactive({
     contact_no: '',
     organization: '',
     person_type: 2,
-    activity_id: props.id
+    activity_id: props.id,
+    ga_id: props.ga_id
 })
 
 console.log(props.id)
-onMounted(() => getActivity(props.id))
+// onMounted(() => getActivity(props.id))
+onMounted(() => getActivityDetail(props.id))
 onMounted(getProvinces)
 onMounted(getPersonInfos)
 

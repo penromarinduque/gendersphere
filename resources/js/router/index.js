@@ -168,24 +168,45 @@ const routes = [
         component: ActivityEdit,
         props: true
     },
+    // Attendees
+    // {
+    //     path: '/activities/:id/attendees',
+    //     name: 'activities.attendees',
+    //     component: AttendeesIndex,
+    //     props: true
+    // },
+    // {
+    //     path: '/activities/:id/attendees/create',
+    //     name: 'attendees.create',
+    //     component: AttendeesCreate,
+    //     props: true
+    // },
+    // {
+    //     path: '/activities/:id/attendees/edit/:person_info_id',
+    //     name: 'attendees.edit',
+    //     component: AttendeesEdit,
+    //     props: true
+    // },
+
     {
-        path: '/activities/:id/attendees',
-        name: 'activities.attendees',
+        path: '/activitydetails/:id/attendees/:ga_id',
+        name: 'activitydetails.attendees',
         component: AttendeesIndex,
         props: true
     },
     {
-        path: '/activities/:id/attendees/create',
+        path: '/activitydetails/:id/attendees/:ga_id/create',
         name: 'attendees.create',
         component: AttendeesCreate,
         props: true
     },
     {
-        path: '/activities/:id/attendees/edit/:person_info_id',
+        path: '/activitydetails/:id/attendees/:ga_id/edit/:person_info_id',
         name: 'attendees.edit',
         component: AttendeesEdit,
         props: true
     },
+    // End Attendees
     {
         path: '/frontlineservices',
         name: 'frontlineservices.index',

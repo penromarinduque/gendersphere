@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AttendeeResource;
 use App\Models\PersonInfo;
+use App\Models\ActivityDetail;
 use App\Models\Attendee;
 use Illuminate\Http\Request;
 
@@ -15,7 +16,7 @@ class AttendeeController extends Controller
      */
     public function index()
     {
-        $attendees = Attendee::select('attendees.activity_id', 'person_infos.*')
+        $attendees = Attendee::select('attendees.activity_id', 'attendees.activity_detail_id', 'person_infos.*')
             ->join('person_infos', 'person_infos.id', 'attendees.person_info_id')
             ->get();
         return AttendeeResource::collection($attendees);
@@ -26,6 +27,9 @@ class AttendeeController extends Controller
      */
     public function store(Request $request)
     {
+        $_activitydetail = new ActivityDetail;
+
+        
         if ($request->person_type==1) {
             $request->validate([
                 'person_info_id' => ['required'],
@@ -38,6 +42,7 @@ class AttendeeController extends Controller
     
             $attendee = Attendee::create([
                 'activity_id' => $activity_id,
+                'activity_detail_id' => $activity_id,
                 'person_info_id' => $person_info_id
             ]);
     
@@ -78,6 +83,7 @@ class AttendeeController extends Controller
     
             $attendee = Attendee::create([
                 'activity_id' => $activity_id,
+                'activity_detail_id' => $activity_id,
                 'person_info_id' => $person_info_id
             ]);
     
@@ -90,12 +96,12 @@ class AttendeeController extends Controller
      */
     public function show($activity_id)
     {
-        $attendees = Attendee::select('attendees.id as attendee_id', 'attendees.activity_id', 'attendees.person_info_id', 'person_infos.*', 'barangays.barangay_name', 'municipalities.municipality_name', 'provinces.province_name')
+        $attendees = Attendee::select('attendees.id as attendee_id', 'attendees.activity_id', 'attendees.activity_detail_id', 'attendees.person_info_id', 'person_infos.*', 'barangays.barangay_name', 'municipalities.municipality_name', 'provinces.province_name')
             ->join('person_infos', 'person_infos.id', 'attendees.person_info_id')
             ->leftJoin('provinces', 'provinces.id', 'person_infos.province_id')
             ->leftJoin('municipalities', 'municipalities.id', 'person_infos.municipality_id')
             ->leftJoin('barangays', 'barangays.id', 'person_infos.barangay_id')
-            ->where('attendees.activity_id', $activity_id)
+            ->where('attendees.activity_detail_id', $activity_id)
             ->get();
         return AttendeeResource::collection($attendees);
     }

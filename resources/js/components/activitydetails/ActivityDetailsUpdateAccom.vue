@@ -16,21 +16,21 @@
                 <div class="pb-1 col-span-1">
                     <label for="actual_men" class="block text-md font-medium text-gray-700">Actual Accomplished Men <small>(Put zero (0) if not available)</small></label>
                     <div class="mt-1">
-                        <input type="text" name="actual_men" id="actual_men" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="activitydetail.actual_men">
+                        <input type="text" name="actual_men" id="actual_men" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" readonly v-model="activitydetail.actual_men">
                         <span class="text-sm text-red-600" v-if="errors?.actual_men">{{ errors.actual_men[0] }}</span>
                     </div>
                 </div>
                 <div class="pb-1 col-span-1">
                     <label for="actual_women" class="block text-md font-medium text-gray-700">Actual Accomplished Women <small>(Put zero (0) if not available)</small></label>
                     <div class="mt-1">
-                        <input type="text" name="actual_women" id="actual_women" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="activitydetail.actual_women">
+                        <input type="text" name="actual_women" id="actual_women" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" readonly v-model="activitydetail.actual_women">
                         <span class="text-sm text-red-600" v-if="errors?.actual_women">{{ errors.actual_women[0] }}</span>
                     </div>
                 </div>
                 <div class="pb-1 col-span-1">
                     <label for="actual_lgbtq" class="block text-md font-medium text-gray-700">Actual Accomplished LGBTQ <small>(Put zero (0) if not available)</small></label>
                     <div class="mt-1">
-                        <input type="text" name="actual_lgbtq" id="actual_lgbtq" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="activitydetail.actual_lgbtq">
+                        <input type="text" name="actual_lgbtq" id="actual_lgbtq" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" readonly v-model="activitydetail.actual_lgbtq">
                         <span class="text-sm text-red-600" v-if="errors?.actual_lgbtq">{{ errors.actual_lgbtq[0] }}</span>
                     </div>
                 </div>

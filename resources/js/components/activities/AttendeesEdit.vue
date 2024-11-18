@@ -1,7 +1,13 @@
 <template>
     <form class="space-y-6" @submit.prevent="editAttendee">
         <div class="space-y-4 rounded-md">
-            <h3><b>Add New Attendee for: <span><u>{{ activity.gad_activity }}</u></span></b></h3>
+            <h3><b>Add New Attendee for: </b>
+                <span v-if="activitydetail.sub_activity===null">Main Activity - <u>{{ activitydetail.main_activity }}</u></span>
+                <span v-if="activitydetail.sub_activity!==null"><u><span v-html="activitydetail.sub_activity"></span></u></span>
+                <p v-if="activitydetail.sub_activity===null">Targets:
+                    <u><span v-if="activitydetail.sub_activity===null" v-html="activitydetail.targets"></span></u>
+                </p>
+            </h3>
             <hr>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 <div class="pb-1">
@@ -113,7 +119,7 @@
         <div class="float-right py-4">
             <input type="hidden" name="person_type" id="person_type" v-model="personinfo.person_type" >
             <button type="button" class="inline-flex items-center px-4 py-2 mr-5 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md ring-gray-300 hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring disabled:opacity-25">
-                <router-link :to="{ name: 'activities.attendees', params: props.id }" class="text-sm font-medium">Cancel</router-link>
+                <router-link :to="{ name: 'activitydetails.attendees', params: { id: props.id, ga_id: props.ga_id } }" class="text-sm font-medium">Cancel</router-link>
             </button>
             <button type="submit"
                     class="inline-flex items-center px-4 py-2 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md ring-indigo-300 hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring disabled:opacity-25">
@@ -126,6 +132,8 @@
 
 <script setup>
 import useActivities from '../../composables/activities'
+import useActivityDetails from '../../composables/activitydetails'
+import useAttendees from '../../composables/attendees';
 import { reactive, onMounted, watch } from 'vue'
  
 // const form = reactive({
@@ -141,10 +149,15 @@ import { reactive, onMounted, watch } from 'vue'
 //     contact_no: '',
 // })
  
-const { errors, activity, personinfo, provinces, municipalities, barangays, getActivity, getPersonInfo, updatePersonInfo, getProvinces, getMunicipalities, getBarangays } = useActivities()
+const { errors, personinfo, provinces, municipalities, barangays, getPersonInfo, updatePersonInfo, getProvinces, getMunicipalities, getBarangays } = useAttendees()
+const { activitydetail, getActivityDetail } = useActivityDetails()
 
 const props = defineProps({
     id: {
+        required: true,
+        type: String
+    },
+    ga_id: {
         required: true,
         type: String
     },
@@ -155,7 +168,8 @@ const props = defineProps({
 })
 
 // console.log(props.person_info_id)
-onMounted(() => getActivity(props.id))
+// onMounted(() => getActivity(props.id))
+onMounted(() => getActivityDetail(props.id))
 onMounted(() => getPersonInfo(props.person_info_id))
 onMounted(getProvinces)
 watch(personinfo, () => {
@@ -165,7 +179,7 @@ watch(personinfo, () => {
 })
 
 const editAttendee = async () => {
-    await updatePersonInfo(props.person_info_id, props.id)
+    await updatePersonInfo(props.person_info_id, props.id, props.ga_id )
 }
 
 const getMunicipals = async (event) => {
