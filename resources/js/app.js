@@ -9,10 +9,23 @@ Alpine.start();
 import { createApp } from 'vue';
 import router from './router';
 
-import PersonInfosIndex from './components/personinfos/PersonInfosIndex.vue';
+/* import the fontawesome core */
+import { library } from '@fortawesome/fontawesome-svg-core'
+
+/* import font awesome icon component */
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+/* import specific icons */
+import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
+
+/* add icons to the library */
+library.add(faUserSecret)
+
+// import PersonInfosIndex from './components/personinfos/PersonInfosIndex.vue';
+import App from './components/App.vue';
 
 createApp({
     components: {
-        PersonInfosIndex
+        App
     }
 }).use(router).mount('#app');

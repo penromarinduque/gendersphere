@@ -18,6 +18,9 @@
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Permit Type</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-2 bg-gray-50">
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Permit No.</span>
+                </th>
+                <th class="border border-slate-300 px-6 py-2 bg-gray-50">
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Name of the Client</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-2 bg-gray-50">
@@ -43,6 +46,9 @@
                 <tr class="bg-white">
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <span style="text-transform: capitalize;">{{ item.service+' - '+item.permit_type }}</span>
+                    </td>
+                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                        <span style="text-transform: capitalize;">{{ item.permit_no }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <span style="text-transform: capitalize;">{{ item.client_name }}</span>

@@ -30,6 +30,7 @@ class FrontlineServiceController extends Controller
     {
         $request->validate([
             'permit_type_id' => ['required'],
+            'permit_no' => ['required'],
             'client_name' => ['required'],
             'gender' => ['required'],
             'date_applied' => ['required'],
@@ -44,6 +45,7 @@ class FrontlineServiceController extends Controller
 
         $frontlineservice = FrontlineService::create([
             'permit_type_id' => $request->permit_type_id,
+            'permit_no' => $request->permit_no,
             'client_name' => $request->client_name,
             'gender' => $request->gender,
             'date_applied' => $request->date_applied,
@@ -76,6 +78,7 @@ class FrontlineServiceController extends Controller
     {
         $request->validate([
             'permit_type_id' => ['required'],
+            'permit_no' => ['required'],
             'client_name' => ['required'],
             'gender' => ['required'],
             'date_applied' => ['required'],
@@ -90,6 +93,7 @@ class FrontlineServiceController extends Controller
 
         $frontlineservice_updated = FrontlineService::find($id)->update([
             'permit_type_id' => $request->permit_type_id,
+            'permit_no' => $request->permit_no,
             'client_name' => $request->client_name,
             'gender' => $request->gender,
             'date_applied' => $request->date_applied,

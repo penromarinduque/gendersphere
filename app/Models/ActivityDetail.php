@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ActivityDetail extends Model
+class ActivityDetail extends Model implements Auditable
 {
     use HasFactory;
+    use \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['gad_activity_id', 'sub_activity', 'targets', 'target_women', 'target_men', 'gad_budget', 'responsible_unit', 'actual_result', 'actual_women', 'actual_men', 'actual_lgbtq', 'actual_cost', 'remarks', 'mov_file'];
 

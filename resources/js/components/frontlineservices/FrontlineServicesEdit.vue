@@ -12,7 +12,7 @@
     <hr>
     <div class="py-4 px-4 mb-5 rounded-md shadow-md">
         <form class="space-y-6" @submit.prevent="editFrontlineService">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5 gap-4">
                 <div class="pb-1">
                     <label for="permit_type_id" class="block text-md font-medium text-gray-700">Permit Type</label>
                     <div class="mt-1">
@@ -23,7 +23,14 @@
                         <span class="text-sm text-red-600" v-if="errors?.permit_type_id">{{ errors.permit_type_id[0] }}</span>
                     </div>
                 </div>
-                <div class="pb-1 col-span-2">
+                <div class="pb-1 col-span-1">
+                    <label for="permit_no" class="block text-md font-medium text-gray-700">Permit No.</label>
+                    <div class="mt-1">
+                        <input type="text" name="permit_no" id="permit_no" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="Permit No." v-model="frontlineservice.permit_no" >
+                        <span class="text-sm text-red-600" v-if="errors?.permit_no ">{{ errors.permit_no[0] }}</span>
+                    </div>
+                </div>
+                <div class="pb-1 col-span-3">
                     <label for="client_name" class="block text-md font-medium text-gray-700">Name of Client</label>
                     <div class="mt-1">
                         <input type="text" name="client_name" id="client_name" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="Complete Name of Client/ Representative" v-model="frontlineservice.client_name" >
