@@ -19,10 +19,11 @@ class ReportController extends Controller
             ->join('municipalities', 'municipalities.id', 'person_infos.municipality_id')
             ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
             ->where('person_type',1)
-            ->where('employment_type', 'permanent')
+            ->where('employment_type', $type)
             ->get();
         return view('pages.reports.employees', [
-            'employees' => $employees
+            'employees' => $employees,
+            'type' => $type
         ]);
     }
 

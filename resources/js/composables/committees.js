@@ -75,7 +75,7 @@ export default function useCommittees() {
     }
 
     const getPersonInfos = async () => {
-        let response = await axios.get('/api/personinfos')
+        let response = await axios.get('/api/personinfos/all/persons')
         personinfos.value = response.data.data
     }
 

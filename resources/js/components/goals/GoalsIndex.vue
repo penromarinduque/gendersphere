@@ -33,10 +33,10 @@
             <template v-for="item in goals" :key="item.id">
                 <tr class="bg-white">
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.goal_no }}</span>
+                        <span style="">{{ item.goal_no }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.gad_goal }}</span>
+                        <span style="">{{ item.gad_goal }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <span style="text-transform: capitalize;" v-if="item.is_active_goal==1">Active</span>

@@ -3,6 +3,8 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
+    // base: 'https://gendersphere.penromarinduque.gov.ph',
+    base: '',
     plugins: [
         laravel({
             input: [
@@ -29,4 +31,9 @@ export default defineConfig({
             vue: 'vue/dist/vue.esm-bundler.js',
         },
     },
+    // server: {
+    //     // for production build only remove this for local
+    //     // origin: 'localhost:9001',
+    //     // origin: 'https://gendersphere.penromarinduque.gov.ph',
+    // },
 });

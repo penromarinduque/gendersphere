@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\ObjectiveController;
 use App\Http\Controllers\Api\FrontlineServiceController;
 use App\Http\Controllers\Api\FrontlineServiceTypeController;
 use App\Http\Controllers\Api\PermitTypeController;
+use App\Http\Controllers\Api\EmployeeSalaryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,6 +37,7 @@ use App\Http\Controllers\Api\PermitTypeController;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 Route::middleware('auth:sanctum')->group( function () {
     Route::apiResources([
@@ -58,7 +60,12 @@ Route::middleware('auth:sanctum')->group( function () {
         'objectives' => ObjectiveController::class,
         'frontlineservicetypes' => FrontlineServiceTypeController::class,
         'permittypes' => PermitTypeController::class,
+        'employeesalaries' => EmployeeSalaryController::class,
     ]);
+    // PersonInfo
+    Route::prefix('personinfos')->group(function () {
+        Route::get('all/persons', [PersonInfoController::class, 'all']);
+    });
     Route::get('yearlist', [CommitteeController::class, 'yearlist']);
     Route::get('genderissuebyyear/{year}', [GenderIssueController::class, 'genderIssueByYear']);
     Route::get('permittypebystatus/{status}', [PermitTypeController::class, 'getPermitTypeByStatus']);

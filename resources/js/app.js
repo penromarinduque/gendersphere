@@ -21,7 +21,7 @@ import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
 /* add icons to the library */
 library.add(faUserSecret)
 
-// import PersonInfosIndex from './components/personinfos/PersonInfosIndex.vue';
+// import App from './components/App.vue';
 import App from './components/App.vue';
 
 createApp({

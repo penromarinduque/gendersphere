@@ -7,6 +7,7 @@ use App\Http\Requests\PersonInfoRequest;
 use App\Http\Resources\PersonInfoResource;
 use App\Models\User;
 use App\Models\PersonInfo;
+use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 
 class PersonInfoController extends Controller
@@ -152,5 +153,20 @@ class PersonInfoController extends Controller
         $personInfo = PersonInfo::find($id)->delete();
 
         return response()->noContent();
+    }
+
+    public function all(Request $request) {
+        
+
+        $personinfo_qry = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
+            ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
+            ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
+            ->join('provinces', 'provinces.id', 'municipalities.province_id')
+            ->where('person_type',1);
+      
+        $personinfos = $personinfo_qry->orderBy('person_infos.lastname', 'ASC')
+            ->get();
+        // $personinfos->appends(['searchkey' => $searchkey]);
+        return PersonInfoResource::collection($personinfos);
     }
 }

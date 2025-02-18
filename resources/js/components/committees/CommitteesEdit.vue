@@ -29,7 +29,7 @@
                     <div class="mt-1">
                         <select name="person_info_id" id="person_info_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="text-transform: capitalize;" v-model="committee.person_info_id">
                             <option value="">-Select Employee-</option>
-                            <option v-for="item in personinfos" :key="item.id" :value="item.id">{{ item.lastname+', '+item.firstname+' '+item.middlename+' '+item.extname }}</option>
+                            <option v-for="item in personinfos" :key="item.id" :value="item.id">{{ item.lastname+', '+item.firstname+' '+item.middlename+' ' }}<span v-if="item.extname!==null">{{ item.extname }}</span></option>
                         </select>
                         <span class="text-sm text-red-600" v-if="errors?.person_info_id">{{ errors.person_info_id[0] }}</span>
                     </div>

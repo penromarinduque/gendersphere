@@ -19,30 +19,30 @@
             <thead>
             <tr>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
-                    <span
-                        class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Name</span>
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Name</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
-                    <span
-                        class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Gender</span>
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Gender</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
-                    <span
-                        class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Civil Status</span>
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Civil Status</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
-                    <span
-                        class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Birthdate</span>
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Birthdate</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
-                    <span
-                        class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Age</span>
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Age</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
-                    <span
-                        class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Address</span>
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Address</span>
                 </th>
-                <th class="border border-slate-300 px-6 py-1 bg-gray-50"></th>
+                <th class="border border-slate-300 px-6 py-1 bg-gray-50">
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Height</span>
+                </th>
+                <th class="border border-slate-300 px-6 py-1 bg-gray-50">
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Blood Type</span>
+                </th>
+                <th class="border border-slate-300 px-6 py-1 bg-gray-50">Actions</th>
             </tr>
             </thead>
  
@@ -59,25 +59,33 @@
                         <span style="text-transform: capitalize;">{{ personinfo.civil_status }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ personinfo.birthdate }}
+                        <span>{{ personinfo.birthdate }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ personinfo.age }}
+                        <span>{{ personinfo.age }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <span>{{ personinfo.barangay_name+', '+personinfo.municipality_name+', '+personinfo.province_name }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <router-link :to="{ name: 'personinfos.edit', params: { id: personinfo.id } }"
-                    class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
+                        {{ personinfo.height.toFixed(2) }}
+                    </td>
+                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                        {{ personinfo.blood_type }}
+                    </td>
+                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                        <router-link :to="{ name: 'personinfos.edit', params: { id: personinfo.id } }" class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
+                        
                         <button @click="deletePersonInfo(personinfo.id)"
-                        class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
+                        class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
                         Delete</button>
+
+                        <!-- <router-link :to="{ name: 'employeesalaries.index', params: { person_info_id: personinfo.id } }" class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25">Salary</router-link>  -->
                     </td>
                 </tr>
             </template>
-                <!-- <tr v-if="personinfos.data!==null">
-                    <td colspan="6" class="text-center text-red-600">No results found!</td>
+                <!-- <tr v-if="personinfos.data">
+                    <td colspan="9" class="text-center text-red-600">No results found!</td>
                 </tr> -->
             </tbody>
         </table>
