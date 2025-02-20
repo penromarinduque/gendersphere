@@ -7,6 +7,7 @@ import { createToaster } from '@meforma/vue-toaster'
 export default function useFrontlineServices() {
     const frontlineservice = ref([])
     const frontlineservices = ref([])
+    const loading = ref(false)
 
     const errors = ref('')
     const router = useRouter()
@@ -31,10 +32,12 @@ export default function useFrontlineServices() {
 
     const storeFrontlineService = async (data) => {
         errors.value = ''
+        loading.value = true;
         try {
             await axios.post('/api/frontlineservices', data)
             await router.push({ name: 'frontlineservices.index' })
             toaster.success(`Successfully Saved!`);
+            loading.value = false;
         } catch (e) {
             console.log(e);
             if (e.response.status === 422) {
@@ -42,16 +45,19 @@ export default function useFrontlineServices() {
                     errors.value = e.response.data.errors
                 }
             }
+            loading.value = false;
         }
     }
  
     const updateFrontlineService = async (id) => {
+        loading.value = true;
         console.log(frontlineservice);
         errors.value = ''
         try {
             await axios.patch(`/api/frontlineservices/${id}`, frontlineservice.value)
             await router.push({ name: 'frontlineservices.index' })
             toaster.success(`Successfully Updated!`);
+            loading.value = false;
         } catch (e) {
             console.log(e);
             if (e.response.status === 422) {
@@ -59,16 +65,20 @@ export default function useFrontlineServices() {
                     errors.value = e.response.data.errors
                 }
             }
+            loading.value = false;
         }
     }
 
     const destroyFrontlineService = async (id) => {
+        loading.value = true;
         try {
             await axios.delete(`/api/frontlineservices/${id}`)
             toaster.info(`Deleted!`);
+            loading.value = false;
         } catch (e) {
             // console.log(e);
             toaster.info(`Oops! Something went wrong please try again.`);
+            loading.value = false;
         }
     }
 
@@ -76,6 +86,7 @@ export default function useFrontlineServices() {
         errors,
         frontlineservice,
         frontlineservices,
+        loading,
         getFrontlineService,
         getFrontlineServices,
         storeFrontlineService,

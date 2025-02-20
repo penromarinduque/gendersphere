@@ -97,9 +97,10 @@
             </div>
             <div class="float-right py-4">
                 <div class="pb-1">
-                    <button type="submit" class="inline-flex items-center px-4 py-2 ml-5 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-blue-800 border border-transparent rounded-md ring-blue-300 hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring disabled:opacity-25">
-                    SAVE
-                </button>
+                    <!-- <button type="submit" class="inline-flex items-center px-4 py-2 ml-5 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-blue-800 border border-transparent rounded-md ring-blue-300 hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring disabled:opacity-25">
+                        SAVE
+                    </button> -->
+                    <Button type="submit" label="SAVE" :loading="loading" size="small" />
                 </div>
             </div>
         </form>
@@ -107,6 +108,7 @@
 </template>
 
 <script setup>
+import Button from "primevue/button";
 import { reactive, onMounted } from 'vue';
 import useFrontlineServices from '../../composables/frontlineservices';
 import usePermitTypes from '../../composables/permittypes';
@@ -123,7 +125,7 @@ const form = reactive({
     barangay_id: '',
 })
 
-const { errors, storeFrontlineService } = useFrontlineServices()
+const { errors, loading, storeFrontlineService } = useFrontlineServices()
 const { permittypesbystatus, getPermitTypesByStatus } = usePermitTypes()
 const { municipalities, barangays, getMunicipalities, getBarangays } = usePersonInfos()
 

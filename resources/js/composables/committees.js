@@ -9,7 +9,8 @@ export default function useCommittees() {
     const committees = ref([])
     const personinfos = ref([])
     const committeepositions = ref([])
-    const yearlist = ref([])
+    const yearlist = ref([]);
+    const loading  = ref(false);
 
     const errors = ref('')
     const router = useRouter()
@@ -32,11 +33,13 @@ export default function useCommittees() {
     }
 
     const storeCommittee = async (data) => {
+        loading.value = true;
         errors.value = ''
         try {
             await axios.post('/api/committees', data)
             await router.push({ name: 'committees.index' })
             toaster.success(`Successfully Saved!`);
+            loading.value = false;
         } catch (e) {
             console.log(e);
             if (e.response.status === 422) {
@@ -44,16 +47,19 @@ export default function useCommittees() {
                     errors.value = e.response.data.errors
                 }
             }
+            loading.value = false;
         }
     }
  
     const updateCommittee = async (id) => {
         // console.log(committee);
+        loading.value = true;
         errors.value = ''
         try {
             await axios.patch(`/api/committees/${id}`, committee.value)
             await router.push({ name: 'committees.index' })
             toaster.success(`Successfully Updated!`);
+            loading.value = false;
         } catch (e) {
             console.log(e);
             if (e.response.status === 422) {
@@ -61,16 +67,20 @@ export default function useCommittees() {
                     errors.value = e.response.data.errors
                 }
             }
+            loading.value = false;
         }
     }
 
     const destroyCommittee = async (id) => {
+        loading.value = true;
         try {
             await axios.delete(`/api/committees/${id}`)
             toaster.info(`Deleted!`);
+            loading.value = false;
         } catch (e) {
             // console.log(e);
             toaster.info(`Oops! Something went wrong please try again.`);
+            loading.value = false;
         }
     }
 
@@ -98,6 +108,7 @@ export default function useCommittees() {
         personinfos,
         committeepositions,
         yearlist,
+        loading,
         getCommittee,
         getCommittees,
         storeCommittee,

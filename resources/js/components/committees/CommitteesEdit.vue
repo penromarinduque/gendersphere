@@ -47,9 +47,10 @@
             </div>
             <div class="float-right py-4">
                 <div class="pb-1">
-                    <button type="submit" class="inline-flex items-center px-4 py-2 ml-5 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-blue-800 border border-transparent rounded-md ring-blue-300 hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring disabled:opacity-25">
-                    SAVE CHANGES
-                </button>
+                    <!-- <button type="submit" class="inline-flex items-center px-4 py-2 ml-5 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-blue-800 border border-transparent rounded-md ring-blue-300 hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring disabled:opacity-25">
+                        SAVE CHANGES
+                    </button> -->
+                    <Button type="submit" label="SAVE CHANGES" :loading="loading" size="small" />
                 </div>
             </div>
         </form>
@@ -57,10 +58,11 @@
 </template>
 
 <script setup>
-import useCommittees from '../../composables/committees'
-import { reactive, onMounted } from 'vue'
+import Button from "primevue/button";
+import useCommittees from '../../composables/committees';
+import { reactive, onMounted } from 'vue';
 
-const { errors, committee, yearlist, personinfos, committeepositions, getYearlist, getPersonInfos, getCommitteePositions, getCommittee, updateCommittee } = useCommittees()
+const { errors, committee, yearlist, personinfos, committeepositions, loading, getYearlist, getPersonInfos, getCommitteePositions, getCommittee, updateCommittee } = useCommittees()
 
 const props = defineProps({
     id: {

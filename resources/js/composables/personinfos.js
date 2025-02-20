@@ -10,6 +10,7 @@ export default function usePersonInfos() {
     const provinces = ref([])
     const municipalities = ref([])
     const barangays = ref([])
+    const loading = ref(false)
  
     const errors = ref('')
     const router = useRouter()
@@ -32,11 +33,13 @@ export default function usePersonInfos() {
     }
  
     const storePersonInfo = async (data) => {
+        loading.value = true;
         errors.value = ''
         try {
             await axios.post('/api/personinfos', data)
             await router.push({ name: 'personinfos.index' })
             toaster.success(`Successfully Saved!`);
+            loading.value = false;
         } catch (e) {
             console.log(e);
             if (e.response.status === 422) {
@@ -44,17 +47,20 @@ export default function usePersonInfos() {
                     errors.value = e.response.data.errors
                 }
             }
+            loading.value = false;
         }
  
     }
  
     const updatePersonInfo = async (id) => {
         // console.log(personinfo);
+        loading.value = true;
         errors.value = ''
         try {
             await axios.patch(`/api/personinfos/${id}`, personinfo.value)
             await router.push({ name: 'personinfos.index' })
             toaster.success(`Successfully Updated!`);
+            loading.value = false;
         } catch (e) {
             console.log(e);
             if (e.response.status === 422) {
@@ -62,16 +68,20 @@ export default function usePersonInfos() {
                     errors.value = e.response.data.errors
                 }
             }
+            loading.value = false;
         }
     }
 
     const destroyPersonInfo = async (id) => {
+        loading.value = true;
         try {
             await axios.delete(`/api/personinfos/${id}`)
             toaster.info(`Deleted!`);
+            loading.value = false;
         } catch (e) {
             // console.log(e);
             toaster.info(`Oops! Something went wrong please try again.`);
+            loading.value = false;
         }
         
     }
@@ -100,6 +110,7 @@ export default function usePersonInfos() {
         provinces,
         municipalities,
         barangays,
+        loading,
         getPersonInfo,
         getPersonInfos,
         storePersonInfo,
