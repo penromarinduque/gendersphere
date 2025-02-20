@@ -38,7 +38,7 @@ export default function usePersonInfos() {
             await router.push({ name: 'personinfos.index' })
             toaster.success(`Successfully Saved!`);
         } catch (e) {
-            // console.log(e);
+            console.log(e);
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
