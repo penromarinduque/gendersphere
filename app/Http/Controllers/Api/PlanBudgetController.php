@@ -12,8 +12,9 @@ class PlanBudgetController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $year = $request->year;
         $planbudgets = PlanBudget::select('plan_budgets.*', 'goals.goal_no', 'goals.gad_goal', 'gender_issues.gender_issue_mandate', 'cause_gender_issues.cause as cause_gender_issue', 'objectives.gad_objective')
             ->with(['gad_activities' => function ($gad_activities) {
                 $gad_activities->select('gad_activities.id', 'gad_activities.plan_budget_id', 'gad_activities.main_activity')

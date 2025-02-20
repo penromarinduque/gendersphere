@@ -17,6 +17,7 @@ export default function usePlanBudgets(){
         // max:
     });
 
+
     const getPlanBudgets = async () => {
         let response = await axios.get('/api/planbudgets')
         // console.log(response)
@@ -74,7 +75,7 @@ export default function usePlanBudgets(){
 
     const getYearlist = async () => {
         let response = await axios.get('/api/yearlist')
-        console.log("response")
+        console.log(response.data)
         yearlist.value = response.data
     }
 

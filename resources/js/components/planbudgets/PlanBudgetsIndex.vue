@@ -14,7 +14,7 @@
                         >
                             <option value="">-YEAR-</option>
 
-                            <option v-for="year in years" :key="year" :value="year">{{year}}</option>
+                            <option v-for="year in yearlist" :key="year.year" :value="year.year">{{year.year}}</option>
                             
                         </select>
                     </div>
@@ -144,8 +144,11 @@ import BaseModal from '@/components/modals/BaseModal.vue'
 import { onMounted, ref, reactive } from 'vue';
 
 // We need only two things from the useCompanies() composable
-const { planbudgets, getPlanBudgets, destroyPlanBudget } = usePlanBudgets()
-const { errors, planbudget_id, isModalOpened, storeGadActivity, putPlanBudgetId, openModal, closeModal } = useGadActivities()
+const { planbudgets, getPlanBudgets, destroyPlanBudget, yearlist, getYearlist } = usePlanBudgets();
+const { errors, planbudget_id, isModalOpened, storeGadActivity, putPlanBudgetId, openModal, closeModal } = useGadActivities();
+
+let curr_year = new Date().getFullYear();
+const selectedYear = ref(curr_year)
 
 const form = reactive({
     main_activity: '',
@@ -163,7 +166,10 @@ const deletePlanBudget = async (id) => {
 }
 
 // We get the companies immediately
-onMounted(getPlanBudgets)
+onMounted(() => {
+    getPlanBudgets();
+    getYearlist();
+})
 
 const saveActivity = async () => {
     await storeGadActivity({ ...form })
@@ -173,5 +179,12 @@ const putId = async (event) => {
     let pb_id = event.target.value;
     // console.log(pb_id)
     putPlanBudgetId(pb_id)
+}
+
+const getByYear = async (event) => {
+    let get_year = event.target.value;
+    console.log(get_year);
+    await getCommittees(1, get_year);
+    // console.log(search_key);
 }
 </script>
