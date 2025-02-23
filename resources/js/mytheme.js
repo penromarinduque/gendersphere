@@ -1,35 +1,11 @@
-import './bootstrap';
-
-import Alpine from 'alpinejs';
-
-window.Alpine = Alpine;
-
-Alpine.start();
-
-import { createApp } from 'vue';
-import router from './router';
-
-/* import the fontawesome core */
-import { library } from '@fortawesome/fontawesome-svg-core'
-
-/* import font awesome icon component */
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-/* import specific icons */
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
-
-/* add icons to the library */
-library.add(faUserSecret)
-
-// import App from './components/App.vue';
-import App from './components/App.vue';
-
+import { createApp } from "vue";
 import PrimeVue from "primevue/config";
-import Aura from '@primevue/themes/aura';
-import Lara from '@primevue/themes/lara';
+import Aura from "@primevue/themes/aura";
 import { definePreset } from "@primevue/themes";
 
-const MyPreset = definePreset(Lara, {
+const app = createApp(App);
+
+const MyPreset = definePreset(Aura, {
     primitive: {
         borderRadius: {
             none: "0",
@@ -329,62 +305,63 @@ const MyPreset = definePreset(Lara, {
     semantic: {
         transitionDuration: "0.2s",
         focusRing: {
-            width: "0",
-            style: "none",
-            color: "transparent",
-            offset: "0"
+            width: "1px",
+            style: "solid",
+            color: "{primary.color}",
+            offset: "2px",
+            shadow: "none"
         },
         disabledOpacity: "0.6",
         iconSize: "1rem",
         anchorGutter: "2px",
         primary: {
-            50: "#f5f5fa",
-            100: "#d0cde9",
-            200: "#aaa5d7",
-            300: "#857dc6",
-            400: "#5f56b4",
-            500: "#3a2ea3",
-            600: "#31278b",
-            700: "#292072",
-            800: "#20195a",
-            900: "#171241",
-            950: "#0f0c29"
+            50: "#ecfdf5",
+            100: "#d1fae5",
+            200: "#a7f3d0",
+            300: "#6ee7b7",
+            400: "#34d399",
+            500: "#10b981",
+            600: "#059669",
+            700: "#047857",
+            800: "#065f46",
+            900: "#064e3b",
+            950: "#022c22"
         },
         formField: {
             paddingX: "0.75rem",
-            paddingY: "0.625rem",
+            paddingY: "0.5rem",
             sm: {
                 fontSize: "0.875rem",
                 paddingX: "0.625rem",
-                paddingY: "0.5rem"
+                paddingY: "0.375rem"
             },
             lg: {
                 fontSize: "1.125rem",
                 paddingX: "0.875rem",
-                paddingY: "0.75rem"
+                paddingY: "0.625rem"
             },
             borderRadius: "{border.radius.md}",
             focusRing: {
-                width: "{focus.ring.width}",
-                style: "{focus.ring.style}",
-                color: "{focus.ring.color}",
-                offset: "{focus.ring.offset}",
-                shadow: "{focus.ring.shadow}"
+                width: "0",
+                style: "none",
+                color: "transparent",
+                offset: "0",
+                shadow: "none"
             },
             transitionDuration: "{transition.duration}"
         },
         list: {
-            padding: "0.5rem 0",
-            gap: "0",
+            padding: "0.25rem 0.25rem",
+            gap: "2px",
             header: {
-                padding: "0.625rem 1rem 0 1rem"
+                padding: "0.5rem 1rem 0.25rem 1rem"
             },
             option: {
-                padding: "0.625rem 1rem",
-                borderRadius: "0"
+                padding: "0.5rem 0.75rem",
+                borderRadius: "{border.radius.sm}"
             },
             optionGroup: {
-                padding: "0.625rem 1rem",
+                padding: "0.5rem 0.75rem",
                 fontWeight: "600"
             }
         },
@@ -396,16 +373,16 @@ const MyPreset = definePreset(Lara, {
         },
         navigation: {
             list: {
-                padding: "0.5rem 0",
-                gap: "0"
+                padding: "0.25rem 0.25rem",
+                gap: "2px"
             },
             item: {
-                padding: "0.625rem 1rem",
-                borderRadius: "0",
+                padding: "0.5rem 0.75rem",
+                borderRadius: "{border.radius.sm}",
                 gap: "0.5rem"
             },
             submenuLabel: {
-                padding: "0.625rem 1rem",
+                padding: "0.5rem 0.75rem",
                 fontWeight: "600"
             },
             submenuIcon: {
@@ -415,20 +392,20 @@ const MyPreset = definePreset(Lara, {
         overlay: {
             select: {
                 borderRadius: "{border.radius.md}",
-                shadow: "0 2px 12px 0 rgba(0, 0, 0, 0.1)"
+                shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)"
             },
             popover: {
                 borderRadius: "{border.radius.md}",
-                padding: "1rem",
-                shadow: "0 1px 3px rgba(0, 0, 0, 0.1)"
+                padding: "0.75rem",
+                shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)"
             },
             modal: {
                 borderRadius: "{border.radius.xl}",
-                padding: "1.5rem",
-                shadow: "0 1px 3px rgba(0, 0, 0, 0.3)"
+                padding: "1.25rem",
+                shadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)"
             },
             navigation: {
-                shadow: "0 2px 12px 0 rgba(0, 0, 0, 0.1)"
+                shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)"
             }
         },
         colorScheme: {
@@ -459,9 +436,6 @@ const MyPreset = definePreset(Lara, {
                     color: "{primary.700}",
                     focusColor: "{primary.800}"
                 },
-                focusRing: {
-                    shadow: "0 0 0 0.2rem {primary.200}"
-                },
                 mask: {
                     background: "rgba(0,0,0,0.4)",
                     color: "{surface.200}"
@@ -471,9 +445,9 @@ const MyPreset = definePreset(Lara, {
                     disabledBackground: "{surface.200}",
                     filledBackground: "{surface.50}",
                     filledHoverBackground: "{surface.50}",
-                    filledFocusBackground: "{surface.0}",
+                    filledFocusBackground: "{surface.50}",
                     borderColor: "{surface.300}",
-                    hoverBorderColor: "{primary.color}",
+                    hoverBorderColor: "{surface.400}",
                     focusBorderColor: "{primary.color}",
                     invalidBorderColor: "{red.400}",
                     color: "{surface.700}",
@@ -484,8 +458,8 @@ const MyPreset = definePreset(Lara, {
                     floatLabelFocusColor: "{primary.600}",
                     floatLabelActiveColor: "{surface.500}",
                     floatLabelInvalidColor: "{form.field.invalid.placeholder.color}",
-                    iconColor: "{surface.500}",
-                    shadow: "none"
+                    iconColor: "{surface.400}",
+                    shadow: "0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgba(18, 18, 23, 0.05)"
                 },
                 text: {
                     color: "{surface.700}",
@@ -533,7 +507,7 @@ const MyPreset = definePreset(Lara, {
                     },
                     optionGroup: {
                         background: "transparent",
-                        color: "{text.color}"
+                        color: "{text.muted.color}"
                     }
                 },
                 navigation: {
@@ -551,7 +525,7 @@ const MyPreset = definePreset(Lara, {
                     },
                     submenuLabel: {
                         background: "transparent",
-                        color: "{text.color}"
+                        color: "{text.muted.color}"
                     },
                     submenuIcon: {
                         color: "{surface.400}",
@@ -587,9 +561,6 @@ const MyPreset = definePreset(Lara, {
                     color: "rgba(255,255,255,.87)",
                     focusColor: "rgba(255,255,255,.87)"
                 },
-                focusRing: {
-                    shadow: "0 0 0 0.2rem color-mix(in srgb, {primary.color}, transparent 80%)"
-                },
                 mask: {
                     background: "rgba(0,0,0,0.6)",
                     color: "{surface.200}"
@@ -599,9 +570,9 @@ const MyPreset = definePreset(Lara, {
                     disabledBackground: "{surface.700}",
                     filledBackground: "{surface.800}",
                     filledHoverBackground: "{surface.800}",
-                    filledFocusBackground: "{surface.950}",
+                    filledFocusBackground: "{surface.800}",
                     borderColor: "{surface.600}",
-                    hoverBorderColor: "{primary.color}",
+                    hoverBorderColor: "{surface.500}",
                     focusBorderColor: "{primary.color}",
                     invalidBorderColor: "{red.300}",
                     color: "{surface.0}",
@@ -613,7 +584,7 @@ const MyPreset = definePreset(Lara, {
                     floatLabelActiveColor: "{surface.400}",
                     floatLabelInvalidColor: "{form.field.invalid.placeholder.color}",
                     iconColor: "{surface.400}",
-                    shadow: "none"
+                    shadow: "0 0 #0000, 0 0 #0000, 0 1px 2px 0 rgba(18, 18, 23, 0.05)"
                 },
                 text: {
                     color: "{surface.0}",
@@ -661,7 +632,7 @@ const MyPreset = definePreset(Lara, {
                     },
                     optionGroup: {
                         background: "transparent",
-                        color: "{text.color}"
+                        color: "{text.muted.color}"
                     }
                 },
                 navigation: {
@@ -679,7 +650,7 @@ const MyPreset = definePreset(Lara, {
                     },
                     submenuLabel: {
                         background: "transparent",
-                        color: "{text.color}"
+                        color: "{text.muted.color}"
                     },
                     submenuIcon: {
                         color: "{surface.500}",
@@ -692,16 +663,9 @@ const MyPreset = definePreset(Lara, {
     }
 });
 
-const app = createApp({
-    components: {
-        App
-    }
-})
-.use(router)
-.use(PrimeVue, {
+app.use(PrimeVue, {
     theme: {
         preset: MyPreset
-    }
-})
-.mount('#app');
-
+    },
+});
+app.mount("#app");
