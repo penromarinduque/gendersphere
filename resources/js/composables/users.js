@@ -74,8 +74,9 @@ export default function useUsers() {
     }
 
     const getPersonInfos = async () => {
-        let response = await axios.get('/api/personinfos')
+        let response = await axios.get('/api/personinfos/all/persons')
         personinfos.value = response.data.data
+        console.log(personinfos.value);
     }
 
     const getPersonEmail = async (id) => {
