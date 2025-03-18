@@ -99,9 +99,10 @@
             </div>
             <div class="float-right py-4">
                 <div class="pb-1">
-                    <button type="submit" class="inline-flex items-center px-4 py-2 ml-5 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-blue-800 border border-transparent rounded-md ring-blue-300 hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring disabled:opacity-25">
-                    SAVE CHANGES
-                </button>
+                    <!-- <button type="submit" class="inline-flex items-center px-4 py-2 ml-5 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-blue-800 border border-transparent rounded-md ring-blue-300 hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring disabled:opacity-25">
+                        SAVE CHANGES
+                    </button> -->
+                    <Button type="submit" size="small" :loading="loading" label="SAVE CHANGES" />
                 </div>
             </div>
         </form>
@@ -109,6 +110,7 @@
 </template>
 
 <script setup>
+import Button from "primevue/button"
 import usePlanBudgets from '../../composables/planbudgets'
 import useGoals from '../../composables/goals'
 import useGenderIssues from '../../composables/genderissues'
@@ -116,7 +118,7 @@ import useCauseGenderIssues from '../../composables/causegenderissues'
 import useObjectives from '../../composables/objectives'
 import { reactive, onMounted, watch } from 'vue'
 
-const { errors, planbudget, yearlist, getYearlist, getPlanBudget, updatePlanBudget } = usePlanBudgets()
+const { errors, planbudget, yearlist, loading, getYearlist, getPlanBudget, updatePlanBudget } = usePlanBudgets()
 const { goals, getGoals } = useGoals()
 const { genderissuesbyyear, getGenderIssuesByYear } = useGenderIssues()
 const { causegenderissues, getCauseGenderIssues } = useCauseGenderIssues()

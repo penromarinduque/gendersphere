@@ -10,7 +10,7 @@
                         <select name="person_info_id" id="person_info_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="form.person_info_id" @change="getPerson($event)">
                             <option value="">-Select Personnel-</option>
-                            <option v-for="item in personinfos" :key="item.id" :value="item.id">{{ item.lastname+', '+item.firstname+' '+item.middlename+' '+item.extname }}</option>
+                            <option v-for="item in personinfos" :key="item.id" :value="item.id">{{ item.lastname+', '+item.firstname+' '+item.middlename+' ' + (item.extname ?? '') }}</option>
                         </select>
                         <span class="text-sm text-red-600" v-if="errors?.person_info_id">{{ errors.person_info_id[0] }}</span>
                     </div>

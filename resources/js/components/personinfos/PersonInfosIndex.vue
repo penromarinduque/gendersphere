@@ -80,6 +80,8 @@
                         class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
                         Delete</button>
 
+                        <!-- <Button @click="deletePersonInfo(personinfo.id)" type="submit" label="DELETE" :loading="loading" severity="danger" size="small" /> -->
+
                         <!-- <router-link :to="{ name: 'employeesalaries.index', params: { person_info_id: personinfo.id } }" class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25">Salary</router-link>  -->
                     </td>
                 </tr>
@@ -99,6 +101,7 @@
 </template>
 
 <script setup>
+import Button from "primevue/button";
 import { TailwindPagination } from 'laravel-vue-pagination';
 
 // Here we're using a Composable file, its code is above
@@ -109,7 +112,7 @@ import { event } from 'jquery';
 import { onMounted } from 'vue';
 
 // We need only two things from the useCompanies() composable
-const { personinfos, getPersonInfos, destroyPersonInfo } = usePersonInfos()
+const { personinfos, getPersonInfos, destroyPersonInfo, loading } = usePersonInfos()
 
 const deletePersonInfo = async (id) => {
     if (!window.confirm('You sure you want to delete this record?')) {

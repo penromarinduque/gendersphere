@@ -48,20 +48,20 @@ Route::middleware('auth')->group(function () {
     })->where('any', '.*')->name('planbudgets');
 
     // GAD Activities
-    Route::get('/activities', function () {
+    Route::get('/activities/{any?}', function () {
         return view('activities');
         Route::view('/activities/{any}', 'activities')->where('any', '.*');
     })->name('activities');
     Route::get('/pages/gadactivities', function () {
         return view('pages.gadactivities');
         Route::view('/pages/gadactivities/{any}', 'pages.gadactivities')->where('any', '.*');
-    })->name('pages.gadactivities');
+    })->where('any', '.*')->name('pages.gadactivities');
 
     // GAD Activity Details
-    Route::get('/activitydetails', function () {
+    Route::get('/activitydetails/{any?}', function () {
         return view('activitydetails');
         Route::view('/activitydetails/{any}', 'activitydetails')->where('any', '.*');
-    })->name('activitydetails');
+    })->where('any', '.*')->name('activitydetails');
 
     // Frontline Services
     Route::get('/frontlineservices/{any?}', function () {

@@ -8,6 +8,7 @@ export default function usePlanBudgets(){
     const planbudget = ref([])
     const planbudgets = ref([])
     const yearlist = ref([])
+    const loading = ref(false)
 
     const errors = ref('')
     const router = useRouter()
@@ -31,11 +32,13 @@ export default function usePlanBudgets(){
     }
 
     const storePlanBudget = async (data) => {
+        loading.value = true;
         errors.value = ''
         try {
             await axios.post('/api/planbudgets', data)
             await router.push({ name: 'planbudgets.index' })
             toaster.success(`Successfully Saved!`);
+            loading.value = false;
         } catch (e) {
             console.log(e);
             if (e.response.status === 422) {
@@ -43,16 +46,19 @@ export default function usePlanBudgets(){
                     errors.value = e.response.data.errors
                 }
             }
+            loading.value = false;
         }
     }
  
     const updatePlanBudget = async (id) => {
         // console.log(planbudget);
+        loading.value = true;
         errors.value = ''
         try {
             await axios.patch(`/api/planbudgets/${id}`, planbudget.value)
             await router.push({ name: 'planbudgets.index' })
             toaster.success(`Successfully Updated!`);
+            loading.value = false;
         } catch (e) {
             console.log(e);
             if (e.response.status === 422) {
@@ -60,16 +66,20 @@ export default function usePlanBudgets(){
                     errors.value = e.response.data.errors
                 }
             }
+            loading.value = false;
         }
     }
 
     const destroyPlanBudget = async (id) => {
+        loading.value = true;
         try {
             await axios.delete(`/api/planbudgets/${id}`)
             toaster.info(`Deleted!`);
+            loading.value = false;
         } catch (e) {
             // console.log(e);
             toaster.info(`Oops! Something went wrong please try again.`);
+            loading.value = false;
         }
     }
 
@@ -84,6 +94,7 @@ export default function usePlanBudgets(){
         planbudget,
         planbudgets,
         yearlist,
+        loading,
         getPlanBudget,
         getPlanBudgets,
         storePlanBudget,

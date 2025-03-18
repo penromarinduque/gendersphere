@@ -7,6 +7,7 @@ import { createToaster } from '@meforma/vue-toaster'
 export default function useActivityDetails(){
     const activitydetail = ref([])
     const activitydetails = ref([])
+    const loading = ref(false)
 
     const errors = ref('')
     const router = useRouter()
@@ -29,10 +30,13 @@ export default function useActivityDetails(){
 
     const storeActivityDetail = async (data) => {
         errors.value = ''
+        console.log("test")
+        loading.value = true;
         try {
             await axios.post('/api/activitydetails', data)
             await router.push({ name: 'activitydetails.index' })
             toaster.success(`Successfully Saved!`);
+            loading.value = false;
         } catch (e) {
             console.log(e);
             if (e.response.status === 422) {
@@ -40,6 +44,7 @@ export default function useActivityDetails(){
                     errors.value = e.response.data.errors
                 }
             }
+            loading.value = false;
         }
     }
  
@@ -91,6 +96,7 @@ export default function useActivityDetails(){
         activitydetail,
         activitydetails,
         errors,
+        loading,
         getActivityDetail,
         getActivityDetails,
         storeActivityDetail,

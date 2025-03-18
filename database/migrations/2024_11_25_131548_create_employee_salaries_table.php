@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('employee_salaries', function (Blueprint $table) {
             $table->id();
             $table->integer('person_info_id');
-            $table->smallInteger('salary_year', 10)->default(0);
+            $table->smallInteger('salary_year');
             $table->double('amount', 12,2)->default(0);
             $table->timestamps();
         });
