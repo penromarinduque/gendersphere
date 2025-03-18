@@ -103,6 +103,13 @@
                     </td>
                 </tr>
             </template>
+            <template v-if="!planbudgets.length">
+                <tr>
+                    <td colspan="9" class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                        No records found
+                    </td>
+                </tr>
+            </template>
             </tbody>
         </table>
     </div>
@@ -167,8 +174,9 @@ const deletePlanBudget = async (id) => {
 
 // We get the companies immediately
 onMounted(() => {
-    getPlanBudgets();
+    // getPlanBudgets();
     getYearlist();
+    getByYear();
 })
 
 const saveActivity = async () => {
@@ -182,9 +190,9 @@ const putId = async (event) => {
 }
 
 const getByYear = async (event) => {
-    let get_year = event.target.value;
+    let get_year = event ? event.target.value : new Date().getFullYear();
     console.log(get_year);
-    await getCommittees(1, get_year);
+    await getPlanBudgets(get_year);
     // console.log(search_key);
 }
 </script>

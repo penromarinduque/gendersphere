@@ -19,8 +19,8 @@ export default function usePlanBudgets(){
     });
 
 
-    const getPlanBudgets = async () => {
-        let response = await axios.get('/api/planbudgets')
+    const getPlanBudgets = async (year) => {
+        let response = await axios.get(`/api/planbudgets?year=${year}`)
         // console.log(response)
         planbudgets.value = response.data.data
     }
