@@ -104,6 +104,7 @@
 import Button from "primevue/button";
 import { TailwindPagination } from 'laravel-vue-pagination';
 
+
 // Here we're using a Composable file, its code is above
 import usePersonInfos from '@/composables/personinfos'
 import { event } from 'jquery';

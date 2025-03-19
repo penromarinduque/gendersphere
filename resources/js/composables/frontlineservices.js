@@ -10,17 +10,35 @@ export default function useFrontlineServices() {
     const loading = ref(false)
 
     const errors = ref('')
-    const router = useRouter()
+    const router = useRouter();
+    const yearlist = ref([]);
+    const selectedYear = ref(new Date().getFullYear());
+    const selectedService = ref();
+    const selectedPermitType = ref();
+    // const page = ref(1);
 
     const toaster = createToaster({ 
         position: "top"
         // max:
     });
 
-    const getFrontlineServices = async () => {
-        let response = await axios.get('/api/frontlineservices')
-        // console.log(response)
-        frontlineservices.value = response.data.data
+    const getYearlist = async () => {
+        let response = await axios.get('/api/yearlist')
+        console.log(response.data)
+        yearlist.value = response.data
+    }
+    
+
+    const getFrontlineServices = async (page=1) => {
+        let response = await axios.get(`/api/frontlineservices`, {
+            params: {
+                year: selectedYear.value,
+                permit_type: selectedPermitType.value,
+                page : page
+            }
+        })
+        console.log(response.data)
+        frontlineservices.value = response.data
     }
  
     const getFrontlineService = async (id) => {
@@ -87,10 +105,15 @@ export default function useFrontlineServices() {
         frontlineservice,
         frontlineservices,
         loading,
+        yearlist,
+        selectedYear,
+        selectedService,
+        selectedPermitType,
         getFrontlineService,
         getFrontlineServices,
         storeFrontlineService,
         updateFrontlineService,
         destroyFrontlineService,
+        getYearlist
     }
 }
