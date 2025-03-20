@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FrontlineServiceResource;
 use App\Models\FrontlineService;
+use App\Models\FrontlineServiceType;
 use Illuminate\Http\Request;
 
 class FrontlineServiceController extends Controller
@@ -123,5 +124,13 @@ class FrontlineServiceController extends Controller
         $frontlineservice = FrontlineService::find($id)->delete();
  
         return response()->noContent();
+    }
+
+    public function summary(){
+        return FrontlineServiceType::query()
+        ->with(['permitTypes' => function ($query) {
+            $query->withCount('services');
+        }])
+        ->where('fs_status', 1)->get();
     }
 }

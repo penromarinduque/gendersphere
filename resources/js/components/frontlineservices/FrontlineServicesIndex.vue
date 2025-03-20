@@ -15,10 +15,16 @@
         <Select @change="getFrontlineServices" v-model="selectedPermitType" :options="permittypes" optionLabel="permit_type" optionValue="id"  placeholder="Filter Permit Type" class="w-full md:w-56 mb-2" size="small" />
     </div>
 
+    <Panel class="mb-3" header="Summary">
+        <div class="grid grid-cols-3">
+            <div v-for="summary in frontlineServiceSummary">
+                <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">{{ summary.service }}</h6>
+                <p v-for="permitType in summary.permit_types">{{ permitType.permit_type }} : {{ permitType.count }}</p>
+            </div>
+        </div>
+    </Panel>
+
     <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-md">
-
-
-
         <table class="min-w-full w-full border-collapse border border-slate-400 divide-y divide-gray-200">
             <thead>
             <tr>
@@ -100,8 +106,10 @@ import { onMounted } from 'vue'
 import Select from 'primevue/select';
 import Paginator from 'primevue/paginator';
 import { TailwindPagination } from 'laravel-vue-pagination';
+import Card from 'primevue/card';
+import Panel from 'primevue/panel';
 
-const { frontlineservices, selectedYear, yearlist, selectedPermitType, getFrontlineServices, destroyFrontlineService, getYearlist } = useFrontlineServices();
+const { frontlineservices, selectedYear, yearlist, selectedPermitType, frontlineServiceSummary, getFrontlineServices, destroyFrontlineService, getYearlist, getFrontlineServiceSummary } = useFrontlineServices();
 const { getFrontlineServiceTypes, frontlineservicetypes } = useFrontlineServiceTypes();
 const { permittypes, getPermitTypes } = usePermitTypes();
 
@@ -119,6 +127,7 @@ onMounted(() => {
     getFrontlineServiceTypes();
     getYearlist();
     getPermitTypes();
+    getFrontlineServiceSummary();
 });
 
 </script>

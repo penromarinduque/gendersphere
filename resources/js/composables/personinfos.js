@@ -10,24 +10,28 @@ export default function usePersonInfos() {
     const provinces = ref([])
     const municipalities = ref([])
     const barangays = ref([])
-    const loading = ref(false)
- 
-    const errors = ref('')
-    const router = useRouter()
+    const loading = ref(false);
+    const genderFilter = ref('');
+    const employmentStatusFilter = ref('');
+    const summary = ref({});
+
+    const errors = ref('');
+    const router = useRouter();
 
     const toaster = createToaster({ 
         position: "top"
         // max:
-     });
+    });
  
     const getPersonInfos = async (page = 1, searchkey = "") => {
-        let response = await axios.get('/api/personinfos', { params: { page:page, searchkey:searchkey } })
+        let response = await axios.get('/api/personinfos', { params: { page:page, searchkey:searchkey, gender:genderFilter.value, employment_status:employmentStatusFilter.value } })
         // console.log(response.data)
         personinfos.value = response.data
     }
  
     const getPersonInfo = async (id) => {
         let response = await axios.get(`/api/personinfos/${id}`)
+        console.log(response.data.data)
         personinfo.value = response.data.data
         // console.log(response.data);
     }
@@ -102,6 +106,11 @@ export default function usePersonInfos() {
         barangays.value = response.data.data
         // console.log(response.data);
     }
+
+    const getPersonInfoSummary = async () => {
+        let response = await axios.get('/api/personinfos/summary');
+        summary.value = response.data
+    }
  
     return {
         errors,
@@ -111,6 +120,9 @@ export default function usePersonInfos() {
         municipalities,
         barangays,
         loading,
+        genderFilter,
+        employmentStatusFilter,
+        summary,
         getPersonInfo,
         getPersonInfos,
         storePersonInfo,
@@ -118,6 +130,7 @@ export default function usePersonInfos() {
         destroyPersonInfo,
         getProvinces,
         getMunicipalities,
-        getBarangays
+        getBarangays,
+        getPersonInfoSummary
     }
 }
