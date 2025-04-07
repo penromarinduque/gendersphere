@@ -10,17 +10,33 @@ export default function useFrontlineServices() {
     const loading = ref(false)
 
     const errors = ref('')
-    const router = useRouter()
+    const router = useRouter();
+    const yearlist = ref([]);
+    const selectedYear = ref(new Date().getFullYear());
+    const selectedService = ref();
+    const selectedPermitType = ref();
+    const frontlineServiceSummary = ref();
 
     const toaster = createToaster({ 
         position: "top"
         // max:
     });
 
-    const getFrontlineServices = async () => {
-        let response = await axios.get('/api/frontlineservices')
-        // console.log(response)
-        frontlineservices.value = response.data.data
+    const getYearlist = async () => {
+        let response = await axios.get('/api/yearlist');
+        yearlist.value = response.data
+    }
+    
+
+    const getFrontlineServices = async (page=1) => {
+        let response = await axios.get(`/api/frontlineservices`, {
+            params: {
+                year: selectedYear.value,
+                permit_type: selectedPermitType.value,
+                page : page
+            }
+        })
+        frontlineservices.value = response.data
     }
  
     const getFrontlineService = async (id) => {
@@ -82,15 +98,28 @@ export default function useFrontlineServices() {
         }
     }
 
+    const getFrontlineServiceSummary = async () => {
+        const response = await axios.get(`/api/frontlineservices/summary` , { params: { year: selectedYear.value} });
+        frontlineServiceSummary.value = response.data;
+        console.log(response.data);
+    }
+
     return {
         errors,
         frontlineservice,
         frontlineservices,
         loading,
+        yearlist,
+        selectedYear,
+        selectedService,
+        selectedPermitType,
+        frontlineServiceSummary,
         getFrontlineService,
         getFrontlineServices,
         storeFrontlineService,
         updateFrontlineService,
         destroyFrontlineService,
+        getYearlist,
+        getFrontlineServiceSummary
     }
 }

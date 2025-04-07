@@ -20,4 +20,8 @@ class FrontlineServiceType extends Model implements Auditable
             ->get();
         return $frontlineservicetypes;
     }
+
+    public function permitTypes(){
+        return $this->hasMany(PermitType::class, 'frontline_service_type_id', 'id');
+    }
 }

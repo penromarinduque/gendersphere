@@ -29,4 +29,8 @@ class PermitType extends Model implements Auditable
             ->first();
         return $permit_type;
     }
+
+    public function services(){
+        return $this->belongsTo(FrontlineService::class, 'id', 'permit_type_id');
+    }
 }

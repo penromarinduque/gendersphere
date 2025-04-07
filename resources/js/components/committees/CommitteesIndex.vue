@@ -13,7 +13,7 @@
                         >
                             <option value="">-YEAR-</option>
 
-                            <option v-for="year in years" :key="year" :value="year">{{year}}</option>
+                            <option v-for="year in yearlist" :key="year" :value="year">{{year}}</option>
                             
                         </select>
                     </div>
@@ -126,7 +126,7 @@ const deleteCommittee = async (id) => {
 const getByYear = async (event) => {
     let get_year = event.target.value;
     await getCommittees(1, get_year);
-    // console.log(search_key);
+    console.log(get_year);
 }
 
 // We get the companies immediately

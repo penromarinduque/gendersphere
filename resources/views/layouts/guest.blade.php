@@ -76,6 +76,7 @@
                 </div>
                 <a href="{{ route('welcome') }}" class="bg-purple-700 text-white py-2 px-6 rounded-full hover:bg-purple-800 transition font-semibold text-sm">
                     Home
+
                 </a>
                 <button @click="toggleMobileMenu" class="lg:hidden text-2xl text-gray-700">
                     <i class="fas fa-bars"></i>
