@@ -290,6 +290,16 @@ class ReportController extends Controller
             $blade_file = "sexaggregated-print";
         }
 
+        return (object)[
+            'year' => $year,
+            'frontline_service_type_id' => $frontline_service_type_id,
+            'permit_type_id' => $permit_type_id,
+            'frontlineservicetypes' => $frontlineservicetypes,
+            'permittypes' => $permittypes,
+            'frontlineservices' => $frontlineservices,
+            'report_heading' => $report_heading,
+        ];
+
         return view('pages.reports.'.$blade_file, [
             'year' => $year,
             'frontline_service_type_id' => $frontline_service_type_id,
