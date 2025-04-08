@@ -269,7 +269,42 @@ class ReportController extends Controller
 
         $year = ($request->year) ? $request->year : date('Y');
         $frontline_service_type_id = ($request->frontline_service_type_id) ? $request->frontline_service_type_id : 0;
-        $permit_type_id = ($request->permit_type_id) ? $request->permit_type_id : 0;
+        $permit_type_id = $request->permit_type_id ? $request->permit_type_id : 1;
+
+        $counts = [
+            "frontline_service_type" => [],
+            "permit_type" => [],
+            "gender" => [
+                "male" => FrontlineService::where([
+                            "gender" => "male"
+                        ])
+                        ->where('date_released', 'LIKE', "%{$year}%")
+                        ->count(),
+                "female" => FrontlineService::where([
+                            "gender" => "female"
+                        ])
+                        ->where('date_released', 'LIKE', "%{$year}%")
+                        ->count(),
+            ]
+        ];
+
+        foreach(PermitType::where("is_active_ptype", 1)->get() as $ptype){
+            $counts["permit_type"][] = [
+                "name" => $ptype->permit_type,
+                "count" => FrontlineService::where("permit_type_id", $ptype->id)->count()
+            ];
+        }
+
+        foreach(FrontlineServiceType::where("fs_status", 1)->get() as $ftype){
+            $ptype_ids = PermitType::where([
+                "frontline_service_type_id" => $ftype->id,
+                "is_active_ptype" => 1
+            ])->pluck("id");
+            $counts["frontline_service_type"][] = [
+                "name" => $ftype->service,
+                "count" => FrontlineService::whereIn("permit_type_id", $ptype_ids)->count()
+            ];
+        }
 
         $frontlineservicetypes = $_frontlineservicetype->getFrontlineServiceType(1);
         $permittypes = $_permittype->getPermitTypes($frontline_service_type_id);
@@ -290,16 +325,6 @@ class ReportController extends Controller
             $blade_file = "sexaggregated-print";
         }
 
-        return (object)[
-            'year' => $year,
-            'frontline_service_type_id' => $frontline_service_type_id,
-            'permit_type_id' => $permit_type_id,
-            'frontlineservicetypes' => $frontlineservicetypes,
-            'permittypes' => $permittypes,
-            'frontlineservices' => $frontlineservices,
-            'report_heading' => $report_heading,
-        ];
-
         return view('pages.reports.'.$blade_file, [
             'year' => $year,
             'frontline_service_type_id' => $frontline_service_type_id,
@@ -308,6 +333,7 @@ class ReportController extends Controller
             'permittypes' => $permittypes,
             'frontlineservices' => $frontlineservices,
             'report_heading' => $report_heading,
+            "counts" => $counts
         ]);
     }
 

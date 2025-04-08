@@ -64,6 +64,55 @@
                         </button>
                     </div>
                 </div>
+
+                <br>
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+                    <div class="col-span-1">
+                        <div class="p-4 bg-white rounded-lg shadow h-full">
+                            <div class="">
+                                <h5 class="text-lg"><b>Frontline Service Types</b></h5>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                @foreach ($counts["frontline_service_type"] as $t)
+                                <div class="">
+                                    <h6 class="text-sm">{{ $t["name"] }} : <b>{{number_format($t["count"], 0)}}</b></h6>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-1">
+                        <div class="p-4 bg-white rounded-lg shadow h-full">
+                            <div class="">
+                                <h5 class="text-lg"><b>Permit Types</b></h5>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                @foreach ($counts["permit_type"] as $t)
+                                <div class="">
+                                    <h6 class="text-sm">{{ $t["name"] }} : <b>{{number_format($t["count"], 0)}}</b></h6>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-1">
+                        <div class="p-4 bg-white rounded-lg shadow h-full">
+                            <div class="">
+                                <h5 class="text-lg"><b>Gender</b></h5>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 0">
+                                <div class="">
+                                    <h6 class="text-sm">Male : <b>{{number_format($counts["gender"]["male"], 0)}}</b></h6>
+                                </div>
+                                <div class="">
+                                    <h6 class="text-sm">Female : <b>{{number_format($counts["gender"]["female"], 0)}}</b></h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <div class="min-w-full w-full py-6">
                     <table class="min-w-full w-full border-collapse border border-slate-400 divide-y divide-gray-200">
                         <thead>

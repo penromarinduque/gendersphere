@@ -131,6 +131,7 @@ class ActivityDetailController extends Controller
     public function updateAccom(Request $request, $id)
     {
         $request->validate([
+            'gad_budget' => ['required'],
             'actual_result' => ['required'],
             'actual_men' => ['required'],
             'actual_women' => ['required'],
@@ -139,6 +140,7 @@ class ActivityDetailController extends Controller
         ]);
 
         $activitydetail_update = ActivityDetail::find($id)->update([
+            'gad_budget' => $request->gad_budget,
             'actual_result' => $request->actual_result,
             'actual_men' => $request->actual_men,
             'actual_women' => $request->actual_women,
