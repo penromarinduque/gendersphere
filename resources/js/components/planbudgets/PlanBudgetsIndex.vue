@@ -8,7 +8,7 @@
             <div class="flex flex-no-wrap">
                 <div class="w-auto flex-none px-2">
                     <div>
-                        <select name="year" id="year" class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                        <!-- <select name="year" id="year" class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                             v-on:change="getByYear"
                             v-model="selectedYear"
                         >
@@ -16,7 +16,8 @@
 
                             <option v-for="year in yearlist" :key="year.year" :value="year.year">{{year.year}}</option>
                             
-                        </select>
+                        </select> -->
+                        <Select @change="getByYear" v-model="selectedYear" :options="yearlist" optionLabel="year" optionValue="year"  placeholder="Filter by Year"  class="w-full md:w-56 mb-2 me-2" size="small" />
                     </div>
                 </div>
             </div>
@@ -146,6 +147,7 @@
 import usePlanBudgets from '@/composables/planbudgets'
 import useGadActivities from '@/composables/gadactivities'
 import BaseModal from '@/components/modals/BaseModal.vue'
+import Select from 'primevue/select';
 
 // onMounted will define what method to "fire" automatically
 import { onMounted, ref, reactive } from 'vue';
@@ -190,9 +192,8 @@ const putId = async (event) => {
 }
 
 const getByYear = async (event) => {
-    let get_year = event ? event.target.value : new Date().getFullYear();
+    let get_year = event ? event.value : new Date().getFullYear();
     console.log(get_year);
     await getPlanBudgets(get_year);
-    // console.log(search_key);
 }
 </script>
