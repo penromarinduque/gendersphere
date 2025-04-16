@@ -153,4 +153,24 @@ class ActivityDetailController extends Controller
 
         return new ActivityDetailResource($activitydetail);
     }
+
+    public function uploadMov(Request $request) {
+
+        $request->validate([
+            'mov' => 'required|mimes:pdf|max:5120', // 5MB limit
+            'id' => 'required'
+        ]);
+
+        $file = $request->file('mov');
+        $newName = 'mov_'.$request->id.'_'.time().'.'.$file->getClientOriginalExtension();
+        $file->storeAs('movs', $newName, 'public');
+        ActivityDetail::where('id', $request->id)->update(['mov_file' => $newName]);
+        return redirect()->back();
+    }
+
+    public function downloadMov(Request $request) {
+        $mov_file = $request->mov_file;
+        $path = storage_path('app/public/movs/'.$mov_file);
+        return response()->file($path);
+    }
 }

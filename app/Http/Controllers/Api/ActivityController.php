@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ActivityRequest;
 use App\Http\Resources\ActivityResource;
 use App\Models\Activity;
+use App\Models\ActivityDetail;
 use Illuminate\Http\Request;
 
 class ActivityController extends Controller
@@ -55,4 +56,6 @@ class ActivityController extends Controller
  
         return response()->noContent();
     }
+
+    
 }

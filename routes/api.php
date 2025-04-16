@@ -51,6 +51,10 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::prefix('committees')->group(function () {
         Route::get('summary', [CommitteeController::class, 'summary']);
     });
+
+    Route::prefix('activitydetails')->group(function () {
+        
+    });
     
     Route::apiResources([
         'personinfos' => PersonInfoController::class,

@@ -1,7 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\ActivityController;
+use App\Http\Controllers\Api\ActivityDetailController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Models\ActivityDetail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -58,10 +61,14 @@ Route::middleware('auth')->group(function () {
     })->where('any', '.*')->name('pages.gadactivities');
 
     // GAD Activity Details
-    Route::get('/activitydetails/{any?}', function () {
-        return view('activitydetails');
-        Route::view('/activitydetails/{any}', 'activitydetails')->where('any', '.*');
-    })->where('any', '.*')->name('activitydetails');
+    Route::prefix('activitydetails')->group(function () {
+        Route::post('upload-mov', [ActivityDetailController::class, 'uploadMov']);
+        Route::get('download-mov', [ActivityDetailController::class, 'downloadMov']);
+        Route::get('/{any?}', function () {
+            return view('activitydetails');
+            Route::view('/activitydetails/{any}', 'activitydetails')->where('any', '.*');
+        })->where('any', '.*')->name('activitydetails');
+    });
 
     // Frontline Services
     Route::get('/frontlineservices/{any?}', function () {
