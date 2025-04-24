@@ -11,7 +11,7 @@
     </div>
     
     <div>
-        <Select @change="getFrontlineServices" v-model="selectedYear" :options="yearlist" optionLabel="year" optionValue="year"  placeholder="Filter Year"  class="w-full md:w-56 mb-2 me-2" size="small" />
+        <Select @change="handleYearChange" v-model="selectedYear" :options="yearlist" optionLabel="year" optionValue="year"  placeholder="Filter Year"  class="w-full md:w-56 mb-2 me-2" size="small" />
         <Select @change="getFrontlineServices" v-model="selectedPermitType" :options="permittypes" optionLabel="permit_type" optionValue="id"  placeholder="Filter Permit Type" class="w-full md:w-56 mb-2" size="small" />
     </div>
 
@@ -19,7 +19,7 @@
         <div class="grid grid-cols-3">
             <div v-for="summary in frontlineServiceSummary">
                 <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">{{ summary.service }}</h6>
-                <p v-for="permitType in summary.permit_types">{{ permitType.permit_type }} : {{ permitType.count }}</p>
+                <p v-for="permitType in summary.permit_types">{{ permitType.permit_type }} : {{ permitType.services_count }}</p>
             </div>
         </div>
     </Panel>
@@ -120,6 +120,11 @@ const deleteFrontlineService = async (id) => {
     }
     await destroyFrontlineService(id)
     await getFrontlineServices()
+}
+
+const handleYearChange = () => {
+    getFrontlineServices();
+    getFrontlineServiceSummary();
 }
 
 onMounted(() => {

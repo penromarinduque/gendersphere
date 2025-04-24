@@ -278,17 +278,18 @@ class ReportController extends Controller
                 "male" => FrontlineService::where([
                             "gender" => "male"
                         ])
-                        ->where('date_released', 'LIKE', "%{$year}%")
+                        ->whereYear('date_released', $year)
                         ->count(),
                 "female" => FrontlineService::where([
                             "gender" => "female"
                         ])
-                        ->where('date_released', 'LIKE', "%{$year}%")
+                        ->whereYear('date_released', $year)
                         ->count(),
             ]
         ];
 
-        foreach(PermitType::where("is_active_ptype", 1)->get() as $ptype){
+        $permit_types = $frontline_service_type_id > 0 ? PermitType::where("is_active_ptype", 1)->where("frontline_service_type_id", $frontline_service_type_id)->get() : PermitType::where("is_active_ptype", 1)->get();
+        foreach($permit_types as $ptype){
             $counts["permit_type"][] = [
                 "name" => $ptype->permit_type,
                 "count" => FrontlineService::where("permit_type_id", $ptype->id)->count()

@@ -126,11 +126,16 @@ class FrontlineServiceController extends Controller
         return response()->noContent();
     }
 
-    public function summary(){
+    public function summary(Request $request)
+    {
         return FrontlineServiceType::query()
-        ->with(['permitTypes' => function ($query) {
-            $query->withCount('services');
-        }])
-        ->where('fs_status', 1)->get();
+            ->with(['permitTypes' => function ($query) use ($request) {
+                $query->withCount(['services as services_count' => function ($query) use ($request) {
+                    $query->whereYear('date_applied', $request->year);
+                }]);
+            }])
+            ->where('fs_status', 1)
+            ->get();
     }
+
 }

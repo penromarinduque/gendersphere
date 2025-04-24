@@ -32,6 +32,7 @@
                                 <div>
                                     <select name="frontline_service_type_id" id="frontline_service_type_id" onchange="getPermitTypes(this.value);" class="w-60 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                                         <option value="">-FRONTLINE SERVICE TYPE-</option>
+                                        <option value="0" {{($frontline_service_type_id==0) ? 'selected' : ''}}>All</option>
                                         @forelse($frontlineservicetypes as $frontlineservicetype)
                                         <option value="{{$frontlineservicetype->id}}" {{($frontlineservicetype->id==$frontline_service_type_id) ? 'selected' : ''}}>{{$frontlineservicetype->service}}</option>
                                         @empty
@@ -41,7 +42,7 @@
                               </div>
                               <div class="w-auto flex-none px-2">
                                 <div>
-                                    <select name="permit_type_id" id="permit_type_id" class="w-48 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                    <select name="permit_type_id" id="permit_type_id" class="w-48 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                         <option value="">-PERMIT TYPE-</option>
                                         @forelse($permittypes as $permittype)
                                         <option value="{{$permittype->id}}" {{($permittype->id==$permit_type_id) ? 'selected' : ''}}>{{$permittype->permit_type}}</option>

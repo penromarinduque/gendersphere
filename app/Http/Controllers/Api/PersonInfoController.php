@@ -182,12 +182,12 @@ class PersonInfoController extends Controller
 
     public function summary(Request $request){
         return (object)[
-            "total_employees" => PersonInfo::query()->count(),
-            "total_cos" => PersonInfo::query()->where('employment_type', 'cos')->count(),
-            "total_permanents" => PersonInfo::query()->where('employment_type', 'permanent')->count(),
-            "total_males" => PersonInfo::query()->where('gender', 'male')->count(),
-            "total_females" => PersonInfo::query()->where('gender', 'female')->count(),
-            "total_lgbtqiaplus" => PersonInfo::query()->where('gender', 'lgbtqia+')->count(),
+            "total_employees" => PersonInfo::query()->where("person_type", 1)->count(),
+            "total_cos" => PersonInfo::query()->where('employment_type', 'cos')->where("person_type", 1)->count(),
+            "total_permanents" => PersonInfo::query()->where('employment_type', 'permanent')->where("person_type", 1)->count(),
+            "total_males" => PersonInfo::query()->where('gender', 'male')->where("person_type", 1)->count(),
+            "total_females" => PersonInfo::query()->where('gender', 'female')->where("person_type", 1)->count(),
+            "total_lgbtqiaplus" => PersonInfo::query()->where('gender', 'lgbtqia+')->where("person_type", 1)->count(),
         ];
     }
 }

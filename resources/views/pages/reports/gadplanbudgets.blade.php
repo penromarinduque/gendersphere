@@ -18,7 +18,7 @@
                             <select onchange="window.location.href='?year='+this.value" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                 <option value="">-YEAR-</option>
                                 @for($i=date('Y'); $i >= 2018; $i--)
-                                <option value="{{$i}}" {{($i==$year) ? 'selected' : ''}}>{{$i}}</option>
+                                    <option value="{{$i}}" {{($i==$year) ? 'selected' : ''}}>{{$i}}</option>
                                 @endfor
                             </select>
                         </div>
@@ -121,6 +121,9 @@
                                                     @endforeach
                                                 </td>                       
                                                 <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                    @foreach ($activities as $act)
+                                                        <div class="p-2">{!! $act->actual_result !!}</div>
+                                                    @endforeach
                                                 </td>                       
                                                 <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                     <div class="p-2">{{ number_format($budget, 2, '.', ',') }}</div>
@@ -183,23 +186,24 @@
                                                 </td>
                                                 @endforeach
                                                 @if($act_details_o == 1)
-                                                @foreach($activity_details_o as $activity_detail_o)
-                                                <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {!! $activity_detail_o->targets !!}
-                                                </td>
-                                                <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {!! $activity_detail_o->actual_result !!}
-                                                </td>
-                                                <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $activity_detail_o->gad_budget }}
-                                                </td>
-                                                <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $activity_detail_o->actual_cost }}
-                                                </td>
-                                                <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {!! $activity_detail_o->remarks !!}
-                                                </td>
-                                                @endforeach
+                                                    @foreach($activity_details_o as $activity_detail_o)
+                                                        <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            {{-- {{ $activity_detail_o }} --}}
+                                                            {!! $activity_detail_o->targets !!}
+                                                        </td>
+                                                        <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            {!! $activity_detail_o->actual_result !!} 
+                                                        </td>
+                                                        <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            {{ $activity_detail_o->gad_budget }}
+                                                        </td>
+                                                        <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            {{ $activity_detail_o->actual_cost }}
+                                                        </td>
+                                                        <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            {!! $activity_detail_o->remarks !!}
+                                                        </td>
+                                                    @endforeach
                                                 @endif
                                             </tr>
                                         @endif
