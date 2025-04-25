@@ -77,8 +77,6 @@
                                         </tr>
                                     @endif
 
-                                    
-
                                     @forelse($planbudgets as $planbudget)
                                     
                                         @if($goal->focus=='client' && $goal->goal_id == $planbudget->goal_id && $planbudget->focus=='client')
@@ -88,51 +86,109 @@
                                                 $budget = 0;
                                                 $actual_cost = 0;
                                             @endphp
-                                            <tr class="align-text-top">
-                                                <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $planbudget->gender_issue_mandate }}
-                                                </td>
-                                                <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $planbudget->cause_gender_issue }}
-                                                </td>
-                                                <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $planbudget->gad_objective }}
-                                                </td>
-                                                <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $planbudget->relevant_org }}
-                                                </td>      
-                                                <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    <div class="grid  grid-rows-2">
-                                                        @foreach($planbudget->gad_activities as $key => $gad_act)
-                                                            @php
-                                                                $activities = [...$activities, ...$gad_act->activity_details];
-                                                            @endphp
-                                                            <div class="p-2">{!! $gad_act->main_activity !!}</div>
-                                                        @endforeach
-                                                    </div>
-                                                </td>  
-                                                <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    @foreach ($activities as $act)
-                                                        @php
-                                                            $budget += $act->gad_budget;
-                                                            $actual_cost += $act->actual_cost;
-                                                        @endphp
-                                                        <div class="p-2">{!! $act->targets !!}</div>
-                                                    @endforeach
-                                                </td>                       
-                                                <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    @foreach ($activities as $act)
-                                                        <div class="p-2">{!! $act->actual_result !!}</div>
-                                                    @endforeach
-                                                </td>                       
-                                                <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    <div class="p-2">{{ number_format($budget, 2, '.', ',') }}</div>
-                                                </td>                        
-                                                <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    <div class="p-2">{{ number_format($actual_cost, 2, '.', ',') }}</div>
-                                                </td>                        
-                                                <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap"></td>                   
-                                            </tr>
+                                            @foreach($planbudget->gad_activities as $key => $gad_act)
+                                                @php
+                                                    $activities = [...$activities, ...$gad_act->activity_details];
+                                                @endphp
+                                                @foreach ($activities as $key => $act)
+                                                    <tr class="align-text-top">
+                                                        <td @class([
+                                                            'border',
+                                                            'border-b-0' => $key == 0,
+                                                            'border-y-0' => $key != 0,
+                                                            'border-slate-300',
+                                                            'px-2', 'py-2',
+                                                            'text-sm', 'leading-5',
+                                                            'text-gray-900',
+                                                            'whitespace-no-wrap'
+                                                        ])>
+                                                            @if ($key == 0)
+                                                                {{ $planbudget->gender_issue_mandate }}
+                                                            @endif
+                                                        </td>
+                                                        <td @class([
+                                                            'border',
+                                                            'border-b-0' => $key == 0,
+                                                            'border-y-0' => $key != 0,
+                                                            'border-slate-300',
+                                                            'px-2', 'py-2',
+                                                            'text-sm', 'leading-5',
+                                                            'text-gray-900',
+                                                            'whitespace-no-wrap'
+                                                        ])>
+                                                            @if ($key == 0)
+                                                                {{ $planbudget->cause_gender_issue }}
+                                                            @endif
+                                                        </td>
+                                                        <td @class([
+                                                            'border',
+                                                            'border-b-0' => $key == 0,
+                                                            'border-y-0' => $key != 0,
+                                                            'border-slate-300',
+                                                            'px-2', 'py-2',
+                                                            'text-sm', 'leading-5',
+                                                            'text-gray-900',
+                                                            'whitespace-no-wrap'
+                                                        ])>
+                                                            @if ($key == 0)
+                                                                {{ $planbudget->gad_objective }}
+                                                            @endif
+                                                        </td>
+                                                        <td @class([
+                                                            'border',
+                                                            'border-b-0' => $key == 0,
+                                                            'border-y-0' => $key != 0,
+                                                            'border-slate-300',
+                                                            'px-2', 'py-2',
+                                                            'text-sm', 'leading-5',
+                                                            'text-gray-900',
+                                                            'whitespace-no-wrap'
+                                                        ])>
+                                                            @if ($key == 0)
+                                                                {{ $planbudget->relevant_org }}
+                                                            @endif
+                                                        </td>      
+                                                        <td @class([
+                                                            'border',
+                                                            'border-b-0' => $key == 0,
+                                                            'border-y-0' => $key != 0,
+                                                            'border-slate-300',
+                                                            'px-2', 'py-2',
+                                                            'text-sm', 'leading-5',
+                                                            'text-gray-900',
+                                                            'whitespace-no-wrap'
+                                                        ])>
+                                                            @if ($key == 0)
+                                                                <div class="p-2">{!! $gad_act->main_activity !!}</div>
+                                                            @endif
+                                                        </td>  
+                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            {{-- @foreach ($activities as $act)
+                                                                @php
+                                                                    $budget += $act->gad_budget;
+                                                                    $actual_cost += $act->actual_cost;
+                                                                @endphp
+                                                                @endforeach --}}
+                                                            <div class="p-2">{!! $act->targets !!}</div>
+                                                        </td>                       
+                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            {{-- @foreach ($activities as $act)
+                                                                <div class="p-2">{!! $act->actual_result !!}</div>
+                                                            @endforeach --}}
+                                                            <div class="p-2">{!! $act->actual_result !!}</div>
+                                                        </td>                       
+                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            <div class="p-2">{{ number_format($act->gad_budget, 2, '.', ',') }}</div>
+                                                        </td>                        
+                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            <div class="p-2">{{ number_format($act->actual_cost, 2, '.', ',') }}</div>
+                                                        </td>                        
+                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            <div class="p-2">{!! $act->remarks !!}</div>
+                                                        </td>                   
+                                                    </tr>
+                                                @endforeach
+                                            @endforeach
                                         @endif
                                     @empty
 
@@ -155,63 +211,121 @@
                                     @endif
 
                                     @forelse($planbudgets as $planbudget)
+                                    
                                         @if($goal->focus=='organizational' && $goal->goal_id == $planbudget->goal_id && $planbudget->focus=='organizational')
                                             @php
-                                                $ga_count_o = count($planbudget->gad_activities);
+                                                $ga_count_c = count($planbudget->gad_activities);
+                                                $activities = [];
+                                                $budget = 0;
+                                                $actual_cost = 0;
                                             @endphp
-                                            <tr class="align-text-top">
-                                                <td rowspan="{{$ga_count_o}}" class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $planbudget->gender_issue_mandate }}
-                                                </td>
-                                                <td rowspan="{{$ga_count_o}}" class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $planbudget->cause_gender_issue }}
-                                                </td>
-                                                <td rowspan="{{$ga_count_o}}" class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $planbudget->gad_objective }}
-                                                </td>
-                                                <td rowspan="{{$ga_count_o}}" class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $planbudget->relevant_org }}
-                                                </td>
-                                                <?php
-                                                    $act_details_o = 0;
-                                                    $activity_details_o = [];
-                                                ?>
-                                                @foreach($planbudget->gad_activities as $gadacty)
-                                                <?php
-                                                    $act_details_o = count($gadacty->activity_details);
-                                                    $activity_details_o = $gadacty->activity_details;
-                                                ?>
-                                                <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                    {{ $gadacty->main_activity }}
-                                                </td>
+                                            @foreach($planbudget->gad_activities as $key => $gad_act)
+                                                @php
+                                                    $activities = [...$activities, ...$gad_act->activity_details];
+                                                @endphp
+                                                @foreach ($activities as $key => $act)
+                                                    <tr class="align-text-top">
+                                                        <td @class([
+                                                            'border',
+                                                            'border-b-0' => $key == 0,
+                                                            'border-y-0' => $key != 0,
+                                                            'border-slate-300',
+                                                            'px-2', 'py-2',
+                                                            'text-sm', 'leading-5',
+                                                            'text-gray-900',
+                                                            'whitespace-no-wrap'
+                                                        ])>
+                                                            @if ($key == 0)
+                                                                {{ $planbudget->gender_issue_mandate }}
+                                                            @endif
+                                                        </td>
+                                                        <td @class([
+                                                            'border',
+                                                            'border-b-0' => $key == 0,
+                                                            'border-y-0' => $key != 0,
+                                                            'border-slate-300',
+                                                            'px-2', 'py-2',
+                                                            'text-sm', 'leading-5',
+                                                            'text-gray-900',
+                                                            'whitespace-no-wrap'
+                                                        ])>
+                                                            @if ($key == 0)
+                                                                {{ $planbudget->cause_gender_issue }}
+                                                            @endif
+                                                        </td>
+                                                        <td @class([
+                                                            'border',
+                                                            'border-b-0' => $key == 0,
+                                                            'border-y-0' => $key != 0,
+                                                            'border-slate-300',
+                                                            'px-2', 'py-2',
+                                                            'text-sm', 'leading-5',
+                                                            'text-gray-900',
+                                                            'whitespace-no-wrap'
+                                                        ])>
+                                                            @if ($key == 0)
+                                                                {{ $planbudget->gad_objective }}
+                                                            @endif
+                                                        </td>
+                                                        <td @class([
+                                                            'border',
+                                                            'border-b-0' => $key == 0,
+                                                            'border-y-0' => $key != 0,
+                                                            'border-slate-300',
+                                                            'px-2', 'py-2',
+                                                            'text-sm', 'leading-5',
+                                                            'text-gray-900',
+                                                            'whitespace-no-wrap'
+                                                        ])>
+                                                            @if ($key == 0)
+                                                                {{ $planbudget->relevant_org }}
+                                                            @endif
+                                                        </td>      
+                                                        <td @class([
+                                                            'border',
+                                                            'border-b-0' => $key == 0,
+                                                            'border-y-0' => $key != 0,
+                                                            'border-slate-300',
+                                                            'px-2', 'py-2',
+                                                            'text-sm', 'leading-5',
+                                                            'text-gray-900',
+                                                            'whitespace-no-wrap'
+                                                        ])>
+                                                            @if ($key == 0)
+                                                                <div class="p-2">{!! $gad_act->main_activity !!}</div>
+                                                            @endif
+                                                        </td>  
+                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            {{-- @foreach ($activities as $act)
+                                                                @php
+                                                                    $budget += $act->gad_budget;
+                                                                    $actual_cost += $act->actual_cost;
+                                                                @endphp
+                                                                @endforeach --}}
+                                                            <div class="p-2">{!! $act->targets !!}</div>
+                                                        </td>                       
+                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            {{-- @foreach ($activities as $act)
+                                                                <div class="p-2">{!! $act->actual_result !!}</div>
+                                                            @endforeach --}}
+                                                            <div class="p-2">{!! $act->actual_result !!}</div>
+                                                        </td>                       
+                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            <div class="p-2">{{ number_format($act->gad_budget, 2, '.', ',') }}</div>
+                                                        </td>                        
+                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            <div class="p-2">{{ number_format($act->actual_cost, 2, '.', ',') }}</div>
+                                                        </td>                        
+                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                            <div class="p-2">{!! $act->remarks !!}</div>
+                                                        </td>                   
+                                                    </tr>
                                                 @endforeach
-                                                @if($act_details_o == 1)
-                                                    @foreach($activity_details_o as $activity_detail_o)
-                                                        <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                            {{-- {{ $activity_detail_o }} --}}
-                                                            {!! $activity_detail_o->targets !!}
-                                                        </td>
-                                                        <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                            {!! $activity_detail_o->actual_result !!} 
-                                                        </td>
-                                                        <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                            {{ $activity_detail_o->gad_budget }}
-                                                        </td>
-                                                        <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                            {{ $activity_detail_o->actual_cost }}
-                                                        </td>
-                                                        <td class="border border-slate-300 px-2 py-2 text-sm leading-5 text-gray-900 whitespace-no-wrap">
-                                                            {!! $activity_detail_o->remarks !!}
-                                                        </td>
-                                                    @endforeach
-                                                @endif
-                                            </tr>
+                                            @endforeach
                                         @endif
-
                                     @empty
-                                    
-                                    @endforelse
 
+                                    @endforelse
                                 @endforeach
                             </tbody>
                         </table>
