@@ -64,9 +64,35 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="10" class="px-2 py-2 text-md bg-orange-100">
+                                    @php
+                                        $goal = $goals->where('focus', 'client')->first();
+                                        $total_budget = $planbudgets
+                                            ->where("goal_id", optional($goal)->goal_id)
+                                            ->flatMap(function ($planbudget) {
+                                                return $planbudget->gad_activities->flatMap(function ($activity) {
+                                                    return $activity->activity_details;
+                                                });
+                                            })
+                                            ->sum('gad_budget');
+                                        $total_actual_cost = $planbudgets
+                                            ->where("goal_id", optional($goal)->goal_id)
+                                            ->flatMap(function ($planbudget) {
+                                                return $planbudget->gad_activities->flatMap(function ($activity) {
+                                                    return $activity->activity_details;
+                                                });
+                                            })
+                                            ->sum('actual_cost');
+                                    @endphp
+                                    <td colspan="7" class="px-2 py-2 text-md bg-orange-100">
                                         CLIENT-FOCUSED ACTIVITIES
                                     </td>
+                                    <td  class="px-2 py-2 text-md bg-orange-100">
+                                        {{ number_format($total_budget, 2, '.', ',') }}
+                                    </td>
+                                    <td  class="px-2 py-2 text-md bg-orange-100">
+                                        {{ number_format($total_actual_cost, 2, '.', ',') }}
+                                    </td>
+                                    <td  class="px-2 py-2 text-md bg-orange-100"></td>
                                 </tr>
                                 @foreach($goals as $goal)
                                     @if($goal->focus=='client')
@@ -85,6 +111,7 @@
                                                 $activities = [];
                                                 $budget = 0;
                                                 $actual_cost = 0;
+                                                // $total_budget = $planbudget->sum("gad_activities.activity_details.gad_budget");
                                             @endphp
                                             @foreach($planbudget->gad_activities as $key => $gad_act)
                                                 @php
@@ -197,9 +224,35 @@
                                 @endforeach
 
                                 <tr>
-                                    <td colspan="10" class="px-2 py-2 text-md bg-orange-100">
+                                    @php
+                                        $goal = $goals->where('focus', 'organizational')->first();
+                                        $total_budget = $planbudgets
+                                            ->where("goal_id", optional($goal)->goal_id)
+                                            ->flatMap(function ($planbudget) {
+                                                return $planbudget->gad_activities->flatMap(function ($activity) {
+                                                    return $activity->activity_details;
+                                                });
+                                            })
+                                            ->sum('gad_budget');
+                                        $total_actual_cost = $planbudgets
+                                            ->where("goal_id", optional($goal)->goal_id)
+                                            ->flatMap(function ($planbudget) {
+                                                return $planbudget->gad_activities->flatMap(function ($activity) {
+                                                    return $activity->activity_details;
+                                                });
+                                            })
+                                            ->sum('actual_cost');
+                                    @endphp
+                                    <td colspan="7" class="px-2 py-2 text-md bg-orange-100">
                                         ORGANIZATIONAL FOCUSED
                                     </td>
+                                    <td  class="px-2 py-2 text-md bg-orange-100">
+                                        {{ number_format($total_budget, 2, '.', ',') }}
+                                    </td>
+                                    <td  class="px-2 py-2 text-md bg-orange-100">
+                                        {{ number_format($total_actual_cost, 2, '.', ',') }}
+                                    </td>
+                                    <td  class="px-2 py-2 text-md bg-orange-100"></td>
                                 </tr>
                                 @foreach($goals as $goal)
                                     @if($goal->focus=='organizational')
