@@ -193,7 +193,22 @@
                         <span class="text-sm text-red-600" v-if="errors?.employment_type">{{ errors.employment_type[0] }}</span>
                     </div>
                 </div>
-                <div class="pb-1 col-span-2">
+                <div class="pb-1">
+                    <label for="employment_type" class="block text-md font-medium text-gray-700">Employment Status</label>
+                    <div class="mt-1">
+                        <select name="employment_status" id="employment_status" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        v-model="form.employment_status">
+                            <option value="">-Select Employment Status-</option>
+                            <option value="new">New</option>
+                            <option value="renewed">Renewed</option>
+                            <option value="retired">Retired</option>
+                            <option value="resigned">Resigned</option>
+                            <option value="terminated">Terminated</option>
+                        </select>
+                        <span class="text-sm text-red-600" v-if="errors?.employment_status">{{ errors.employment_status[0] }}</span>
+                    </div>
+                </div>
+                <div class="pb-1 ">
                     <label for="position" class="block text-md font-medium text-gray-700">Position</label>
                     <div class="mt-1">
                         <input type="text" name="position" id="position" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"

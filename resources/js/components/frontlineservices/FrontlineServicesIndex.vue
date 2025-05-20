@@ -10,6 +10,20 @@
         </div>
     </div>
     
+    <div>
+        <Select @change="handleYearChange" v-model="selectedYear" :options="yearlist" optionLabel="year" optionValue="year"  placeholder="Filter Year"  class="w-full md:w-56 mb-2 me-2" size="small" />
+        <Select @change="getFrontlineServices" v-model="selectedPermitType" :options="permittypes" optionLabel="permit_type" optionValue="id"  placeholder="Filter Permit Type" class="w-full md:w-56 mb-2" size="small" />
+    </div>
+
+    <Panel class="mb-3" header="Summary">
+        <div class="grid grid-cols-3">
+            <div v-for="summary in frontlineServiceSummary">
+                <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">{{ summary.service }}</h6>
+                <p v-for="permitType in summary.permit_types">{{ permitType.permit_type }} : {{ permitType.services_count }}</p>
+            </div>
+        </div>
+    </Panel>
+
     <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-md">
         <table class="min-w-full w-full border-collapse border border-slate-400 divide-y divide-gray-200">
             <thead>
@@ -42,7 +56,7 @@
             </thead>
  
             <tbody class="bg-white divide-y divide-gray-200 divide-solid">
-            <template v-for="item in frontlineservices" :key="item.id">
+            <template v-for="item in frontlineservices.data" :key="item.id">
                 <tr class="bg-white">
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <span style="text-transform: capitalize;">{{ item.service+' - '+item.permit_type }}</span>
@@ -72,16 +86,32 @@
                     </td>
                 </tr>
             </template>
+            <tr v-if="!frontlineservices.length">
+                <td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found</td>
+            </tr>
             </tbody>
         </table>
     </div>
+    <div class="flex mt-3 place-content-end">
+         <!-- <Paginator :rows="10" :totalRecords="120" :rowsPerPageOptions="[10, 20, 30]"></Paginator> -->
+         <TailwindPagination :data="frontlineservices" @pagination-change-page="getFrontlineServices" />
+     </div>
 </template>
 
 <script setup>
-import useFrontlineServices from '../../composables/frontlineservices'
+import useFrontlineServices from '../../composables/frontlineservices';
+import useFrontlineServiceTypes from '../../composables/frontlineservicetypes';
+import usePermitTypes from '../../composables/permittypes';
 import { onMounted } from 'vue'
+import Select from 'primevue/select';
+import Paginator from 'primevue/paginator';
+import { TailwindPagination } from 'laravel-vue-pagination';
+import Card from 'primevue/card';
+import Panel from 'primevue/panel';
 
-const { frontlineservices, getFrontlineServices, destroyFrontlineService } = useFrontlineServices()
+const { frontlineservices, selectedYear, yearlist, selectedPermitType, frontlineServiceSummary, getFrontlineServices, destroyFrontlineService, getYearlist, getFrontlineServiceSummary } = useFrontlineServices();
+const { getFrontlineServiceTypes, frontlineservicetypes } = useFrontlineServiceTypes();
+const { permittypes, getPermitTypes } = usePermitTypes();
 
 const deleteFrontlineService = async (id) => {
     // console.log(id);
@@ -92,6 +122,17 @@ const deleteFrontlineService = async (id) => {
     await getFrontlineServices()
 }
 
-// We get the companies immediately
-onMounted(getFrontlineServices)
+const handleYearChange = () => {
+    getFrontlineServices();
+    getFrontlineServiceSummary();
+}
+
+onMounted(() => {
+    getFrontlineServices();
+    getFrontlineServiceTypes();
+    getYearlist();
+    getPermitTypes();
+    getFrontlineServiceSummary();
+});
+
 </script>

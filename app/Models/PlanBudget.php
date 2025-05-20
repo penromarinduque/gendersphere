@@ -24,8 +24,8 @@ class PlanBudget extends Model implements Auditable
             ->with(['gad_activities' => function ($gad_activities) {
                 $gad_activities->select('gad_activities.id', 'gad_activities.plan_budget_id', 'gad_activities.main_activity')
                 ->with(['activity_details' => function ($activity_details) {
-                        $activity_details->select('activity_details.gad_activity_id', 'sub_activity', 'targets', 'target_women', 'target_men', 'gad_budget', 'responsible_unit', 'actual_result', 'actual_women', 'actual_men', 'actual_lgbtq', 'actual_cost', 'remarks');
-                    }]);
+                    $activity_details->select('activity_details.gad_activity_id', 'sub_activity', 'targets', 'target_women', 'target_men', 'gad_budget', 'responsible_unit', 'actual_result', 'actual_women', 'actual_men', 'actual_lgbtq', 'actual_cost', 'remarks');
+                }]);
             }])
             ->leftJoin('goals', 'goals.id', 'plan_budgets.goal_id')
             ->leftJoin('gender_issues', 'gender_issues.id', 'plan_budgets.gender_issue_id')

@@ -3,29 +3,40 @@
         <div class="col-span-1">
             <h3 class="text-lg"><b>List of GADFPS Committees</b></h3>
         </div>
-        <div class="col-span-3">
-            <div class="flex flex-no-wrap">
-                <div class="w-auto flex-none px-2">
-                    <div>
-                        <select name="year" id="year" class="w-40 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            v-on:change="getByYear"
-                            v-model="selectedYear"
-                        >
-                            <option value="">-YEAR-</option>
-
-                            <option v-for="year in years" :key="year" :value="year">{{year}}</option>
-                            
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-span-1 flex mb-4 place-content-end">
-            <button class="inline-flex items-center mr-1 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
+        <div class="col-span-4 flex justify-end">
+            <button class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
                 <router-link :to="{ name: 'committees.create' }" class="text-sm font-medium">Add New</router-link>
             </button>
         </div>
     </div>
+
+    <div class="mb-2">
+        <Select @change="getByYear" v-model="selectedYear" :options="yearlist" optionLabel="year" optionValue="year"  placeholder="Filter by Year"  class="w-full md:w-56 mb-2 me-2" size="small" />
+        <Select @change="filterCommittees" v-model="selectedEmpStatus" placeholder="Filter by Employement Status"  class="w-full md:w-56 mb-2 me-2" size="small" optionLabel="name" optionValue="value" :options="[{name: 'New', value: 'new'}, {name: 'Renewed', value: 'renewed'}, {name: 'All', value: 'all'}]" />
+        <Select @change="filterCommittees" v-model="selectedGender" placeholder="Filter by Gender"  class="w-full md:w-56 mb-2 me-2" size="small" optionLabel="name" optionValue="value" :options="[{name: 'Male', value: 'male'}, {name: 'Female', value: 'female'}, {name: 'LGBTQIA+', value: 'lgbtqia+'}, {name: 'All', value: 'all'}]" />
+    </div>
+
+    <div class="mb-2">
+        <Panel header="Summary">
+            <div class="grid grid-cols-3">
+                <div >
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Gender</h6>
+                    <p >Male : {{ committeeSummary.total_males }}</p>
+                    <p >Female : {{ committeeSummary.total_females }}</p>
+                    <p >LGBTQIA+ : {{ committeeSummary.total_lgbtqiaplus }}</p>
+                </div>
+                <div>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Employment Type</h6>
+                    <p >Permanent : {{ committeeSummary.total_permanents }}</p>
+                    <p >COS : {{ committeeSummary.total_cos }}</p>
+                </div>
+                <div>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Total Members : {{ committeeSummary.total_employees }}</h6>
+                </div>
+            </div>
+        </Panel>
+    </div>
+
     <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-md">
         <table class="min-w-full w-full border-collapse border border-slate-400 divide-y divide-gray-200">
             <thead>
@@ -84,52 +95,61 @@
                     </td>
                 </tr>
             </template>
+            <tr v-if="committees.data && committees.data.length === 0">
+                <td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found</td>
+            </tr>
             </tbody>
         </table>
 
         <div class="flex mt-3 place-content-end">
-            <!-- <TailwindPagination
-                :data="committees"
-                @pagination-change-page="getCommittees"
-            /> -->
-        </div>
+         <!-- <Paginator :rows="10" :totalRecords="120" :rowsPerPageOptions="[10, 20, 30]"></Paginator> -->
+         <TailwindPagination :data="committees" @pagination-change-page="paginate" />
+     </div>
     </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import { TailwindPagination } from 'laravel-vue-pagination';
-// Here we're using a Composable file, its code is above
-import useCommittees from '@/composables/committees'
-
-// onMounted will define what method to "fire" automatically
+import useCommittees from '@/composables/committees';
+import Select from 'primevue/select';
 import { onMounted } from 'vue';
+import Panel from 'primevue/panel';
 
-// We need only two things from the useCompanies() composable
-const { committees, getCommittees, destroyCommittee } = useCommittees()
+const { committees, getCommittees, destroyCommittee, getCommitteeSummary, committeeSummary, getYearlist, yearlist, selectedYear } = useCommittees();
 
-let curr_year = new Date().getFullYear()
-const years = Array.from({length: 7}, (value, index) => curr_year - index)
-// console.log(years)
-const selectedYear = ref(curr_year)
+
+
+const selectedEmpStatus = ref('all');
+const selectedGender= ref('all');
 
 const deleteCommittee = async (id) => {
     if (!window.confirm('You sure you want to delete this record?')) {
         return
     }
     
-    await destroyCommittee(id)
-    await getCommittees()
+    await destroyCommittee(id);
+    await getCommittees();
     // console.log(1);
 }
 
 const getByYear = async (event) => {
-    let get_year = event.target.value;
-    await getCommittees(1, get_year);
-    // console.log(search_key);
+    let get_year = event.value;
+    await getCommittees(1, get_year, selectedEmpStatus.value, selectedGender.value);
+}
+
+const filterCommittees = async () => {
+    await getCommittees(1, selectedYear.value, selectedEmpStatus.value, selectedGender.value);
+}
+
+const paginate = async (page) => {
+    await getCommittees(page, selectedYear.value, selectedEmpStatus.value);
 }
 
 // We get the companies immediately
-onMounted(getCommittees)
+onMounted(()=>{
+    getCommittees();
+    getYearlist();
+})
 
 </script>

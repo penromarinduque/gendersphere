@@ -11,33 +11,37 @@ export default function useCommittees() {
     const committeepositions = ref([])
     const yearlist = ref([]);
     const loading  = ref(false);
+    const committeeSummary = ref({});
+    let curr_year = new Date().getFullYear()
+    const years = Array.from({length: 7}, (value, index) => curr_year - index)
+    const selectedYear = ref(curr_year);
 
     const errors = ref('')
-    const router = useRouter()
+    const router = useRouter();
 
     const toaster = createToaster({ 
         position: "top"
         // max:
     });
 
-    const getCommittees = async (page = 1, year = null) => {
-        let response = await axios.get('/api/committees', {params: { page:page, year:year }})
-        console.log(response.data)
-        committees.value = response.data
+    const getCommittees = async (page = 1, year = null, emp_status = 'all', gender = 'all') => {
+        let response = await axios.get('/api/committees', {params: { page:page, year:year, employment_status:emp_status, gender:gender } });
+        committees.value = response.data;
+        await getCommitteeSummary();
     }
  
     const getCommittee = async (id) => {
         let response = await axios.get(`/api/committees/${id}`)
-        committee.value = response.data.data
+        committee.value = response.data.data;
         // console.log(response.data);
     }
 
     const storeCommittee = async (data) => {
         loading.value = true;
-        errors.value = ''
+        errors.value = '';
         try {
-            await axios.post('/api/committees', data)
-            await router.push({ name: 'committees.index' })
+            await axios.post('/api/committees', data);
+            await router.push({ name: 'committees.index' });
             toaster.success(`Successfully Saved!`);
             loading.value = false;
         } catch (e) {
@@ -97,8 +101,14 @@ export default function useCommittees() {
 
     const getYearlist = async () => {
         let response = await axios.get('/api/yearlist')
-        // console.log(response)
+        console.log(response.data)
         yearlist.value = response.data
+    }
+
+    const getCommitteeSummary = async () => {
+        const response = await axios.get(`/api/committees/summary` , { params: { year: selectedYear.value} });
+        console.log(response.data);
+        committeeSummary.value = response.data;
     }
 
     return {
@@ -109,6 +119,8 @@ export default function useCommittees() {
         committeepositions,
         yearlist,
         loading,
+        committeeSummary,
+        selectedYear,
         getCommittee,
         getCommittees,
         storeCommittee,
@@ -116,6 +128,7 @@ export default function useCommittees() {
         destroyCommittee,
         getPersonInfos,
         getCommitteePositions,
-        getYearlist
+        getYearlist,
+        getCommitteeSummary
     }
 }

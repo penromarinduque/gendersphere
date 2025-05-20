@@ -40,6 +40,22 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::middleware('auth:sanctum')->group( function () {
+    Route::prefix('frontlineservices')->group(function () {
+        Route::get('summary', [FrontlineServiceController::class, 'summary']);
+    });
+
+    Route::prefix('personinfos')->group(function () {
+        Route::get('summary', [PersonInfoController::class, 'summary']);
+    });
+
+    Route::prefix('committees')->group(function () {
+        Route::get('summary', [CommitteeController::class, 'summary']);
+    });
+
+    Route::prefix('activitydetails')->group(function () {
+        
+    });
+    
     Route::apiResources([
         'personinfos' => PersonInfoController::class,
         'users' => UserController::class,
@@ -70,6 +86,8 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('genderissuebyyear/{year}', [GenderIssueController::class, 'genderIssueByYear']);
     Route::get('permittypebystatus/{status}', [PermitTypeController::class, 'getPermitTypeByStatus']);
     Route::post('updateaccom/{id}', [ActivityDetailController::class, 'updateAccom']);
+
+    
 });
 
 // Route::apiResource('personinfos', PersonInfoController::class);

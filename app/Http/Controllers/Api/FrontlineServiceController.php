@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FrontlineServiceResource;
 use App\Models\FrontlineService;
+use App\Models\FrontlineServiceType;
 use Illuminate\Http\Request;
 
 class FrontlineServiceController extends Controller
@@ -12,15 +13,24 @@ class FrontlineServiceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $frontlineservices = FrontlineService::select('frontline_services.*', 'permit_types.permit_type', 'frontline_service_types.service', 'municipalities.id as municipality_id', 'municipalities.municipality_name', 'barangays.barangay_name')
+        $frontlineservices = FrontlineService::query();
+        
+        $frontlineservices->select('frontline_services.*', 'permit_types.permit_type', 'frontline_service_types.service', 'municipalities.id as municipality_id', 'municipalities.municipality_name', 'barangays.barangay_name')
         ->join('permit_types', 'permit_types.id', 'frontline_services.permit_type_id')
         ->join('frontline_service_types', 'frontline_service_types.id', 'permit_types.frontline_service_type_id')
         ->join('barangays', 'barangays.id', 'frontline_services.barangay_id')
-        ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
-        ->get();
-        return FrontlineServiceResource::collection($frontlineservices);
+        ->join('municipalities', 'municipalities.id', 'barangays.municipality_id');
+        
+        if($request->permit_type){
+            $frontlineservices->where('permit_type_id', $request->permit_type);
+        }
+        if($request->year){
+            $frontlineservices->whereYear('date_applied', $request->year);
+        }
+
+        return FrontlineServiceResource::collection($frontlineservices->paginate(15));
     }
 
     /**
@@ -115,4 +125,17 @@ class FrontlineServiceController extends Controller
  
         return response()->noContent();
     }
+
+    public function summary(Request $request)
+    {
+        return FrontlineServiceType::query()
+            ->with(['permitTypes' => function ($query) use ($request) {
+                $query->withCount(['services as services_count' => function ($query) use ($request) {
+                    $query->whereYear('date_applied', $request->year);
+                }]);
+            }])
+            ->where('fs_status', 1)
+            ->get();
+    }
+
 }

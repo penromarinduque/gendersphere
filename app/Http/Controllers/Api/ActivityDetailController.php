@@ -131,6 +131,7 @@ class ActivityDetailController extends Controller
     public function updateAccom(Request $request, $id)
     {
         $request->validate([
+            'gad_budget' => ['required'],
             'actual_result' => ['required'],
             'actual_men' => ['required'],
             'actual_women' => ['required'],
@@ -139,6 +140,7 @@ class ActivityDetailController extends Controller
         ]);
 
         $activitydetail_update = ActivityDetail::find($id)->update([
+            'gad_budget' => $request->gad_budget,
             'actual_result' => $request->actual_result,
             'actual_men' => $request->actual_men,
             'actual_women' => $request->actual_women,
@@ -150,5 +152,25 @@ class ActivityDetailController extends Controller
         $activitydetail = ActivityDetail::find($id);
 
         return new ActivityDetailResource($activitydetail);
+    }
+
+    public function uploadMov(Request $request) {
+
+        $request->validate([
+            'mov' => 'required|mimes:pdf|max:5120', // 5MB limit
+            'id' => 'required'
+        ]);
+
+        $file = $request->file('mov');
+        $newName = 'mov_'.$request->id.'_'.time().'.'.$file->getClientOriginalExtension();
+        $file->storeAs('movs', $newName, 'public');
+        ActivityDetail::where('id', $request->id)->update(['mov_file' => $newName]);
+        return redirect()->back();
+    }
+
+    public function downloadMov(Request $request) {
+        $mov_file = $request->mov_file;
+        $path = storage_path('app/public/movs/'.$mov_file);
+        return response()->file($path);
     }
 }

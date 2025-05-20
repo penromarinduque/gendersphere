@@ -700,7 +700,10 @@ const app = createApp({
 .use(router)
 .use(PrimeVue, {
     theme: {
-        preset: MyPreset
+        preset: MyPreset,
+        options: {
+            darkModeSelector: false || 'none',
+        }
     }
 })
 .mount('#app');
