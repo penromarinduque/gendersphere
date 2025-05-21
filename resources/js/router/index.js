@@ -53,6 +53,8 @@ import EmployeeSalariesIndex from "../components/employeesalaries/EmployeeSalari
 import EmployeeSalariesCreate from "../components/employeesalaries/EmployeeSalariesCreate.vue";
 import EmployeeSalariesEdit from "../components/employeesalaries/EmployeeSalariesEdit.vue";
 import DashboardIndex from "../components/dashboard/DashboardIndex.vue";
+import EmployeeList from "../components/reports/EmployeeList.vue";
+
 const routes = [
     // Dashboard
     {
@@ -525,7 +527,18 @@ const routes = [
         meta: {
             title: 'Edit Permit Type'
         }
+    },
+
+    // reports
+    {
+        path: '/report/employees',
+        name: 'report.employees',
+        component: EmployeeList,
+        meta: {
+            title: 'Reports'
+        }
     }
+
 ];
 
 const router = createRouter({

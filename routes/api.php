@@ -51,6 +51,8 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::prefix('personinfos')->group(function () {
         Route::get('summary', [PersonInfoController::class, 'summary']);
+        Route::get('get-employees', [PersonInfoController::class, 'getEmployees']);
+        Route::get('get-chart-data', [PersonInfoController::class, 'getChartData']);
     });
 
     Route::prefix('committees')->group(function () {

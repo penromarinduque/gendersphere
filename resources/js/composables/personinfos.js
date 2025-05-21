@@ -14,6 +14,8 @@ export default function usePersonInfos() {
     const genderFilter = ref('');
     const employmentStatusFilter = ref('');
     const summary = ref({});
+    const employees = ref([]);
+    const personInfoChartData = ref({});
 
     const errors = ref('');
     const router = useRouter();
@@ -111,6 +113,21 @@ export default function usePersonInfos() {
         let response = await axios.get('/api/personinfos/summary');
         summary.value = response.data
     }
+    
+    const getEmployees  = async (employmentType = null) => {
+        let response = await axios.get('/api/personinfos/get-employees', {
+            params: {
+                employment_type: employmentType
+            }
+        });
+        employees.value = response.data
+    }
+
+    const getPersonInfoChartData = async () => {
+        let response = await axios.get('/api/personinfos/get-chart-data');
+        personInfoChartData.value = response.data
+        console.log(response.data);
+    }
  
     return {
         errors,
@@ -123,6 +140,10 @@ export default function usePersonInfos() {
         genderFilter,
         employmentStatusFilter,
         summary,
+        employees,
+        personInfoChartData,
+        getPersonInfoChartData,
+        getEmployees,
         getPersonInfo,
         getPersonInfos,
         storePersonInfo,
