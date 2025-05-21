@@ -5,10 +5,12 @@ import { useRouter } from 'vue-router'
 import { createToaster } from '@meforma/vue-toaster'
 
 export default function useUsers() {
-    const user = ref([])
-    const users = ref([])
-    const personinfos = ref([])
-    const personinfo = ref([])
+    const user = ref([]);
+    const users = ref([]);
+    const authUser = ref([]);
+    const personinfos = ref([]);
+    const personinfo = ref([]);
+    const yearlist = ref([]);
 
     const errors = ref('')
     const router = useRouter()
@@ -17,6 +19,12 @@ export default function useUsers() {
         position: "top"
         // max:
      });
+
+    const getYearlist = async () => {
+        let response = await axios.get('/api/yearlist')
+        console.log(response.data)
+        yearlist.value = response.data
+    }
 
     const getUsers = async () => {
         let response = await axios.get('/api/users')
@@ -27,6 +35,12 @@ export default function useUsers() {
         let response = await axios.get(`/api/users/${id}`)
         user.value = response.data.data
         // console.log(response.data);
+    }
+
+    const getAuthenticatedUser = async () => {
+        let response = await axios.get('/api/users/get-auth');
+        console.log(response.data)
+        authUser.value = response.data
     }
 
     const storeUser = async (data) => {
@@ -105,6 +119,9 @@ export default function useUsers() {
         user,
         users,
         personinfos,
+        authUser,
+        yearlist,   
+        getYearlist,
         getUser,
         getUsers,
         storeUser,
@@ -113,5 +130,6 @@ export default function useUsers() {
         generatePassword,
         getPersonInfos,
         getPersonEmail,
+        getAuthenticatedUser
     }
 }

@@ -52,13 +52,13 @@ import PermitTypesEdit from "../components/permittypes/PermitTypesEdit.vue";
 import EmployeeSalariesIndex from "../components/employeesalaries/EmployeeSalariesIndex.vue";
 import EmployeeSalariesCreate from "../components/employeesalaries/EmployeeSalariesCreate.vue";
 import EmployeeSalariesEdit from "../components/employeesalaries/EmployeeSalariesEdit.vue";
-
+import DashboardIndex from "../components/dashboard/DashboardIndex.vue";
 const routes = [
     // Dashboard
     {
         path: '/dashboard',
-        // name: 'personinfos.index',
-        component: App,
+        name: 'dashboard.index',
+        component: DashboardIndex,
         meta: {
             title: 'Dashboard'
         }

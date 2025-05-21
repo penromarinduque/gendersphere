@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\FrontlineServiceController;
 use App\Http\Controllers\Api\FrontlineServiceTypeController;
 use App\Http\Controllers\Api\PermitTypeController;
 use App\Http\Controllers\Api\EmployeeSalaryController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::middleware('auth:sanctum')->group( function () {
+    Route::prefix('dashboard')->group(function () {
+        Route::get('summary', [DashboardController::class, 'summary']);
+    });
+    
     Route::prefix('frontlineservices')->group(function () {
         Route::get('summary', [FrontlineServiceController::class, 'summary']);
     });
@@ -54,6 +59,10 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::prefix('activitydetails')->group(function () {
         
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('get-auth', [UserController::class, 'getAuth']);
     });
     
     Route::apiResources([

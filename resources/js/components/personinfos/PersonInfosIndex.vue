@@ -147,7 +147,7 @@ const { personinfos, getPersonInfos, destroyPersonInfo, loading, genderFilter, e
 
 const deletePersonInfo = async (id) => {
     if (!window.confirm('You sure you want to delete this record?')) {
-        return
+        return;
     }
     
     await destroyPersonInfo(id);
@@ -166,8 +166,8 @@ const filterEmployees = async () => {
 
 // We get the companies immediately
 onMounted(() => {
-    getPersonInfos()
-    getPersonInfoSummary()
-})
+    getPersonInfos();
+    getPersonInfoSummary();
+});
 
 </script>
