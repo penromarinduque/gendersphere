@@ -21,4 +21,9 @@ class Attendee extends Model implements Auditable
             ->where('activity_details.id', $activity_detail_id)
             ->get();
     }
+
+    public function personInfo()
+    {
+        return $this->belongsTo(PersonInfo::class);
+    }
 }

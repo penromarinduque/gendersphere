@@ -128,7 +128,38 @@ export default function usePersonInfos() {
         personInfoChartData.value = response.data
         console.log(response.data);
     }
- 
+
+    const computeAge = (date, year = null) => {
+        var today = year ? new Date('12-31-' + year) :  new Date();
+        var birthDate = new Date(date);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    const setEmpStatusSeverityColor = (status) => {
+        if (status == 'new') {
+            return 'success';
+        } else if (status == 'renewed') {
+            return 'primary';
+        } else if (status == 'retired' || status == 'resigned') {
+            return 'secondary';
+        } else if (status == 'terminated') {
+            return 'danger';
+        }
+    }
+
+    const setEmpTypeSeverityColor = (type) => {
+        if (type == 'permanent') {
+            return 'primary';
+        } else if (type == 'cos') {
+            return 'warn';
+        }
+    }
+
     return {
         errors,
         personinfo,
@@ -152,6 +183,9 @@ export default function usePersonInfos() {
         getProvinces,
         getMunicipalities,
         getBarangays,
-        getPersonInfoSummary
+        getPersonInfoSummary,
+        computeAge,
+        setEmpStatusSeverityColor,
+        setEmpTypeSeverityColor
     }
 }

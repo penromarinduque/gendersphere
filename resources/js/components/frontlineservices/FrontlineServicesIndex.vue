@@ -82,19 +82,20 @@
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <router-link :to="{ name: 'frontlineservices.edit', params: { id: item.id } }" class="inline-flex items-center mr-2 px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
                         <button @click="deleteFrontlineService(item.id)" class="inline-flex items-center px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
-                            Delete</button>
+                            Delete
+                        </button>
                     </td>
                 </tr>
             </template>
-            <tr v-if="!frontlineservices.length">
-                <td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found</td>
+            <tr v-if="!frontlineservices.length && frontlineservices.length < 1">
+                <td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found </td>
             </tr>
             </tbody>
         </table>
     </div>
-    <div class="flex mt-3 place-content-end">
+    <div class="flex mt-3 place-content-end ">
          <!-- <Paginator :rows="10" :totalRecords="120" :rowsPerPageOptions="[10, 20, 30]"></Paginator> -->
-         <TailwindPagination :data="frontlineservices" @pagination-change-page="getFrontlineServices" />
+         <TailwindPagination :data="frontlineservices" @pagination-change-page="getFrontlineServices" :limit="5" />
      </div>
 </template>
 

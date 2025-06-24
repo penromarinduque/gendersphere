@@ -41,7 +41,7 @@ class FrontlineServiceController extends Controller
         $request->validate([
             'permit_type_id' => ['required'],
             'permit_no' => ['required'],
-            'client_name' => ['required'],
+            'client_name' => ['required', 300],
             'gender' => ['required'],
             'date_applied' => ['required'],
             'date_released' => ['required'],

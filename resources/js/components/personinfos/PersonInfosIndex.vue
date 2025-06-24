@@ -56,21 +56,27 @@
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Civil Status</span>
                 </th>
-                <th class="border border-slate-300 px-6 py-1 bg-gray-50">
+                <!-- <th class="border border-slate-300 px-6 py-1 bg-gray-50">
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Birthdate</span>
-                </th>
+                </th> -->
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Age</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Address</span>
                 </th>
-                <th class="border border-slate-300 px-6 py-1 bg-gray-50">
+                <!-- <th class="border border-slate-300 px-6 py-1 bg-gray-50">
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Height</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Blood Type</span>
-                </th>
+                </th> -->
+                <th class="border border-slate-300 px-6 py-1 bg-gray-50">
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Employment Type</span>
+                </th> 
+                <th class="border border-slate-300 px-6 py-1 bg-gray-50">
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Employment Status</span>
+                </th> 
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">Actions</th>
             </tr>
             </thead>
@@ -87,27 +93,31 @@
                     <td class="border border-slate-300 px-6 py-2text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <span style="text-transform: capitalize;">{{ personinfo.civil_status }}</span>
                     </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                    <!-- <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <span>{{ personinfo.birthdate }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span>{{ personinfo.age }}</span>
+                    </td> -->
+                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap text-center">
+                        <span>{{ computeAge(personinfo.birthdate) }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <span>{{ personinfo.barangay_name+', '+personinfo.municipality_name+', '+personinfo.province_name }}</span>
                     </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                    <!-- <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         {{ personinfo.height.toFixed(2) }}
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         {{ personinfo.blood_type }}
+                    </td> -->
+                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap text-center">
+                        <Badge :severity="setEmpTypeSeverityColor(personinfo.employment_type)" style="text-transform: uppercase;">{{ personinfo.employment_type }}</Badge>
+                    </td>
+                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap text-center">
+                        <Badge :severity="setEmpStatusSeverityColor(personinfo.employment_status)" style="text-transform: uppercase;">{{ personinfo.employment_status }}</Badge>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <router-link :to="{ name: 'personinfos.edit', params: { id: personinfo.id } }" class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
+                        <Button class="me-2" @click="$router.push({ name: 'personinfos.edit', params: { id: personinfo.id } })" size="small" variant="outlined" severity="primary">Edit</Button> 
                         
-                        <button @click="deletePersonInfo(personinfo.id)"
-                        class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
-                        Delete</button>
+                        <Button @click="deletePersonInfo(personinfo.id)" size="small" variant="outlined" severity="danger">Delete</Button>
 
                         <!-- <Button @click="deletePersonInfo(personinfo.id)" type="submit" label="DELETE" :loading="loading" severity="danger" size="small" /> -->
 
@@ -135,6 +145,7 @@ import { TailwindPagination } from 'laravel-vue-pagination';
 import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import Panel from 'primevue/panel';
+import Badge from 'primevue/badge';
 
 // Here we're using a Composable file, its code is above
 import usePersonInfos from '@/composables/personinfos'
@@ -143,7 +154,7 @@ import usePersonInfos from '@/composables/personinfos'
 import { onMounted } from 'vue';
 
 // We need only two things from the useCompanies() composable
-const { personinfos, getPersonInfos, destroyPersonInfo, loading, genderFilter, employmentStatusFilter, getPersonInfoSummary, summary } = usePersonInfos();
+const { personinfos, getPersonInfos, destroyPersonInfo, loading, genderFilter, employmentStatusFilter, getPersonInfoSummary, summary, computeAge, setEmpStatusSeverityColor, setEmpTypeSeverityColor } = usePersonInfos();
 
 const deletePersonInfo = async (id) => {
     if (!window.confirm('You sure you want to delete this record?')) {

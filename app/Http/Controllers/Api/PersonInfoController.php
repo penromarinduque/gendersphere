@@ -208,12 +208,37 @@ class PersonInfoController extends Controller
 
     public function getChartData(Request $request){
         $employees_by_gender = PersonInfo::query()
-                        ->select('gender', DB::raw('COUNT(*) as total'))
+                        ->select('gender as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
                         ->groupBy('gender')
                         ->get()
                         ->toArray();
+        $permanent_by_gender = PersonInfo::query()
+                        ->select('gender as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->where('employment_type', 'permanent')
+                        ->groupBy('gender')
+                        ->get()
+                        ->toArray();
+        $cos_by_gender = PersonInfo::query()
+                        ->select('gender as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->where('employment_type', 'cos')
+                        ->groupBy('gender')
+                        ->get()
+                        ->toArray();
+        $employees_by_emp_type = PersonInfo::query()
+                        ->select('employment_type as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->groupBy('employment_type')
+                        ->get()
+                        ->toArray();
+                        
         return (object)[
-            'employees_by_gender' => $employees_by_gender
+            'employees_by_gender' => $employees_by_gender,
+            'employees_by_emp_type' => $employees_by_emp_type,
+            'permanent_by_gender' => $permanent_by_gender,
+            'cos_by_gender' => $cos_by_gender,
         ];
     }
 }

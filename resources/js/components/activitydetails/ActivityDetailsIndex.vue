@@ -108,6 +108,14 @@
                             class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
                             Delete
                         </button>
+
+                        <Button type="button"  @click="toggle" aria-haspopup="true" aria-controls="overlay_tmenu" >Actions</Button> 
+                        <TieredMenu
+                            ref="actionMenu"
+                            id="overlay_tmenu"
+                            :model="items"
+                            popup
+                            />
                     </td>
                 </tr>
             </template>
@@ -115,8 +123,7 @@
         </table>
     </div>
 
-    <Dialog v-model:visible="movDialogVisible" modal header="Activity Report" :style="{ width: '25rem' }" :draggable="false" >
-        <!-- <span class="text-surface-500 dark:text-surface-400 block mb-8">Update your information.</span> -->
+    <!-- <Dialog v-model:visible="movDialogVisible" modal header="Activity Report" :style="{ width: '25rem' }" :draggable="false" >
         <form id="movForm" action="/activitydetails/upload-mov" method="post" enctype="multipart/form-data">
             <input type="hidden" name="_token" :value="csrf" />
             <input type="hidden" name="id" :value="activity_id" />
@@ -135,14 +142,22 @@
                 <Button type="submit" label="Save"></Button>
             </div>
         </form>
-    </Dialog>
+    </Dialog> -->
+
+    <Drawer v-model:visible="movDialogVisible" position="right"  class="!w-full md:!w-80 lg:!w-[40rem]">
+       asd
+    </Drawer>
 </template>
+
+
 <script setup>
 import useGadActivities from '@/composables/gadactivities';
 import useActivityDetails from '../../composables/activitydetails';
 import { onMounted, ref } from 'vue';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
+import Drawer from 'primevue/drawer';
+import TieredMenu from 'primevue/tieredmenu';
 
 const { gadactivity, getGadActivity, updateGadActivity, destroyGadActivity } = useGadActivities();
 const { activitydetails, getActivityDetails, destroyActivityDetail } = useActivityDetails();
@@ -150,8 +165,7 @@ const movDialogVisible = ref(false);
 const csrf = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 const activity_id = ref('');
 const downloadMovLink = ref('');
-
-
+const actionMenu = ref();
 const props = defineProps({
     ga_id: {
         required: true,
@@ -161,6 +175,85 @@ const props = defineProps({
 
 onMounted(() => getGadActivity(props.ga_id))
 onMounted(() => getActivityDetails(props.ga_id))
+
+const items = ref([
+    {
+        label: 'File',
+        icon: 'pi pi-file',
+        items: [
+            {
+                label: 'New',
+                icon: 'pi pi-plus',
+                items: [
+                    {
+                        label: 'Document',
+                        icon: 'pi pi-file'
+                    },
+                    {
+                        label: 'Image',
+                        icon: 'pi pi-image'
+                    },
+                    {
+                        label: 'Video',
+                        icon: 'pi pi-video'
+                    }
+                ]
+            },
+            {
+                label: 'Open',
+                icon: 'pi pi-folder-open'
+            },
+            {
+                label: 'Print',
+                icon: 'pi pi-print'
+            }
+        ]
+    },
+    {
+        label: 'Edit',
+        icon: 'pi pi-file-edit',
+        items: [
+            {
+                label: 'Copy',
+                icon: 'pi pi-copy'
+            },
+            {
+                label: 'Delete',
+                icon: 'pi pi-times'
+            }
+        ]
+    },
+    {
+        label: 'Search',
+        icon: 'pi pi-search'
+    },
+    {
+        separator: true
+    },
+    {
+        label: 'Share',
+        icon: 'pi pi-share-alt',
+        items: [
+            {
+                label: 'Slack',
+                icon: 'pi pi-slack'
+            },
+            {
+                label: 'Whatsapp',
+                icon: 'pi pi-whatsapp'
+            }
+        ]
+    }
+]);
+
+const toggle = (event) => {
+    console.log(actionMenu)
+    if (menu.value) {
+        menu.value.toggle(event);
+    } else {
+        console.error('Menu ref is not yet available');
+    }
+}
 
 const deleteActivityDetail = async (id, gaId) => {
     if (!window.confirm('You sure you want to delete this record?')) {

@@ -84,7 +84,7 @@
                         <span style="text-transform: capitalize;">{{ item.barangay_name+', '+item.municipality_name+', '+item.province_name }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ item.age }}
+                        {{ computeAge(item.birthdate, item.year_covered) }}
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <router-link :to="{ name: 'committees.edit', params: { id: item.id } }"
@@ -115,8 +115,10 @@ import useCommittees from '@/composables/committees';
 import Select from 'primevue/select';
 import { onMounted } from 'vue';
 import Panel from 'primevue/panel';
+import usePersonInfos from '../../composables/personinfos';
 
 const { committees, getCommittees, destroyCommittee, getCommitteeSummary, committeeSummary, getYearlist, yearlist, selectedYear } = useCommittees();
+const { computeAge } = usePersonInfos();
 
 
 

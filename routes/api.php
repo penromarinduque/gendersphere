@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityDetailReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PersonInfoController;
@@ -75,6 +76,7 @@ Route::middleware('auth:sanctum')->group( function () {
         'activities' => ActivityController::class,
         'gadactivities' => GadActivityController::class,
         'activitydetails' => ActivityDetailController::class,
+        'activitydetailreports' => ActivityDetailReportController::class,
         'attendees' => AttendeeController::class,
         'frontlineservices' => FrontlineServiceController::class,
         'provinces' => ProvinceController::class,
@@ -88,6 +90,7 @@ Route::middleware('auth:sanctum')->group( function () {
         'frontlineservicetypes' => FrontlineServiceTypeController::class,
         'permittypes' => PermitTypeController::class,
         'employeesalaries' => EmployeeSalaryController::class,
+
     ]);
     // PersonInfo
     Route::prefix('personinfos')->group(function () {

@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('frontline_services', function (Blueprint $table) {
+        Schema::create('activity_detail_reports', function (Blueprint $table) {
             $table->id();
-            $table->integer('permit_type_id');
-            $table->string('client_name', 300);
-            $table->char('gender', 10);
-            $table->date('date_applied');
-            $table->date('date_released');
-            $table->integer('barangay_id');
+            $table->unsignedBigInteger('activity_detail_id');
+            $table->string('file', 100);
             $table->timestamps();
         });
     }
@@ -28,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('frontline_services');
+        Schema::dropIfExists('activity_detail_reports');
     }
 };

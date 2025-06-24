@@ -39,7 +39,16 @@
                         <TabPanel value="1">
                             <div class="grid grid-cols-5 gap-4">
                                 <Panel header="Employees by Gender">
-                                    <Chart type="pie" :data="chartData" :options="chartOptions" class="w-full " />
+                                    <Chart type="pie" :data="empByGenderData" :options="chartOptions" class="w-full " />
+                                </Panel>
+                                <Panel header="Employees by Employment Status">
+                                    <Chart type="pie" :data="empByEmpTypeData" :options="chartOptions" class="w-full " />
+                                </Panel>
+                                <Panel header="Permanent Employees by Gender">
+                                    <Chart type="pie" :data="permanentByGenderData" :options="chartOptions" class="w-full " />
+                                </Panel>
+                                <Panel header="COS Employees by Gender">
+                                    <Chart type="pie" :data="cosByGenderData" :options="chartOptions" class="w-full " />
                                 </Panel>
                             </div>  
                         </TabPanel>
@@ -72,19 +81,30 @@
         
     });
 
-    const chartData = ref();
+    const empByGenderData = ref();
+    const empByEmpTypeData = ref();
+    const permanentByGenderData = ref();
+    const cosByGenderData = ref();
     const chartOptions = ref();
 
-    const setChartData = () => {
+    const setPieChartData = (data) => {
         const documentStyle = getComputedStyle(document.body);
 
         return {
-            labels: personInfoChartData.value?.employees_by_gender.map((data) => data.gender),
+            labels: data.map((data) => data.name),
             datasets: [
                 {
-                    data: personInfoChartData.value?.employees_by_gender.map((data) => data.total),
-                    backgroundColor: [documentStyle.getPropertyValue('--p-cyan-500'), documentStyle.getPropertyValue('--p-orange-500'), documentStyle.getPropertyValue('--p-gray-500')],
-                    hoverBackgroundColor: [documentStyle.getPropertyValue('--p-cyan-400'), documentStyle.getPropertyValue('--p-orange-400'), documentStyle.getPropertyValue('--p-gray-400')]
+                    data: data.map((data) => data.total),
+                    backgroundColor: [
+                        documentStyle.getPropertyValue('--p-purple-500'),
+                        documentStyle.getPropertyValue('--p-purple-400'),
+                        documentStyle.getPropertyValue('--p-purple-300')
+                    ],
+                    hoverBackgroundColor: [
+                        documentStyle.getPropertyValue('--p-purple-400'),
+                        documentStyle.getPropertyValue('--p-purple-300'),
+                        documentStyle.getPropertyValue('--p-purple-200')
+                    ]
                 }
             ]
         };
@@ -109,7 +129,10 @@
     async function initialize() {
         await getEmployees(null);
         await getPersonInfoChartData();
-        chartData.value = setChartData();
+        empByGenderData.value = setPieChartData(personInfoChartData.value?.employees_by_gender);
+        empByEmpTypeData.value = setPieChartData(personInfoChartData.value?.employees_by_emp_type);
+        permanentByGenderData.value = setPieChartData(personInfoChartData.value?.permanent_by_gender);
+        cosByGenderData.value = setPieChartData(personInfoChartData.value?.cos_by_gender);
         chartOptions.value = setChartOptions();
     }
 
