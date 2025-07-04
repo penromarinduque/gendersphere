@@ -1,14 +1,23 @@
 {
+  "node_modules/chart.js/auto/auto.js": {
+    "file": "assets/auto-DWLGPMwj.js",
+    "name": "auto",
+    "src": "node_modules/chart.js/auto/auto.js",
+    "isDynamicEntry": true
+  },
   "resources/css/app.css": {
-    "file": "assets/app-XDi2s2GA.css",
+    "file": "assets/app-cnnwRKqW.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BTb_PPpk.js",
+    "file": "assets/app-D1iemBO7.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
+    "dynamicImports": [
+      "node_modules/chart.js/auto/auto.js"
+    ],
     "css": [
       "assets/app-fECqR7-C.css"
     ]
