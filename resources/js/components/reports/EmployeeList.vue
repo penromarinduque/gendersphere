@@ -20,6 +20,16 @@
                                     </template>
                                 </Column>
                                 <Column field="position" header="Position"></Column>
+                                <Column field="employment_type" header="Employee Type">
+                                    <template #body="{ data }">
+                                        {{ data.employment_type.toUpperCase() }}
+                                    </template>
+                                </Column>
+                                <Column field="employment_status" header="Employee Status">
+                                    <template #body="{ data }">
+                                        {{ data.employment_status.toUpperCase() }}
+                                    </template>
+                                </Column>
                                 <Column header="Gender">
                                     <template #body="{ data }">
                                         {{ data.gender.toUpperCase() }}
@@ -30,9 +40,8 @@
                                         {{ data.barangay_name }}, {{ data.municipality_name }}, {{ data.province_name }}
                                     </template>
                                 </Column>
-                                <Column field="age" header="Age"></Column>
-                                <Column header="Birthdate">
-                                    <template #body="{ data }"> {{ new Date(data.birthdate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) }}</template>
+                                <Column header="Age">
+                                    <template #body="{ data }">{{ computeAge(data.birthdate) }}</template>
                                 </Column>
                             </DataTable>
                         </TabPanel>
@@ -74,7 +83,7 @@
     import Chart from 'primevue/chart';
     import Panel from 'primevue/panel';
 
-    const { employees, getEmployees, personInfoChartData, getPersonInfoChartData } = usePersonInfos();
+    const { employees, getEmployees, personInfoChartData, getPersonInfoChartData, computeAge } = usePersonInfos();
 
     onMounted(() => {
         initialize();
