@@ -139,12 +139,14 @@ class ActivityDetailController extends Controller
             'actual_cost' => ['required'],
         ]);
 
+        $attendees = Attendee::where('activity_detail_id', $id)->with('personInfo')->get();
+
         $activitydetail_update = ActivityDetail::find($id)->update([
             'gad_budget' => $request->gad_budget,
             'actual_result' => $request->actual_result,
-            'actual_men' => $request->actual_men,
-            'actual_women' => $request->actual_women,
-            'actual_lgbtq' => $request->actual_lgbtq,
+            'actual_men' => $attendees->where('personInfo.gender', 'male')->count(),
+            'actual_women' => $attendees->where('personInfo.gender', 'female')->count(),
+            'actual_lgbtq' => $attendees->where('personInfo.gender', 'lgbtqia+')->count(),
             'actual_cost' => $request->actual_cost,
             'remarks' => $request->remarks,
         ]);

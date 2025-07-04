@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\PersonInfo;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PersonInfoController extends Controller
 {
@@ -188,6 +189,56 @@ class PersonInfoController extends Controller
             "total_males" => PersonInfo::query()->where('gender', 'male')->where("person_type", 1)->count(),
             "total_females" => PersonInfo::query()->where('gender', 'female')->where("person_type", 1)->count(),
             "total_lgbtqiaplus" => PersonInfo::query()->where('gender', 'lgbtqia+')->where("person_type", 1)->count(),
+        ];
+    }
+
+    public function getEmployees(Request $request){
+        $query = PersonInfo::query()->select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
+            ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
+            ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
+            ->join('provinces', 'provinces.id', 'municipalities.province_id')
+            ->where("person_type", 1);
+
+        if($request->has('employment_type') && $request->employment_type != 'all'){
+            $query->where("employment_type", $request->employment_type);
+        }
+
+        return $query->get();
+    }
+
+    public function getChartData(Request $request){
+        $employees_by_gender = PersonInfo::query()
+                        ->select('gender as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->groupBy('gender')
+                        ->get()
+                        ->toArray();
+        $permanent_by_gender = PersonInfo::query()
+                        ->select('gender as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->where('employment_type', 'permanent')
+                        ->groupBy('gender')
+                        ->get()
+                        ->toArray();
+        $cos_by_gender = PersonInfo::query()
+                        ->select('gender as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->where('employment_type', 'cos')
+                        ->groupBy('gender')
+                        ->get()
+                        ->toArray();
+        $employees_by_emp_type = PersonInfo::query()
+                        ->select('employment_type as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->groupBy('employment_type')
+                        ->get()
+                        ->toArray();
+                        
+        return (object)[
+            'employees_by_gender' => $employees_by_gender,
+            'employees_by_emp_type' => $employees_by_emp_type,
+            'permanent_by_gender' => $permanent_by_gender,
+            'cos_by_gender' => $cos_by_gender,
         ];
     }
 }

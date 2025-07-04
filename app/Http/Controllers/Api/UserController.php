@@ -118,4 +118,9 @@ class UserController extends Controller
 
         return response()->noContent(); 
     }
+
+    public function getAuth()
+    {
+        return auth()->user();
+    }
 }

@@ -14,6 +14,8 @@ export default function usePersonInfos() {
     const genderFilter = ref('');
     const employmentStatusFilter = ref('');
     const summary = ref({});
+    const employees = ref([]);
+    const personInfoChartData = ref({});
 
     const errors = ref('');
     const router = useRouter();
@@ -111,7 +113,53 @@ export default function usePersonInfos() {
         let response = await axios.get('/api/personinfos/summary');
         summary.value = response.data
     }
- 
+    
+    const getEmployees  = async (employmentType = null) => {
+        let response = await axios.get('/api/personinfos/get-employees', {
+            params: {
+                employment_type: employmentType
+            }
+        });
+        employees.value = response.data
+    }
+
+    const getPersonInfoChartData = async () => {
+        let response = await axios.get('/api/personinfos/get-chart-data');
+        personInfoChartData.value = response.data
+        console.log(response.data);
+    }
+
+    const computeAge = (date, year = null) => {
+        var today = year ? new Date('12-31-' + year) :  new Date();
+        var birthDate = new Date(date);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    const setEmpStatusSeverityColor = (status) => {
+        if (status == 'new') {
+            return 'success';
+        } else if (status == 'renewed') {
+            return 'primary';
+        } else if (status == 'retired' || status == 'resigned') {
+            return 'secondary';
+        } else if (status == 'terminated') {
+            return 'danger';
+        }
+    }
+
+    const setEmpTypeSeverityColor = (type) => {
+        if (type == 'permanent') {
+            return 'primary';
+        } else if (type == 'cos') {
+            return 'warn';
+        }
+    }
+
     return {
         errors,
         personinfo,
@@ -123,6 +171,10 @@ export default function usePersonInfos() {
         genderFilter,
         employmentStatusFilter,
         summary,
+        employees,
+        personInfoChartData,
+        getPersonInfoChartData,
+        getEmployees,
         getPersonInfo,
         getPersonInfos,
         storePersonInfo,
@@ -131,6 +183,9 @@ export default function usePersonInfos() {
         getProvinces,
         getMunicipalities,
         getBarangays,
-        getPersonInfoSummary
+        getPersonInfoSummary,
+        computeAge,
+        setEmpStatusSeverityColor,
+        setEmpTypeSeverityColor
     }
 }

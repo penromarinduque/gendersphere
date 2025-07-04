@@ -380,6 +380,8 @@
 
                                     @endforelse
                                 @endforeach
+
+                                
                             </tbody>
                         </table>
                     </div>

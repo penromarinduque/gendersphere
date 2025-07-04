@@ -27,4 +27,9 @@ class ActivityDetail extends Model implements Auditable
             ->where('gad_activity_id', $ga_id)
             ->get();
     }
+
+    public function attendees()
+    {
+        return $this->hasMany(Attendee::class);
+    }
 }

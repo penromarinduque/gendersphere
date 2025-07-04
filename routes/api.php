@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityDetailReportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\PersonInfoController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\Api\FrontlineServiceController;
 use App\Http\Controllers\Api\FrontlineServiceTypeController;
 use App\Http\Controllers\Api\PermitTypeController;
 use App\Http\Controllers\Api\EmployeeSalaryController;
+use App\Http\Controllers\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,12 +42,18 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::middleware('auth:sanctum')->group( function () {
+    Route::prefix('dashboard')->group(function () {
+        Route::get('summary', [DashboardController::class, 'summary']);
+    });
+    
     Route::prefix('frontlineservices')->group(function () {
         Route::get('summary', [FrontlineServiceController::class, 'summary']);
     });
 
     Route::prefix('personinfos')->group(function () {
         Route::get('summary', [PersonInfoController::class, 'summary']);
+        Route::get('get-employees', [PersonInfoController::class, 'getEmployees']);
+        Route::get('get-chart-data', [PersonInfoController::class, 'getChartData']);
     });
 
     Route::prefix('committees')->group(function () {
@@ -54,6 +62,10 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::prefix('activitydetails')->group(function () {
         
+    });
+
+    Route::prefix('users')->group(function () {
+        Route::get('get-auth', [UserController::class, 'getAuth']);
     });
     
     Route::apiResources([
@@ -64,6 +76,7 @@ Route::middleware('auth:sanctum')->group( function () {
         'activities' => ActivityController::class,
         'gadactivities' => GadActivityController::class,
         'activitydetails' => ActivityDetailController::class,
+        'activitydetailreports' => ActivityDetailReportController::class,
         'attendees' => AttendeeController::class,
         'frontlineservices' => FrontlineServiceController::class,
         'provinces' => ProvinceController::class,
@@ -77,6 +90,7 @@ Route::middleware('auth:sanctum')->group( function () {
         'frontlineservicetypes' => FrontlineServiceTypeController::class,
         'permittypes' => PermitTypeController::class,
         'employeesalaries' => EmployeeSalaryController::class,
+
     ]);
     // PersonInfo
     Route::prefix('personinfos')->group(function () {

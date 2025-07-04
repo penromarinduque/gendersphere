@@ -21,7 +21,7 @@ export default function useAttendees() {
     });
 
     const getPersonInfos = async () => {
-        let response = await axios.get('/api/personinfos')
+        let response = await axios.get('/api/personinfos/all/persons')
         personinfos.value = response.data.data
     }
 
