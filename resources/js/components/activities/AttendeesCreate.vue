@@ -50,21 +50,21 @@
                 <hr>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                     <div class="pb-1">
-                        <label for="lastname" class="block text-md font-medium text-gray-700">Lastname</label>
+                        <label for="lastname" class="block text-md font-medium text-gray-700">Lastname <span class="text-red-500">*</span></label>
                         <div class="mt-1">
                             <input type="text" name="lastname" id="lastname" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="form.lastname">
                             <span class="text-sm text-red-600" v-if="errors?.lastname">{{ errors.lastname[0] }}</span>
                         </div>
                     </div>
                     <div class="pb-1">
-                        <label for="firstname" class="block text-md font-medium text-gray-700">First Name</label>
+                        <label for="firstname" class="block text-md font-medium text-gray-700">First Name <span class="text-red-500">*</span></label>
                         <div class="mt-1">
                             <input type="text" name="firstname" id="firstname" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="form.firstname">
                             <span class="text-sm text-red-600" v-if="errors?.firstname">{{ errors.firstname[0] }}</span>
                         </div>
                     </div>
                     <div class="pb-1">
-                        <label for="middlename" class="block text-md font-medium text-gray-700">Middle Name</label>
+                        <label for="middlename" class="block text-md font-medium text-gray-700">Middle Name <span class="text-red-500">*</span></label>
                         <div class="mt-1">
                             <input type="text" name="middlename" id="middlename" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="form.middlename">
                             <span class="text-sm text-red-600" v-if="errors?.middlename">{{ errors.middlename[0] }}</span>
@@ -80,7 +80,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                     <div class="pb-1">
-                        <label for="gender" class="block text-md font-medium text-gray-700">Gender</label>
+                        <label for="gender" class="block text-md font-medium text-gray-700">Gender <span class="text-red-500">*</span></label>
                         <div class="mt-1">
                             <select name="gender" id="gender" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                             v-model="form.gender">
@@ -93,7 +93,7 @@
                         </div>
                     </div>
                     <div class="pb-1">
-                        <label for="age" class="block text-md font-medium text-gray-700">Age</label>
+                        <label for="age" class="block text-md font-medium text-gray-700">Age <span class="text-red-500">*</span></label>
                         <div class="mt-1">
                             <input type="number" name="age" id="age" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="form.age">
                             <span class="text-sm text-red-600" v-if="errors?.age">{{ errors.age[0] }}</span>
@@ -107,7 +107,7 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                     <div class="pb-1">
-                        <label for="province_id" class="block text-md font-medium text-gray-700">ADDRESS: Province</label>
+                        <label for="province_id" class="block text-md font-medium text-gray-700">ADDRESS: Province <span class="text-red-500">*</span></label>
                         <div class="mt-1">
                             <select name="province_id" id="province_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                             v-model="form.province_id" @change="getMunicipals($event)">
@@ -118,7 +118,7 @@
                         </div>
                     </div>
                     <div class="pb-1">
-                        <label for="municipality_id" class="block text-md font-medium text-gray-700">Municipality</label>
+                        <label for="municipality_id" class="block text-md font-medium text-gray-700">Municipality <span class="text-red-500">*</span></label>
                         <div class="mt-1">
                             <select name="municipality_id" id="municipality_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                             v-model="form.municipality_id" @change="getMunicipalBrgys($event)">
@@ -129,7 +129,7 @@
                         </div>
                     </div>
                     <div class="pb-1">
-                        <label for="barangay_id" class="block text-md font-medium text-gray-700">Barangay</label>
+                        <label for="barangay_id" class="block text-md font-medium text-gray-700">Barangay <span class="text-red-500">*</span></label>
                         <div class="mt-1">
                             <select name="barangay_id" id="barangay_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                             v-model="form.barangay_id">

@@ -14,7 +14,7 @@
         <form class="space-y-6" @submit.prevent="editObjective">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4">
                 <div class="pb-1 col-span-3">
-                    <label for="cause" class="block text-md font-medium text-gray-700">GAD Result Statement/ GAD Objective</label>
+                    <label for="cause" class="block text-md font-medium text-gray-700">GAD Result Statement/ GAD Objective <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <textarea name="gad_objective" id="gad_objective" rows="4" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 v-model="objective.gad_objective"></textarea>

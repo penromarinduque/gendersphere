@@ -24,14 +24,14 @@
                     </div>
                 </div>
                 <div class="pb-1 col-span-1">
-                    <label for="target_men" class="block text-md font-medium text-gray-700">Target Men <small>(Put zero (0) if not available)</small></label>
+                    <label for="target_men" class="block text-md font-medium text-gray-700">Target Men <small>(Put zero (0) if not available)</small> <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="text" name="target_men" id="target_men" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="form.target_men">
                         <span class="text-sm text-red-600" v-if="errors?.target_men">{{ errors.target_men[0] }}</span>
                     </div>
                 </div>
                 <div class="pb-1 col-span-1">
-                    <label for="target_women" class="block text-md font-medium text-gray-700">Target Women <small>(Put zero (0) if not available)</small></label>
+                    <label for="target_women" class="block text-md font-medium text-gray-700">Target Women <small>(Put zero (0) if not available)</small> <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="text" name="target_women" id="target_women" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="form.target_women">
                         <span class="text-sm text-red-600" v-if="errors?.target_women">{{ errors.target_women[0] }}</span>

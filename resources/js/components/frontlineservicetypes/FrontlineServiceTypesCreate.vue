@@ -14,7 +14,7 @@
         <form class="space-y-6" @submit.prevent="saveFrontlineServiceType">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
                 <div class="pb-1">
-                    <label for="service" class="block text-md font-medium text-gray-700">Service</label>
+                    <label for="service" class="block text-md font-medium text-gray-700">Service <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="text" name="service" id="service"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
