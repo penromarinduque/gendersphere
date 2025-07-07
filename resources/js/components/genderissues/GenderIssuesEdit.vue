@@ -14,7 +14,7 @@
         <form class="space-y-6" @submit.prevent="editGenderIssue">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 gap-4">
                 <div class="pb-1">
-                    <label for="mandate_year" class="block text-md font-medium text-gray-700">Year Covered</label>
+                    <label for="mandate_year" class="block text-md font-medium text-gray-700">Year Covered <span class="text-red-500">*</span><</label>
                     <div class="mt-1">
                         <select name="mandate_year" id="mandate_year" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="text-transform: capitalize;" v-model="genderissue.mandate_year">
                             <option value="">-Select Year-</option>
@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <div class="pb-1 col-span-3">
-                    <label for="gender_issue_mandate" class="block text-md font-medium text-gray-700">Gender Issue/ GAD Mandate</label>
+                    <label for="gender_issue_mandate" class="block text-md font-medium text-gray-700">Gender Issue/ GAD Mandate <span class="text-red-500">*</span><</label>
                     <div class="mt-1">
                         <textarea name="gender_issue_mandate" id="gender_issue_mandate" rows="4" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 v-model="genderissue.gender_issue_mandate"></textarea>

@@ -14,7 +14,7 @@
         <form class="space-y-6" @submit.prevent="saveGoal">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                 <div class="pb-1">
-                    <label for="goal_no" class="block text-md font-medium text-gray-700">Goal No.</label>
+                    <label for="goal_no" class="block text-md font-medium text-gray-700">Goal No. <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="number" name="goal_no" id="goal_no"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -23,7 +23,7 @@
                     </div>
                 </div>
                 <div class="pb-1 col-span-2">
-                    <label for="gad_goal" class="block text-md font-medium text-gray-700">GAD Goal</label>
+                    <label for="gad_goal" class="block text-md font-medium text-gray-700">GAD Goal <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <textarea name="gad_goal" id="gad_goal" rows="4" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 v-model="form.gad_goal"></textarea>

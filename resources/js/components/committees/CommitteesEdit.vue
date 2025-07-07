@@ -15,7 +15,7 @@
         <form class="space-y-6" @submit.prevent="editCommittee">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 gap-4">
                 <div class="pb-1">
-                    <label for="year_covered" class="block text-md font-medium text-gray-700">Year Covered</label>
+                    <label for="year_covered" class="block text-md font-medium text-gray-700">Year Covered <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="year_covered" id="year_covered" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="text-transform: capitalize;" v-model="committee.year_covered">
                             <option value="">-Select Year-</option>
@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div class="pb-1 col-span-2">
-                    <label for="person_info_id" class="block text-md font-medium text-gray-700">PENRO EMPLOYEE</label>
+                    <label for="person_info_id" class="block text-md font-medium text-gray-700">PENRO EMPLOYEE <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="person_info_id" id="person_info_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="text-transform: capitalize;" v-model="committee.person_info_id">
                             <option value="">-Select Employee-</option>
@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <div class="pb-1 col-span-2">
-                    <label for="committee_position_id" class="block text-md font-medium text-gray-700">Position</label>
+                    <label for="committee_position_id" class="block text-md font-medium text-gray-700">Position <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="committee_position_id" id="committee_position_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="text-transform: capitalize;" v-model="committee.committee_position_id">
                             <option value="">-Select Position-</option>
