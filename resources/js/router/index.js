@@ -56,6 +56,7 @@ import DashboardIndex from "../components/dashboard/DashboardIndex.vue";
 import EmployeeList from "../components/reports/EmployeeList.vue";
 import OfficesIndex from "../components/offices/OfficesIndex.vue";
 import OfficesCreate from "../components/offices/OfficesCreate.vue";
+import OfficesEdit from "../components/offices/OfficesEdit.vue";
 
 const routes = [
     // Dashboard
@@ -545,6 +546,15 @@ const routes = [
         path: '/maintenance/offices/create',
         name: 'offices.create',
         component: OfficesCreate,
+        props: true,
+        meta: {
+            title: 'Offices'
+        }
+    },
+    {
+        path: '/maintenance/offices/edit/:id',
+        name: 'offices.edit',
+        component: OfficesEdit,
         props: true,
         meta: {
             title: 'Offices'

@@ -55,7 +55,7 @@ export default function usePersonInfos() {
             }
             loading.value = false;
         }
- 
+
     }
  
     const updatePersonInfo = async (id) => {

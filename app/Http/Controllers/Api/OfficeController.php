@@ -52,7 +52,7 @@ class OfficeController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Office $office)
+    public function update(Request $request)
     {
         //
     }
@@ -63,5 +63,11 @@ class OfficeController extends Controller
     public function destroy(Office $office)
     {
         //
+    }
+
+    public function findById($id)
+    {
+        $office = Office::with(['region', 'barangay.municipality.province', 'parent'])->find($id);
+        return new OfficeResource($office);
     }
 }

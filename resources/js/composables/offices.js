@@ -7,6 +7,7 @@ import { createToaster } from '@meforma/vue-toaster'
 export default function useOffices () {
 
     const offices = ref([]);
+    const office = ref({});
     const errors = ref('');
     const router = useRouter();
     const toast = useToast();
@@ -22,7 +23,7 @@ export default function useOffices () {
             toaster.success(`Successfully Saved!`);
             router.push({ name: 'offices.index' });
         } catch (e) {
-            toaster.error(`Unexpected error occured while saving the office.`);
+            toaster.error(e.response.data.message);
             console.log(e);
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
@@ -30,6 +31,29 @@ export default function useOffices () {
                 }
             }
         }
+    }
+
+    const updateOffice = async (data) => {
+        console.log(data);
+        try {
+            const response = await axios.put('/api/offices/update', data);
+            toaster.success(`Successfully Saved!`);
+            router.push({ name: 'offices.index' });
+        } catch (e) {
+            toaster.error(e.response.data.message);
+            console.log(e);
+            if (e.response.status === 422) {
+                for (const key in e.response.data.errors) {
+                    errors.value = e.response.data.errors
+                }
+            }
+        }
+    }
+
+    const findOfficeById =async (id) => {
+        const response = await axios.get(`/api/offices/${id}`);
+        office.value = response.data.data
+        return response.data.data
     }
 
     const getAllOffices = async () => {
@@ -41,7 +65,10 @@ export default function useOffices () {
     return {
         errors,
         offices,
+        office,
+        findOfficeById,
         saveOffice,
-        getAllOffices
+        getAllOffices,
+        updateOffice
     }
 }

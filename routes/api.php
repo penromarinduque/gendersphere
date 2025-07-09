@@ -78,6 +78,10 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('search/{name}', [BarangayController::class, 'search']);
     });
 
+    Route::prefix('offices')->group(function () {
+        Route::get('{id}', [OfficeController::class, 'findById']);
+    });
+
     Route::apiResources([
         'personinfos' => PersonInfoController::class,
         'users' => UserController::class,

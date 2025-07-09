@@ -29,8 +29,12 @@
                 {{ `${slotProps.data.barangay.barangay_name}, ${slotProps.data.barangay.municipality.municipality_name}, ${slotProps.data.barangay.municipality.province.province_name}` }}
             </template>
         </Column>
-        <Column  header="Actions">
-            
+        <Column field="id"  header="Actions">
+            <template #body="slotProps">
+                <Button asChild v-slot="props" size="small" label="Edit" icon="pi pi-pencil" class="p-button-warning" variant="outlined">
+                    <router-link :class="props.class" :to="{ name: 'offices.edit', params: { id: slotProps.data.id } }"><i class="pi pi-pencil"></i> Edit</router-link>
+                </Button>
+            </template>
         </Column>
     </DataTable>
 </template>
