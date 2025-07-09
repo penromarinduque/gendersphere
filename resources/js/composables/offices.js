@@ -37,6 +37,7 @@ export default function useOffices () {
         console.log(data);
         try {
             const response = await axios.put('/api/offices/update', data);
+            console.log(response);
             toaster.success(`Successfully Saved!`);
             router.push({ name: 'offices.index' });
         } catch (e) {
@@ -62,6 +63,26 @@ export default function useOffices () {
         return response.data.data
     }
 
+    const deleteOffice = async (id) => {
+        try {
+            await axios.delete(`/api/offices/${id}`)
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Office successfully deleted',
+                life: 3000
+            });
+            await getAllOffices();
+        } catch (e) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            });
+        }
+    }
+
     return {
         errors,
         offices,
@@ -69,6 +90,7 @@ export default function useOffices () {
         findOfficeById,
         saveOffice,
         getAllOffices,
-        updateOffice
+        updateOffice,
+        deleteOffice
     }
 }

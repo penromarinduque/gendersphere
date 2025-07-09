@@ -115,7 +115,8 @@
         'region_id': '',
         'barangay_id': '',
         'parent_id': '',
-        'selected_barangay_label': ''
+        'selected_barangay_label': '',
+        'id': route.params.id
     })
 
     onMounted(async (props) => {

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('offices', function (Blueprint $table) {
             $table->id();
             $table->foreignId('parent_id')->nullable();
-            $table->string('office_name', 100)->unique();
+            $table->string('office_name', 100);
             $table->enum('office_type', ['region', 'penro', 'cenro']);
             $table->foreignId('region_id')->nullable();
             $table->foreignId('barangay_id');
