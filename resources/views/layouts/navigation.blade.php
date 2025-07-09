@@ -93,6 +93,9 @@
                             </x-slot>
 
                             <x-slot name="content">
+                                <x-dropdown-link :href="route('maintenance.offices')">
+                                    {{ __('Offices') }}
+                                </x-dropdown-link>
                                 <x-dropdown-link :href="route('users')">
                                     {{ __('Users') }}
                                 </x-dropdown-link>

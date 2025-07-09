@@ -23,7 +23,9 @@ use App\Http\Controllers\Api\FrontlineServiceController;
 use App\Http\Controllers\Api\FrontlineServiceTypeController;
 use App\Http\Controllers\Api\PermitTypeController;
 use App\Http\Controllers\Api\EmployeeSalaryController;
+use App\Http\Controllers\Api\OfficeController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RegionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,7 +69,15 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::prefix('users')->group(function () {
         Route::get('get-auth', [UserController::class, 'getAuth']);
     });
-    
+
+    Route::prefix('regions')->group(function () {
+        Route::get('all', [RegionController::class, 'all']);
+    });
+
+    Route::prefix('barangays')->group(function () {
+        Route::get('search/{name}', [BarangayController::class, 'search']);
+    });
+
     Route::apiResources([
         'personinfos' => PersonInfoController::class,
         'users' => UserController::class,
@@ -90,7 +100,7 @@ Route::middleware('auth:sanctum')->group( function () {
         'frontlineservicetypes' => FrontlineServiceTypeController::class,
         'permittypes' => PermitTypeController::class,
         'employeesalaries' => EmployeeSalaryController::class,
-
+        'offices' => OfficeController::class,
     ]);
     // PersonInfo
     Route::prefix('personinfos')->group(function () {

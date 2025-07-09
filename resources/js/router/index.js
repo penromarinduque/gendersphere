@@ -54,6 +54,8 @@ import EmployeeSalariesCreate from "../components/employeesalaries/EmployeeSalar
 import EmployeeSalariesEdit from "../components/employeesalaries/EmployeeSalariesEdit.vue";
 import DashboardIndex from "../components/dashboard/DashboardIndex.vue";
 import EmployeeList from "../components/reports/EmployeeList.vue";
+import OfficesIndex from "../components/offices/OfficesIndex.vue";
+import OfficesCreate from "../components/offices/OfficesCreate.vue";
 
 const routes = [
     // Dashboard
@@ -526,6 +528,26 @@ const routes = [
         props: true,
         meta: {
             title: 'Edit Permit Type'
+        }
+    },
+
+    // Maintenance Offices
+    {
+        path: '/maintenance/offices',
+        name: 'offices.index',
+        component: OfficesIndex,
+        props: true,
+        meta: {
+            title: 'Offices'
+        }
+    },
+    {
+        path: '/maintenance/offices/create',
+        name: 'offices.create',
+        component: OfficesCreate,
+        props: true,
+        meta: {
+            title: 'Offices'
         }
     },
 

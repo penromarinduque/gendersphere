@@ -12,4 +12,9 @@ class Barangay extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['municipality_id', 'barangay_name'];
+
+    public function municipality()
+    {
+        return $this->belongsTo(Municipality::class, 'municipality_id', 'id');
+    }
 }

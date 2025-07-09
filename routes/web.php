@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\ActivityDetailController;
+use App\Http\Controllers\Api\BarangayController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Models\ActivityDetail;
@@ -124,6 +125,12 @@ Route::middleware('auth')->group(function () {
         Route::view('/maintenance/permittypes/{any}', 'maintenance.permittypes')->where('any', '.*');
     })->where('any', '.*')->name('maintenance.permittypes');
 
+    // Maintenance - Offices
+    Route::get('/maintenance/offices/{any?}', function () {
+        return view('maintenance.offices');
+        Route::view('/maintenance/offices/{any}', 'maintenance.offices')->where('any', '.*');
+    })->where('any', '.*')->name('maintenance.offices');
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -137,6 +144,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/sexaggregated-print', [ReportController::class, 'sexAggregatedPrint'])->name('sexaggregated-print');
         Route::get('/getpermittypes/{frontlineservicetype_id?}', [ReportController::class, 'getPermitTypes'])->name('getpermittypes');
     });
+
 });
+Route::get("/test/{name}", [BarangayController::class, 'search']);    
     
 require __DIR__.'/auth.php';

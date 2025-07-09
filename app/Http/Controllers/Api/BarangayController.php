@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 
 class BarangayController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
@@ -32,6 +33,27 @@ class BarangayController extends Controller
     {
         $barangays = Barangay::where('municipality_id', $id)->orderBy('barangay_name','ASC')->get();
 
+        return $barangays;
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function search($name)
+    {
+        // $barangays = Barangay::where('barangay_name','LIKE', $name)->with(['municipality', 'municipality.province'])->get();
+
+        $barangays = Barangay::with(['municipality.province'])
+                ->where('barangay_name', 'LIKE', '%' . $name . '%')
+                ->orWhereHas('municipality', function ($q) use ($name) {
+                    $q->where('municipality_name', 'LIKE', '%' . $name . '%')
+                    ->orWhereHas('province', function ($q) use ($name) {
+                        $q->where('province_name', 'LIKE', '%' . $name . '%');
+                    });
+                })
+                ->limit(100)
+                ->get();
+
         return BarangayResource::collection($barangays);
     }
 
@@ -49,5 +71,13 @@ class BarangayController extends Controller
     public function destroy(Barangay $barangay)
     {
         //
+    }
+
+    /**
+     * Display all barangays without pagination
+     */
+    public function all()
+    {
+        return Barangay::query()->with(['municipality'])->get();
     }
 }

@@ -12,4 +12,9 @@ class Province extends Model implements Auditable
     use \OwenIt\Auditing\Auditable;
 
     protected $fillable = ['region_id', 'province_name'];
+
+    public function region()
+    {
+        return $this->belongsTo(Region::class);
+    }
 }
