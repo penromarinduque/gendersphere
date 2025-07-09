@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('frontline_services', function (Blueprint $table) {
             $table->id();
             $table->integer('permit_type_id');
-            $table->string('client_name', 200);
+            $table->string('client_name', 300);
             $table->char('gender', 10);
             $table->date('date_applied');
             $table->date('date_released');

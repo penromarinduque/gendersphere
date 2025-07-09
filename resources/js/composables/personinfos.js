@@ -10,24 +10,30 @@ export default function usePersonInfos() {
     const provinces = ref([])
     const municipalities = ref([])
     const barangays = ref([])
-    const loading = ref(false)
- 
-    const errors = ref('')
-    const router = useRouter()
+    const loading = ref(false);
+    const genderFilter = ref('');
+    const employmentStatusFilter = ref('');
+    const summary = ref({});
+    const employees = ref([]);
+    const personInfoChartData = ref({});
+
+    const errors = ref('');
+    const router = useRouter();
 
     const toaster = createToaster({ 
         position: "top"
         // max:
-     });
+    });
  
     const getPersonInfos = async (page = 1, searchkey = "") => {
-        let response = await axios.get('/api/personinfos', { params: { page:page, searchkey:searchkey } })
+        let response = await axios.get('/api/personinfos', { params: { page:page, searchkey:searchkey, gender:genderFilter.value, employment_status:employmentStatusFilter.value } })
         // console.log(response.data)
         personinfos.value = response.data
     }
  
     const getPersonInfo = async (id) => {
         let response = await axios.get(`/api/personinfos/${id}`)
+        console.log(response.data.data)
         personinfo.value = response.data.data
         // console.log(response.data);
     }
@@ -102,7 +108,58 @@ export default function usePersonInfos() {
         barangays.value = response.data.data
         // console.log(response.data);
     }
- 
+
+    const getPersonInfoSummary = async () => {
+        let response = await axios.get('/api/personinfos/summary');
+        summary.value = response.data
+    }
+    
+    const getEmployees  = async (employmentType = null) => {
+        let response = await axios.get('/api/personinfos/get-employees', {
+            params: {
+                employment_type: employmentType
+            }
+        });
+        employees.value = response.data
+    }
+
+    const getPersonInfoChartData = async () => {
+        let response = await axios.get('/api/personinfos/get-chart-data');
+        personInfoChartData.value = response.data
+        console.log(response.data);
+    }
+
+    const computeAge = (date, year = null) => {
+        var today = year ? new Date('12-31-' + year) :  new Date();
+        var birthDate = new Date(date);
+        var age = today.getFullYear() - birthDate.getFullYear();
+        var m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
+    const setEmpStatusSeverityColor = (status) => {
+        if (status == 'new') {
+            return 'success';
+        } else if (status == 'renewed') {
+            return 'primary';
+        } else if (status == 'retired' || status == 'resigned') {
+            return 'secondary';
+        } else if (status == 'terminated') {
+            return 'danger';
+        }
+    }
+
+    const setEmpTypeSeverityColor = (type) => {
+        if (type == 'permanent') {
+            return 'primary';
+        } else if (type == 'cos') {
+            return 'warn';
+        }
+    }
+
     return {
         errors,
         personinfo,
@@ -111,6 +168,13 @@ export default function usePersonInfos() {
         municipalities,
         barangays,
         loading,
+        genderFilter,
+        employmentStatusFilter,
+        summary,
+        employees,
+        personInfoChartData,
+        getPersonInfoChartData,
+        getEmployees,
         getPersonInfo,
         getPersonInfos,
         storePersonInfo,
@@ -118,6 +182,10 @@ export default function usePersonInfos() {
         destroyPersonInfo,
         getProvinces,
         getMunicipalities,
-        getBarangays
+        getBarangays,
+        getPersonInfoSummary,
+        computeAge,
+        setEmpStatusSeverityColor,
+        setEmpTypeSeverityColor
     }
 }

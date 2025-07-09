@@ -32,6 +32,7 @@
                                 <div>
                                     <select name="frontline_service_type_id" id="frontline_service_type_id" onchange="getPermitTypes(this.value);" class="w-60 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                                         <option value="">-FRONTLINE SERVICE TYPE-</option>
+                                        <option value="0" {{($frontline_service_type_id==0) ? 'selected' : ''}}>All</option>
                                         @forelse($frontlineservicetypes as $frontlineservicetype)
                                         <option value="{{$frontlineservicetype->id}}" {{($frontlineservicetype->id==$frontline_service_type_id) ? 'selected' : ''}}>{{$frontlineservicetype->service}}</option>
                                         @empty
@@ -41,7 +42,7 @@
                               </div>
                               <div class="w-auto flex-none px-2">
                                 <div>
-                                    <select name="permit_type_id" id="permit_type_id" class="w-48 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                    <select name="permit_type_id" id="permit_type_id" class="w-48 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                         <option value="">-PERMIT TYPE-</option>
                                         @forelse($permittypes as $permittype)
                                         <option value="{{$permittype->id}}" {{($permittype->id==$permit_type_id) ? 'selected' : ''}}>{{$permittype->permit_type}}</option>
@@ -64,6 +65,55 @@
                         </button>
                     </div>
                 </div>
+
+                <br>
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+                    <div class="col-span-1">
+                        <div class="p-4 bg-white rounded-lg shadow h-full">
+                            <div class="">
+                                <h5 class="text-lg"><b>Frontline Service Types</b></h5>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                @foreach ($counts["frontline_service_type"] as $t)
+                                <div class="">
+                                    <h6 class="text-sm">{{ $t["name"] }} : <b>{{number_format($t["count"], 0)}}</b></h6>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-1">
+                        <div class="p-4 bg-white rounded-lg shadow h-full">
+                            <div class="">
+                                <h5 class="text-lg"><b>Permit Types</b></h5>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                @foreach ($counts["permit_type"] as $t)
+                                <div class="">
+                                    <h6 class="text-sm">{{ $t["name"] }} : <b>{{number_format($t["count"], 0)}}</b></h6>
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-span-1">
+                        <div class="p-4 bg-white rounded-lg shadow h-full">
+                            <div class="">
+                                <h5 class="text-lg"><b>Gender</b></h5>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 0">
+                                <div class="">
+                                    <h6 class="text-sm">Male : <b>{{number_format($counts["gender"]["male"], 0)}}</b></h6>
+                                </div>
+                                <div class="">
+                                    <h6 class="text-sm">Female : <b>{{number_format($counts["gender"]["female"], 0)}}</b></h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
                 <div class="min-w-full w-full py-6">
                     <table class="min-w-full w-full border-collapse border border-slate-400 divide-y divide-gray-200">
                         <thead>

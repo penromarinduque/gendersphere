@@ -53,7 +53,7 @@
                         <span style="text-transform: capitalize;">{{ item.gender }}</span>
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                       {{ item.age }}
+                       {{ item.birthdate ? computeAge(item.birthdate) : item.age }}
                     </td>
                     <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         <span style="text-transform: capitalize;">{{ item.barangay_name+', '+item.municipality_name+', '+item.province_name }}</span>
@@ -78,10 +78,12 @@
 // import useActivities from '../../composables/activities'
 import useActivityDetails from '../../composables/activitydetails'
 import useAttendees from '../../composables/attendees';
+import usePersonInfos from '../../composables/personinfos'
 import { onMounted } from 'vue'
 
 const { errors, attendees, getAttendees, destroyAttendee } = useAttendees()
 const { activitydetail, getActivityDetail } = useActivityDetails()
+const { computeAge } = usePersonInfos()
 
 const props = defineProps({
     id: {
@@ -97,6 +99,7 @@ const props = defineProps({
 // onMounted(() => getActivity(props.id))
 onMounted(() => getActivityDetail(props.id))
 onMounted(() => getAttendees(props.id))
+
 const removeAttendee = async (id, activity_id) => {
     // console.log(id);
     if (!window.confirm('You sure you want to remove this Attendee from the list?')) {

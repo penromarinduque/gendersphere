@@ -6,7 +6,7 @@
             <hr>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 <div class="pb-1">
-                    <label for="lastname" class="block text-sm font-medium text-gray-700">Lastname</label>
+                    <label for="lastname" class="block text-sm font-medium text-gray-700">Lastname <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="text" name="lastname" id="lastname"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="firstname" class="block text-sm font-medium text-gray-700">First Name</label>
+                    <label for="firstname" class="block text-sm font-medium text-gray-700">First Name <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="text" name="firstname" id="firstname"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -24,7 +24,7 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="middlename" class="block text-sm font-medium text-gray-700">Middle Name</label>
+                    <label for="middlename" class="block text-sm font-medium text-gray-700">Middle Name <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="text" name="middlename" id="middlename"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -45,7 +45,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div class="pb-1">
-                    <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+                    <label for="gender" class="block text-sm font-medium text-gray-700">Gender <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="gender" id="gender" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="personinfo.gender">
@@ -58,7 +58,7 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="civil_status" class="block text-sm font-medium text-gray-700">Civil Status</label>
+                    <label for="civil_status" class="block text-sm font-medium text-gray-700">Civil Status <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="civil_status" id="civil_status" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="personinfo.civil_status">
@@ -73,7 +73,7 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="birthdate" class="block text-md font-medium text-gray-700">Birthdate</label>
+                    <label for="birthdate" class="block text-md font-medium text-gray-700">Birthdate <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="date" name="birthdate" id="birthdate"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -118,7 +118,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div class="pb-1">
-                    <label for="province_id" class="block text-md font-medium text-gray-700">ADDRESS: Province</label>
+                    <label for="province_id" class="block text-md font-medium text-gray-700">ADDRESS: Province <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="province_id" id="province_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="personinfo.province_id" @change="getMunicipals($event)" >
@@ -129,7 +129,7 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="municipality_id" class="block text-md font-medium text-gray-700">Municipality</label>
+                    <label for="municipality_id" class="block text-md font-medium text-gray-700">Municipality <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="municipality_id" id="municipality_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="personinfo.municipality_id" @change="getMunicipalBrgys($event)">
@@ -140,7 +140,7 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="barangay_id" class="block text-md font-medium text-gray-700">Barangay</label>
+                    <label for="barangay_id" class="block text-md font-medium text-gray-700">Barangay <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="barangay_id" id="barangay_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="personinfo.barangay_id">
@@ -153,7 +153,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 <div class="pb-1">
-                    <label for="education_level" class="block text-md font-medium text-gray-700">Education Level</label>
+                    <label for="education_level" class="block text-md font-medium text-gray-700">Education Level <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="education_level" id="education_level" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="personinfo.education_level">
@@ -168,23 +168,23 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="contact_no" class="block text-md font-medium text-gray-700">Contact No.</label>
+                    <label for="contact_no" class="block text-md font-medium text-gray-700">Contact No. <span class="text-red-500">*</span></label>
                     <input type="text" name="contact_no" id="contact_no"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 v-model="personinfo.contact_no">
                     <span class="text-sm text-red-600" v-if="errors?.contact_no">{{ errors.contact_no[0] }}</span>
                 </div>
                 <div class="pb-1 col-span-2">
-                    <label for="email_add" class="block text-md font-medium text-gray-700">Email address</label>
+                    <label for="email_add" class="block text-md font-medium text-gray-700">Email address <span class="text-red-500">*</span></label>
                     <input type="text" name="email_add" id="email_add"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 v-model="personinfo.email_add">
                     <span class="text-sm text-red-600" v-if="errors?.email_add">{{ errors.email_add[0] }}</span>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div class="pb-1">
-                    <label for="employment_type" class="block text-md font-medium text-gray-700">Employment Type</label>
+                    <label for="employment_type" class="block text-md font-medium text-gray-700">Employment Type <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="employment_type" id="employment_type" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="personinfo.employment_type">
@@ -195,8 +195,23 @@
                         <span class="text-sm text-red-600" v-if="errors?.employment_type">{{ errors.employment_type[0] }}</span>
                     </div>
                 </div>
-                <div class="pb-1 col-span-2">
-                    <label for="position" class="block text-md font-medium text-gray-700">Position</label>
+                <div class="pb-1">
+                    <label for="employment_type" class="block text-md font-medium text-gray-700">Employment Status</label>
+                    <div class="mt-1">
+                        <select name="employment_status" id="employment_status" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        v-model="personinfo.employment_status">
+                            <option value="">-Select Employment Status-</option>
+                            <option value="new">New</option>
+                            <option value="renewed">Renewed</option>
+                            <option value="retired">Retired</option>
+                            <option value="resigned">Resigned</option>
+                            <option value="terminated">Terminated</option>
+                        </select>
+                        <span class="text-sm text-red-600" v-if="errors?.employment_status">{{ errors.employment_status[0] }}</span>
+                    </div>
+                </div>
+                <div class="pb-1 ">
+                    <label for="position" class="block text-md font-medium text-gray-700">Position <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="text" name="position" id="position" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 v-model="personinfo.position">
@@ -224,13 +239,14 @@ import Button from "primevue/button"
 import usePersonInfos from '@/composables/personinfos'
 import { onMounted, watch } from 'vue';
  
-const { errors, personinfo, provinces, municipalities, barangays, updatePersonInfo, getPersonInfo, getProvinces, getMunicipalities, getBarangays, loading } = usePersonInfos()
+const { errors, personinfo, provinces, municipalities, barangays, updatePersonInfo, getPersonInfo, getProvinces, getMunicipalities, getBarangays, loading } = usePersonInfos();
+
 const props = defineProps({
     id: {
         required: true,
         type: String
     }
-})
+});
 
 onMounted(() => getPersonInfo(props.id))
 onMounted(getProvinces)

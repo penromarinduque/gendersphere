@@ -15,7 +15,7 @@
         <form class="space-y-6" @submit.prevent="editPlanBudget" autocomplete="off">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 gap-4">
                 <div class="pb-1">
-                    <label for="year" class="block text-md font-medium text-gray-700">Year Covered</label>
+                    <label for="year" class="block text-md font-medium text-gray-700">Year Covered <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="year" id="year" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="text-transform: capitalize;" v-model="planbudget.year" @change="getGenderIssues($event)">
                             <option value="">-Select Year-</option>
@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="focus" class="block text-md font-medium text-gray-700">Focus</label>
+                    <label for="focus" class="block text-md font-medium text-gray-700">Focus <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="focus" id="focus" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="planbudget.focus">
@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="pb-1 col-span-3">
-                    <label for="goal_id" class="block text-md font-medium text-gray-700">Goal</label>
+                    <label for="goal_id" class="block text-md font-medium text-gray-700">Goal <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="goal_id" id="goal_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="planbudget.goal_id">
@@ -50,7 +50,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
                 <div class="pb-1 col-span-3">
-                    <label for="gender_issue_id" class="block text-md font-medium text-gray-700">Gender Issue/GAD Mandate</label>
+                    <label for="gender_issue_id" class="block text-md font-medium text-gray-700">Gender Issue/GAD Mandate <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="gender_issue_id" id="gender_issue_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="planbudget.gender_issue_id">
@@ -76,7 +76,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
                 <div class="pb-1">
-                    <label for="objective_id" class="block text-md font-medium text-gray-700">GAD Result Statement/ GAD Objective</label>
+                    <label for="objective_id" class="block text-md font-medium text-gray-700">GAD Result Statement/ GAD Objective <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="objective_id" id="objective_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="planbudget.objective_id">
@@ -89,7 +89,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
                 <div class="pb-1">
-                    <label for="relevant_org" class="block text-md font-medium text-gray-700">Relevant Organization MFO/PAP or PPA</label>
+                    <label for="relevant_org" class="block text-md font-medium text-gray-700">Relevant Organization MFO/PAP or PPA <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="text" name="relevant_org" id="relevant_org" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 v-model="planbudget.relevant_org">

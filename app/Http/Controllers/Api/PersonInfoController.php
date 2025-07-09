@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\PersonInfo;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PersonInfoController extends Controller
 {
@@ -30,6 +31,12 @@ class PersonInfoController extends Controller
                     ->orWhere('firstname','LIKE',"%{$searchkey}%")
                     ->orWhere('birthdate','LIKE',"%{$searchkey}%");
             });
+        }
+        if($request->gender && $request->gender != 'all'){
+            $personinfo_qry->where('person_infos.gender', $request->gender);
+        }
+        if($request->employment_status && $request->employment_status != 'all'){
+            $personinfo_qry->where('person_infos.employment_type', $request->employment_status);
         }
         $personinfos = $personinfo_qry->orderBy('person_infos.lastname', 'ASC')
             ->paginate(15)
@@ -101,6 +108,8 @@ class PersonInfoController extends Controller
             'municipality_id' => ['required'],
             'barangay_id' => ['required'],
             'education_level' => [$education_level_nullable],
+            'employment_status' => ['required', 'in:new,renewed,resigned,terminated,retired'],
+            'employment_type' => ['required'],
             'contact_no' => ['nullable', 'max:12'],
             'email_add' => [$email_add_nullable, 'string', 'lowercase', 'email', 'max:150'],
             'position' => [$position_nullable, 'string']
@@ -123,6 +132,8 @@ class PersonInfoController extends Controller
             'barangay_id' => $request->barangay_id,
             'education_level' => $education_level,
             'contact_no' => $request->contact_no,
+            'employment_status' => $request->employment_status,
+            'employment_type' => $request->employment_type,
             'email_add' => $email_add,
             'position' => $position,
             'organization' => $organization,
@@ -168,5 +179,66 @@ class PersonInfoController extends Controller
             ->get();
         // $personinfos->appends(['searchkey' => $searchkey]);
         return PersonInfoResource::collection($personinfos);
+    }
+
+    public function summary(Request $request){
+        return (object)[
+            "total_employees" => PersonInfo::query()->where("person_type", 1)->count(),
+            "total_cos" => PersonInfo::query()->where('employment_type', 'cos')->where("person_type", 1)->count(),
+            "total_permanents" => PersonInfo::query()->where('employment_type', 'permanent')->where("person_type", 1)->count(),
+            "total_males" => PersonInfo::query()->where('gender', 'male')->where("person_type", 1)->count(),
+            "total_females" => PersonInfo::query()->where('gender', 'female')->where("person_type", 1)->count(),
+            "total_lgbtqiaplus" => PersonInfo::query()->where('gender', 'lgbtqia+')->where("person_type", 1)->count(),
+        ];
+    }
+
+    public function getEmployees(Request $request){
+        $query = PersonInfo::query()->select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
+            ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
+            ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
+            ->join('provinces', 'provinces.id', 'municipalities.province_id')
+            ->where("person_type", 1);
+
+        if($request->has('employment_type') && $request->employment_type != 'all'){
+            $query->where("employment_type", $request->employment_type);
+        }
+
+        return $query->get();
+    }
+
+    public function getChartData(Request $request){
+        $employees_by_gender = PersonInfo::query()
+                        ->select('gender as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->groupBy('gender')
+                        ->get()
+                        ->toArray();
+        $permanent_by_gender = PersonInfo::query()
+                        ->select('gender as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->where('employment_type', 'permanent')
+                        ->groupBy('gender')
+                        ->get()
+                        ->toArray();
+        $cos_by_gender = PersonInfo::query()
+                        ->select('gender as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->where('employment_type', 'cos')
+                        ->groupBy('gender')
+                        ->get()
+                        ->toArray();
+        $employees_by_emp_type = PersonInfo::query()
+                        ->select('employment_type as name', DB::raw('COUNT(*) as total'))
+                        ->where('person_type', 1)
+                        ->groupBy('employment_type')
+                        ->get()
+                        ->toArray();
+                        
+        return (object)[
+            'employees_by_gender' => $employees_by_gender,
+            'employees_by_emp_type' => $employees_by_emp_type,
+            'permanent_by_gender' => $permanent_by_gender,
+            'cos_by_gender' => $cos_by_gender,
+        ];
     }
 }

@@ -14,7 +14,7 @@
         <form class="space-y-6" @submit.prevent="editFrontlineService">
             <div class="grid grid-cols-1 md:grid-cols-5 lg:grid-cols-5 xl:grid-cols-5 gap-4">
                 <div class="pb-1">
-                    <label for="permit_type_id" class="block text-md font-medium text-gray-700">Permit Type</label>
+                    <label for="permit_type_id" class="block text-md font-medium text-gray-700">Permit Type <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="permit_type_id" id="permit_type_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" style="text-transform: 'capitalize';" v-model="frontlineservice.permit_type_id" >
                             <option value="">-Select Permit Type-</option>
@@ -24,14 +24,14 @@
                     </div>
                 </div>
                 <div class="pb-1 col-span-1">
-                    <label for="permit_no" class="block text-md font-medium text-gray-700">Permit No.</label>
+                    <label for="permit_no" class="block text-md font-medium text-gray-700">Permit No. <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="text" name="permit_no" id="permit_no" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="Permit No." v-model="frontlineservice.permit_no" >
                         <span class="text-sm text-red-600" v-if="errors?.permit_no ">{{ errors.permit_no[0] }}</span>
                     </div>
                 </div>
                 <div class="pb-1 col-span-3">
-                    <label for="client_name" class="block text-md font-medium text-gray-700">Name of Client</label>
+                    <label for="client_name" class="block text-md font-medium text-gray-700">Name of Client <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="text" name="client_name" id="client_name" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" placeholder="Complete Name of Client/ Representative" v-model="frontlineservice.client_name" >
                         <span class="text-sm text-red-600" v-if="errors?.client_name ">{{ errors.client_name[0] }}</span>
@@ -40,7 +40,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div class="pb-1">
-                    <label for="gender" class="block text-md font-medium text-gray-700">Gender</label>
+                    <label for="gender" class="block text-md font-medium text-gray-700">Gender <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="gender" id="gender" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="frontlineservice.gender">
                             <option value="">-Select Gender-</option>
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="date_applied" class="block text-md font-medium text-gray-700">Date Applied/Received</label>
+                    <label for="date_applied" class="block text-md font-medium text-gray-700">Date Applied/Received <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="date" name="date_applied" id="date_applied"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -61,7 +61,7 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="date_released" class="block text-md font-medium text-gray-700">Date Approved/Released</label>
+                    <label for="date_released" class="block text-md font-medium text-gray-700">Date Approved/Released <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="date" name="date_released" id="date_released"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -73,7 +73,7 @@
             <h5 class="pb-0">Address:</h5>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div class="pb-1">
-                    <label for="municipality_id" class="block text-md font-medium text-gray-700">Municipality</label>
+                    <label for="municipality_id" class="block text-md font-medium text-gray-700">Municipality <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="municipality_id" id="municipality_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="frontlineservice.municipality_id" @change="getMunicipalBrgys($event)">
@@ -84,7 +84,7 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="barangay_id" class="block text-md font-medium text-gray-700">Barangay</label>
+                    <label for="barangay_id" class="block text-md font-medium text-gray-700">Barangay <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="barangay_id" id="barangay_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="frontlineservice.barangay_id">
