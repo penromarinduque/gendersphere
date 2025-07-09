@@ -105,6 +105,7 @@ export default function usePersonInfos() {
 
     const getBarangays = async (id) => {
         let response = await axios.get(`/api/barangays/${id}`)
+        console.log(response.data.data);
         barangays.value = response.data.data
         // console.log(response.data);
     }

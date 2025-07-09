@@ -33,7 +33,7 @@ class BarangayController extends Controller
     {
         $barangays = Barangay::where('municipality_id', $id)->orderBy('barangay_name','ASC')->get();
 
-        return $barangays;
+        return BarangayResource::collection($barangays);
     }
 
     /**

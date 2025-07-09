@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('office_name', 100)->unique();
             $table->enum('office_type', ['region', 'penro', 'cenro']);
             $table->foreignId('region_id')->nullable();
-            $table->foreignId('baranggay_id');
+            $table->foreignId('barangay_id');
             $table->timestamps();
         });
     }
