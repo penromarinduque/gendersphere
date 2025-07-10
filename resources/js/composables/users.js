@@ -2,7 +2,8 @@ import { ref } from 'vue'
 // import axios from 'axios'
 import axios from '../utils/axios'
 import { useRouter } from 'vue-router'
-import { createToaster } from '@meforma/vue-toaster'
+import { createToaster } from '@meforma/vue-toaster';
+import { useToast } from 'primevue/usetoast'
 
 export default function useUsers() {
     const user = ref([]);
@@ -19,6 +20,7 @@ export default function useUsers() {
         position: "top"
         // max:
      });
+     const toast = useToast();
 
     const getYearlist = async () => {
         let response = await axios.get('/api/yearlist')
@@ -80,9 +82,20 @@ export default function useUsers() {
     const destroyUser = async (id) => {
         try {
             await axios.delete(`/api/users/${id}`)
-            toaster.info(`Deleted!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'User successfully deleted',
+                life: 3000
+            })
         } catch (e) {
             console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
         }
         
     }

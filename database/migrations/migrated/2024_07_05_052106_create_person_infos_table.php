@@ -22,8 +22,8 @@ return new class extends Migration
             $table->char('civil_status',50)->nullable();
             $table->date('birthdate',30)->nullable();
             $table->tinyInteger('age')->default(0);
-            $table->double('height', 8,2)->default(0);
-            $table->double('weight', 8,2)->default(0);
+            $table->double('height', 8,2)->default(0)->nullable();
+            $table->double('weight', 8,2)->default(0)->nullable();
             $table->char('blood_type',20)->nullable();
             $table->integer('barangay_id')->default(0);
             $table->integer('municipality_id')->default(0);

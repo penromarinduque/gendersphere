@@ -18,7 +18,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return UserResource::collection(User::where('usertype','<>',1)->get());
+        return UserResource::collection(User::where('usertype','<>',1)->with('role')->get());
     }
 
     /**

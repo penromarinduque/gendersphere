@@ -1,5 +1,5 @@
 <template>
-    <App />
+    <!-- <App /> -->
     <h1 class="text-2xl font-extrabold">Office List</h1>
     <div class="grid justify-items-end mb-3 ">
         <Button asChild label="Create" icon="pi pi-plus" class="p-button-success" v-slot="props" size="small">
@@ -38,6 +38,7 @@
                 <Button :loading="loading" size="small" label="Delete" icon="pi pi-trash" severity="danger" variant="outlined" @click="onDelete($event, slotProps.data.id)"></Button>
             </template>
         </Column>
+        <template #empty> No offices found. </template>
     </DataTable>
 </template>
 
@@ -48,7 +49,6 @@
     import ColumnGroup from 'primevue/columngroup';   // optional
     import Row from 'primevue/row';                   // optional
     import Tag from 'primevue/tag';
-    import ConfirmPopup from "primevue/confirmpopup";
     import { useConfirm } from "primevue/useconfirm";
     import { useToast } from 'primevue/usetoast';
 
@@ -78,7 +78,7 @@
                 outlined: true
             },
             acceptProps: {
-                label: 'Save'
+                label: 'Continue'
             },
             accept: async () => {
                 loading.value = true;

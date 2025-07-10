@@ -20,10 +20,20 @@ export default function useOffices () {
         console.log(data);
         try {
             const response = await axios.post('/api/offices', data);
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Office successfully saved',
+                life: 3000
+            });
             router.push({ name: 'offices.index' });
         } catch (e) {
-            toaster.error(e.response.data.message);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             console.log(e);
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
@@ -37,11 +47,20 @@ export default function useOffices () {
         console.log(data);
         try {
             const response = await axios.put('/api/offices/update', data);
-            console.log(response);
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Office successfully updated',
+                life: 3000
+            });
             router.push({ name: 'offices.index' });
         } catch (e) {
-            toaster.error(e.response.data.message);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             console.log(e);
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {

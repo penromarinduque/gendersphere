@@ -9,7 +9,7 @@
     </x-slot>
 
     <div class="py-6">
-        <router-view />
+        <app />
     </div>
 
     {{-- <div class="py-6">

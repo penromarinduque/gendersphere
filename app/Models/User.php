@@ -51,4 +51,9 @@ class User extends Authenticatable implements Auditable
     {   
         $arr_type = [1 => 'Administrator', 2 => 'Encoder', 3 => 'Viewer'];
     }
+    
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
 }

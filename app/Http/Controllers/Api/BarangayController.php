@@ -33,7 +33,7 @@ class BarangayController extends Controller
     {
         $barangays = Barangay::where('municipality_id', $id)->orderBy('barangay_name','ASC')->get();
 
-        return BarangayResource::collection($barangays);
+        return $barangays;
     }
 
     /**
@@ -44,15 +44,25 @@ class BarangayController extends Controller
         // $barangays = Barangay::where('barangay_name','LIKE', $name)->with(['municipality', 'municipality.province'])->get();
 
         $barangays = Barangay::with(['municipality.province'])
-                ->where('barangay_name', 'LIKE', '%' . $name . '%')
-                ->orWhereHas('municipality', function ($q) use ($name) {
-                    $q->where('municipality_name', 'LIKE', '%' . $name . '%')
-                    ->orWhereHas('province', function ($q) use ($name) {
-                        $q->where('province_name', 'LIKE', '%' . $name . '%');
-                    });
-                })
-                ->limit(100)
-                ->get();
+                    ->where('barangay_name', 'LIKE', '%' . $name . '%')
+                    ->orWhereHas('municipality', function ($q) use ($name) {
+                        $q->where('municipality_name', 'LIKE', '%' . $name . '%')
+                        ->orWhereHas('province', function ($q) use ($name) {
+                            $q->where('province_name', 'LIKE', '%' . $name . '%');
+                        });
+                    })
+                    ->limit(100)
+                    ->get();
+        // $barangays = Barangay::with(['municipality.province'])
+        //         ->where('barangay_name', 'LIKE', '%' . $name . '%')
+        //         ->orWhereHas('municipality', function ($q) use ($name) {
+        //             $q->where('municipality_name', 'LIKE', '%' . $name . '%')
+        //             ->orWhereHas('province', function ($q) use ($name) {
+        //                 $q->where('province_name', 'LIKE', '%' . $name . '%');
+        //             });
+        //         })
+        //         ->limit(100)
+        //         ->get();
 
         return BarangayResource::collection($barangays);
     }

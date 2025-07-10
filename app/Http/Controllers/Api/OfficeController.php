@@ -40,7 +40,7 @@ class OfficeController extends Controller
                 'barangay_id' => $request->barangay_id,
                 'parent_id' => $request->office_type == 'region' ? null : $request->parent_id,
                 'office_name' => $request->office_name
-            ]);
+            ])->exists();
 
         if($officeExists) {
             return response()->json([

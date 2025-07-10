@@ -90,9 +90,13 @@ Route::middleware('auth')->group(function () {
     })->where('any', '.*')->name('maintenance.committeepositions');
 
     // Maintenance - Goals
+    // Route::get('/maintenance/goals/{any?}', function () {
+    //     return view('maintenance.goals');
+    //     Route::view('/maintenance/goals/{any}', 'maintenance.goals')->where('any', '.*');
+    // })->where('any', '.*')->name('maintenance.goals');
+
     Route::get('/maintenance/goals/{any?}', function () {
         return view('maintenance.goals');
-        Route::view('/maintenance/goals/{any}', 'maintenance.goals')->where('any', '.*');
     })->where('any', '.*')->name('maintenance.goals');
 
     // Maintenance - Gender Issues
