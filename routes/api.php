@@ -26,6 +26,7 @@ use App\Http\Controllers\Api\EmployeeSalaryController;
 use App\Http\Controllers\Api\OfficeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RegionController;
+use App\Http\Controllers\Api\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,6 +69,7 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::prefix('users')->group(function () {
         Route::get('get-auth', [UserController::class, 'getAuth']);
+        Route::post('store-admin', [UserController::class, 'storeAdmin']);
     });
 
     Route::prefix('regions')->group(function () {
@@ -105,6 +107,7 @@ Route::middleware('auth:sanctum')->group( function () {
         'permittypes' => PermitTypeController::class,
         'employeesalaries' => EmployeeSalaryController::class,
         'offices' => OfficeController::class,
+        'roles' => RoleController::class,
     ]);
     // PersonInfo
     Route::prefix('personinfos')->group(function () {

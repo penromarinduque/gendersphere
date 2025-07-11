@@ -25,6 +25,8 @@ class User extends Authenticatable implements Auditable
         'password',
         'usertype',
         'is_active',
+        'office_id',
+        'usertype'
     ];
 
     /**
@@ -52,8 +54,13 @@ class User extends Authenticatable implements Auditable
         $arr_type = [1 => 'Administrator', 2 => 'Encoder', 3 => 'Viewer'];
     }
     
-    public function role()
+    public function roles()
     {
-        return $this->belongsTo(Role::class);
+        return $this->hasMany(Role::class, 'user_id', 'id');
+    }
+
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'office_id', 'id');
     }
 }

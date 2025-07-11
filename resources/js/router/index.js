@@ -57,6 +57,7 @@ import EmployeeList from "../components/reports/EmployeeList.vue";
 import OfficesIndex from "../components/offices/OfficesIndex.vue";
 import OfficesCreate from "../components/offices/OfficesCreate.vue";
 import OfficesEdit from "../components/offices/OfficesEdit.vue";
+import AdminCreate from "../components/users/AdminCreate.vue";
 
 const routes = [
     // Dashboard
@@ -344,6 +345,14 @@ const routes = [
         }
     },
     {
+        path: '/users/create-admin',
+        name: 'users.create-admin',
+        component: AdminCreate,
+        meta: {
+            title: 'Add Admin User'
+        }
+    },
+    {
         path: '/users/:id/edit',
         name: 'users.edit',
         component: UsersEdit,
@@ -580,6 +589,8 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     document.title = `${to.meta.title} | GenderSphere`;
+
+    
     next();
 });
 

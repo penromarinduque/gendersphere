@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -27,7 +28,7 @@ class RoleController extends Controller
             'role' => ['required', Rule::in(['admin', 'viewer', 'encoder'])],
             'user_id' => ['required', 'exists:users,id'],
             'office_id' => ['required', 'exists:offices,id'],
-        ], [
+        ],[], [
             'user_id' => 'user',
             'office_id' => 'office'
         ]);
@@ -42,6 +43,18 @@ class RoleController extends Controller
             return response()->json([
                 'message' => 'Role already exists'
             ], 409);
+        }
+
+        $user = User::where('id', $request->user_id)->first();
+        
+        if(!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        if($user->office_id != $request->office_id) {
+            
         }
 
         $role = Role::create([
@@ -72,8 +85,13 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Role $role)
+    public function destroy(Request $request, $id)
     {
         //
+        Role::where('id', $id)->delete();
+
+        return response()->json([
+            'message' => 'Role deleted successfully'
+        ], 204);
     }
 }

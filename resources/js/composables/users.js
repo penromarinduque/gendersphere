@@ -4,6 +4,7 @@ import axios from '../utils/axios'
 import { useRouter } from 'vue-router'
 import { createToaster } from '@meforma/vue-toaster';
 import { useToast } from 'primevue/usetoast'
+import { error } from 'jquery';
 
 export default function useUsers() {
     const user = ref([]);
@@ -61,6 +62,35 @@ export default function useUsers() {
             }
         }
  
+    }
+
+    const storeAdmin = async (data) => {
+        errors.value = ''
+        try {
+            await axios.post('/api/users/store-admin', data)
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'User successfully saved',
+                life: 3000
+            })
+            await router.push({ name: 'users.index' })
+            return true;
+        } catch (e) {
+            console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
+            if (e.response.status === 422) {
+                for (const key in e.response.data.errors) {
+                    errors.value = e.response.data.errors
+                }
+            }
+            return false;
+        }
     }
 
     const updateUser = async (id) => {
@@ -143,6 +173,7 @@ export default function useUsers() {
         generatePassword,
         getPersonInfos,
         getPersonEmail,
-        getAuthenticatedUser
+        getAuthenticatedUser,
+        storeAdmin
     }
 }

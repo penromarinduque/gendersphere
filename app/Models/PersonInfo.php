@@ -12,7 +12,7 @@ class PersonInfo extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['user_id', 'lastname', 'firstname', 'middlename', 'extname', 'gender', 'civil_status', 'birthdate', 'age', 'height', 'weight', 'blood_type', 'barangay_id', 'municipality_id', 'province_id', 'address_full', 'education_level', 'contact_no', 'email_add', 'employment_type', 'employment_status', 'position', 'organization', 'person_type'];
+    protected $fillable = ['user_id', 'lastname', 'firstname', 'middlename', 'extname', 'gender', 'civil_status', 'birthdate', 'age', 'height', 'weight', 'blood_type', 'barangay_id', 'municipality_id', 'province_id', 'address_full', 'education_level', 'contact_no', 'email_add', 'employment_type', 'employment_status', 'position', 'organization', 'person_type', 'office_id'];
 
     public function educationalLevel($lvl = null)
     {

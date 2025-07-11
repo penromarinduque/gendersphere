@@ -7,9 +7,12 @@ use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Models\PersonInfo;
+use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -18,7 +21,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return UserResource::collection(User::where('usertype','<>',1)->with('role')->get());
+        return UserResource::collection(User::where('usertype','<>',1)->with('office', 'roles.office')->get());
     }
 
     /**
@@ -50,7 +53,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'usertype' => $request->usertype,
-            'is_active' => 1,
+            'is_active' => 1
         ]);
 
         PersonInfo::find($request->person_info_id)->update(['user_id' => $user->id]);
@@ -58,6 +61,54 @@ class UserController extends Controller
         // $user = User::create($request->validated());
 
         return new UserResource($user);
+    }
+
+    public function storeAdmin(Request $request)
+    {
+        $request->validate([
+            'first_name' => ['required', 'string', 'max:150'],
+            'last_name' => ['required', 'string', 'max:150'],
+            'middle_name' => ['required', 'string', 'max:150'],
+            'gender' => ['required', Rule::in(['male', 'female', 'lgbtqia+'])],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'office_id' => ['required', 'exists:offices,id'],
+            'password' => ['required'],
+        ],
+        [],
+        [
+            'office_id' => 'office'
+        ]);
+
+        return DB::transaction(function () use ($request) {
+            $name = $request->last_name.', '.$request->first_name.' '.$request->middle_name;    
+            $user = User::create([
+                'name' => $name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'usertype' => $request->usertype,
+                'is_active' => 1,
+                'usertype' => 3,
+                'office_id' => $request->office_id
+            ]);
+
+            $personInfo = PersonInfo::create([
+                'user_id' => $user->id,
+                'lastname' => $request->last_name,
+                'firstname' => $request->first_name,
+                'middlename' => $request->middle_name,
+                'gender' => $request->gender,
+                'person_type' => 1,
+                'office_id' => $request->office_id
+            ]);
+
+            Role::create([
+                'user_id' => $user->id,
+                'office_id' => $request->office_id,
+                'role_type' => 'admin'
+            ]);
+
+            return new UserResource($user);
+        });
     }
 
     /**
@@ -123,4 +174,9 @@ class UserController extends Controller
     {
         return auth()->user();
     }
+
+    // public function getRoles($id)
+    // {
+        
+    // }
 }
