@@ -58,6 +58,7 @@ import OfficesIndex from "../components/offices/OfficesIndex.vue";
 import OfficesCreate from "../components/offices/OfficesCreate.vue";
 import OfficesEdit from "../components/offices/OfficesEdit.vue";
 import AdminCreate from "../components/users/AdminCreate.vue";
+import useAuth from "../composables/auth";
 
 const routes = [
     // Dashboard
@@ -587,10 +588,14 @@ const router = createRouter({
     routes
 });
 
-router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} | GenderSphere`;
+router.beforeEach(async (to, from, next) => {
 
-    
+    const auth = useAuth();
+
+    document.title = `${to.meta.title ? to.meta.title : ''} | GenderSphere`;
+
+    await auth.getUser();
+
     next();
 });
 

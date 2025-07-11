@@ -8,10 +8,13 @@ export default function useAuth() {
 
     const getUser = async () => {
         let response = await axios.get('/api/auth/user')
-        return response.data.data
+        user.value = response.data.data;
+        console.log("user auth : ", response.data.data)
+        return response.data.data;
     }   
 
     return {
-        getUser
+        getUser,
+        user
     }
 }

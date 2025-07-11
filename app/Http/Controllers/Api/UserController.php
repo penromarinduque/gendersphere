@@ -10,6 +10,7 @@ use App\Models\PersonInfo;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -65,6 +66,8 @@ class UserController extends Controller
 
     public function storeAdmin(Request $request)
     {
+        Gate::authorize('createAdmin', Role::class);
+        
         $request->validate([
             'first_name' => ['required', 'string', 'max:150'],
             'last_name' => ['required', 'string', 'max:150'],

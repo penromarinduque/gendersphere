@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\GadActivityController;
 use App\Http\Controllers\Api\ActivityDetailController;
 use App\Http\Controllers\Api\AttendeeController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProvinceController;
 use App\Http\Controllers\Api\MunicipalityController;
 use App\Http\Controllers\Api\BarangayController;
@@ -82,6 +83,10 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::prefix('offices')->group(function () {
         Route::get('{id}', [OfficeController::class, 'findById']);
+    });
+
+    Route::prefix('auth')->group(function () {
+        Route::get('user', [AuthController::class, 'user']);
     });
 
     Route::apiResources([
