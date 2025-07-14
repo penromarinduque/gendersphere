@@ -20,9 +20,15 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return UserResource::collection(User::where('usertype','<>',1)->with('office', 'roles.office')->get());
+        $query = User::query();
+        $query->where('usertype','<>', 1);
+        if($request->has('office_id')) {
+            $query->where('office_id', $request->office_id);
+        }
+        $query->with('office', 'roles.office');
+        return UserResource::collection($query->get());
     }
 
     /**

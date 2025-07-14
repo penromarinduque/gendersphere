@@ -89,6 +89,10 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('user', [AuthController::class, 'user']);
     });
 
+    Route::prefix('auth')->group(function () {
+       Route::get('can-access', [AuthController::class, 'canAccess']); 
+    });
+
     Route::apiResources([
         'personinfos' => PersonInfoController::class,
         'users' => UserController::class,

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\BarangayController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Models\ActivityDetail;
+use App\Models\Office;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -133,7 +134,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/maintenance/offices/{any?}', function () {
         return view('maintenance.offices');
         Route::view('/maintenance/offices/{any}', 'maintenance.offices')->where('any', '.*');
-    })->where('any', '.*')->name('maintenance.offices');
+    })->where('any', '.*')->name('maintenance.offices')->can('viewAny', Office::class);
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

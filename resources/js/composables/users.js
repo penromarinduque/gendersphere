@@ -29,8 +29,10 @@ export default function useUsers() {
         yearlist.value = response.data
     }
 
-    const getUsers = async () => {
-        let response = await axios.get('/api/users')
+    const getUsers = async (data = {}) => {
+        let response = await axios.get('/api/users', {
+            params: data
+        })
         users.value = response.data.data
     }
 

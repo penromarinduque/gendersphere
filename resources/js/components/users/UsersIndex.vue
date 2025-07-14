@@ -1,6 +1,6 @@
 <template>
     <div class="flex mb-4 place-content-end gap-2">
-        <Button asChild label="Create"  v-slot="props" size="small" variant="outlined">
+        <Button asChild label="Create"  v-slot="props" size="small" variant="outlined" v-if="can['createAdmin_user']">
             <router-link :to="{ name: 'users.create-admin' }" :class="props.class">Create Admin</router-link>
         </Button>
         <Button asChild label="Create"  v-slot="props" size="small">
@@ -47,9 +47,12 @@
     import AddRoleDialog from './AddRoleDialog.vue';
     import ViewRolesDrawer from './ViewRolesDrawer.vue';
     import Tag from "primevue/tag";
+    import useAuth from '../../composables/auth';
 
     const { users, user, getUsers, destroyUser } = useUsers();
+    const { user: authUser, getUser } = useAuth();
     const { offices, getAllOffices } = useOffices();
+    const { can, canAccess } = useAuth();
 
     
     const viewRolesVisible = ref(false);
@@ -82,8 +85,11 @@
     // We get the companies immediately
     onMounted(async () => {
         loading.value = true;
-        await getUsers();
-        console.log(users.value)
+        await getUser();
+        console.log("authenthicated user", authUser.value.office_id)
+        await getUsers(authUser.value.office_id ? { office_id: authUser.value.office_id } : {});
+        await canAccess('createAdmin', 'user');
+        console.log(can.value)
         getAllOffices();
         loading.value = false;
     });

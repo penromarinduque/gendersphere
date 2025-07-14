@@ -93,9 +93,11 @@
                             </x-slot>
 
                             <x-slot name="content">
-                                <x-dropdown-link :href="route('maintenance.offices')">
-                                    {{ __('Offices') }}
-                                </x-dropdown-link>
+                                @can('viewAny', App\Models\Office::class)
+                                    <x-dropdown-link :href="route('maintenance.offices')">
+                                        {{ __('Offices') }}
+                                    </x-dropdown-link>
+                                @endcan
                                 <x-dropdown-link :href="route('users')">
                                     {{ __('Users') }}
                                 </x-dropdown-link>
