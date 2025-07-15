@@ -43,16 +43,19 @@
                     </td>
                 </tr>
             </template>
+            <template v-if="causegenderissues.length == 0"><tr><td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found</td></tr></template>
             </tbody>
         </table>
     </div>
 </template>
 
 <script setup>
-import useCauseGenderIssues from '../../composables/causegenderissues'
+import useCauseGenderIssues from '../../composables/causegenderissues';
+import useAuth from '../../composables/auth';
 import { onMounted } from 'vue'
 
-const { causegenderissues, getCauseGenderIssues, destroyCauseGenderIssue } = useCauseGenderIssues()
+const { causegenderissues, getCauseGenderIssues, destroyCauseGenderIssue } = useCauseGenderIssues();
+const { user:authUser, getUser } = useAuth();
 
 const deleteCauseGenderIsssue = async (id) => {
     // console.log(id);
@@ -60,9 +63,16 @@ const deleteCauseGenderIsssue = async (id) => {
         return
     }
     await destroyCauseGenderIssue(id)
-    await getCauseGenderIssues()
+    await getCauseGenderIssues({
+        office_id: authUser.value.office_id
+    })
 }
 
 // We get the companies immediately
-onMounted(getCauseGenderIssues)
+onMounted(async () => {
+    await getUser();
+    await getCauseGenderIssues({
+        office_id: authUser.value.office_id
+    })
+})
 </script>

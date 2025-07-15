@@ -11,5 +11,5 @@ class CommitteePosition extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['id', 'position_title', 'is_active_position'];
+    protected $fillable = ['id', 'position_title', 'is_active_position', 'office_id'];
 }

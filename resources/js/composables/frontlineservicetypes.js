@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from '../utils/axios'
 import { useRouter } from 'vue-router'
 import { createToaster } from '@meforma/vue-toaster'
+import { useToast } from 'primevue/usetoast'
 
 export default function useFrontlineServiceTypes() {
     const frontlineservicetype = ref([])
@@ -10,7 +11,7 @@ export default function useFrontlineServiceTypes() {
 
     const errors = ref('')
     const router = useRouter()
-
+    const toast = useToast();
     const toaster = createToaster({ 
         position: "top"
         // max:
@@ -32,9 +33,19 @@ export default function useFrontlineServiceTypes() {
         try {
             await axios.post('/api/frontlineservicetypes', data)
             await router.push({ name: 'frontlineservicetypes.index' })
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Frontline Service Type successfully saved',
+                life: 3000
+            })
         } catch (e) {
-            console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -49,9 +60,19 @@ export default function useFrontlineServiceTypes() {
         try {
             await axios.patch(`/api/frontlineservicetypes/${id}`, frontlineservicetype.value)
             await router.push({ name: 'frontlineservicetypes.index' })
-            toaster.success(`Successfully Updated!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Frontline Service Type successfully updated',
+                life: 3000
+            })
         } catch (e) {
-            console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -63,10 +84,20 @@ export default function useFrontlineServiceTypes() {
     const destroyFrontlineServiceType = async (id) => {
         try {
             await axios.delete(`/api/frontlineservicetypes/${id}`)
-            toaster.info(`Deleted!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Frontline Service Type successfully deleted',
+                life: 3000
+            })
         } catch (e) {
             // console.log(e);
-            toaster.info(`Oops! Something went wrong please try again.`);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
         }
     }
 
@@ -78,6 +109,6 @@ export default function useFrontlineServiceTypes() {
         getFrontlineServiceTypes,
         storeFrontlineServiceType,
         updateFrontlineServiceType,
-        destroyFrontlineServiceType,
+        destroyFrontlineServiceType
     }
 }

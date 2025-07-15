@@ -17,8 +17,10 @@ export default function useCommitteePositions() {
         // max:
     });
 
-    const getCommitteePositions = async () => {
-        let response = await axios.get('/api/committeepositions')
+    const getCommitteePositions = async (query) => {
+        let response = await axios.get('/api/committeepositions', {
+            params: query
+        })
         committeepositions.value = response.data.data
     }
  

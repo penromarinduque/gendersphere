@@ -24,8 +24,8 @@ export default function useCommittees() {
         // max:
     });
 
-    const getCommittees = async (page = 1, year = null, emp_status = 'all', gender = 'all') => {
-        let response = await axios.get('/api/committees', {params: { page:page, year:year, employment_status:emp_status, gender:gender } });
+    const getCommittees = async (page = 1, year = null, emp_status = 'all', gender = 'all', office_id = null) => {
+        let response = await axios.get('/api/committees', {params: { page:page, year:year, employment_status:emp_status, gender:gender, office_id:office_id } });
         committees.value = response.data;
         await getCommitteeSummary();
     }

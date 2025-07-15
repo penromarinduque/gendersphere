@@ -16,8 +16,10 @@ export default function useGoals(){
         // max:
     });
 
-    const getGoals = async () => {
-        let response = await axios.get('/api/goals')
+    const getGoals = async (query = {}) => {
+        let response = await axios.get('/api/goals', {
+            params: query
+        })
         goals.value = response.data.data
     }
  

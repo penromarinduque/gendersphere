@@ -3,7 +3,7 @@
         <Button asChild label="Create"  v-slot="props" size="small" variant="outlined" v-if="can['createAdmin_user']">
             <router-link :to="{ name: 'users.create-admin' }" :class="props.class">Create Admin</router-link>
         </Button>
-        <Button asChild label="Create"  v-slot="props" size="small">
+        <Button asChild label="Create"  v-slot="props" size="small" v-if="can['create_user']">
             <router-link :to="{ name: 'users.create' }" :class="props.class">Create New User</router-link>
         </Button>
     </div>
@@ -89,6 +89,8 @@
         console.log("authenthicated user", authUser.value.office_id)
         await getUsers(authUser.value.office_id ? { office_id: authUser.value.office_id } : {});
         await canAccess('createAdmin', 'user');
+        console.log(can.value)
+        await canAccess('create', 'user');
         console.log(can.value)
         getAllOffices();
         loading.value = false;

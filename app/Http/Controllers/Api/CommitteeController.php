@@ -33,6 +33,10 @@ class CommitteeController extends Controller
         if($request->gender && $request->gender != 'all'){
             $committees->where('person_infos.gender', $request->gender);
         }
+
+        if($request->has('office_id')){
+            $committees->where('office_id', $request->office_id);
+        }
  
         return CommitteeResource::collection($committees->paginate(15));
     }

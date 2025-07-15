@@ -30,9 +30,9 @@ class AuthController extends Controller
             return response(['message' => 'No model specified'], 400);
         }
 
-        $model = $models[$request->model]::find($request->id);
+        $model = $models[$request->model];
         
-        if(!$request->has('id')) {
+        if($request->has('id')) {
             $model = $models[$request->model]::find($request->id);
         }
 

@@ -116,9 +116,11 @@ import Select from 'primevue/select';
 import { onMounted } from 'vue';
 import Panel from 'primevue/panel';
 import usePersonInfos from '../../composables/personinfos';
+import useAuth from '../../composables/auth';
 
 const { committees, getCommittees, destroyCommittee, getCommitteeSummary, committeeSummary, getYearlist, yearlist, selectedYear } = useCommittees();
 const { computeAge } = usePersonInfos();
+const { user: authUser, getUser } = useAuth();
 
 
 
@@ -137,7 +139,8 @@ const deleteCommittee = async (id) => {
 
 const getByYear = async (event) => {
     let get_year = event.value;
-    await getCommittees(1, get_year, selectedEmpStatus.value, selectedGender.value);
+    
+    await getCommittees(1, get_year, selectedEmpStatus.value, selectedGender.value, authUser.value.office_id);
 }
 
 const filterCommittees = async () => {
@@ -149,8 +152,10 @@ const paginate = async (page) => {
 }
 
 // We get the companies immediately
-onMounted(()=>{
-    getCommittees();
+onMounted(async()=>{
+    await getUser();
+    await getCommittees(undefined, selectedYear.value, undefined, undefined, authUser.value.office_id);
+    // console.log("committees : ", committees.value);
     getYearlist();
 })
 

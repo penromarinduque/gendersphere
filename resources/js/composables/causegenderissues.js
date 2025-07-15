@@ -2,7 +2,8 @@ import { ref } from 'vue'
 // import axios from 'axios'
 import axios from '../utils/axios'
 import { useRouter } from 'vue-router'
-import { createToaster } from '@meforma/vue-toaster'
+import { createToaster } from '@meforma/vue-toaster';
+import { useToast } from "primevue/usetoast";
 
 export default function useCauseGenderIssues(){
     const causegenderissue = ref([])
@@ -11,14 +12,16 @@ export default function useCauseGenderIssues(){
 
     const errors = ref('')
     const router = useRouter()
-
+    const toast = useToast();
     const toaster = createToaster({ 
         position: "top"
         // max:
     });
 
-    const getCauseGenderIssues = async () => {
-        let response = await axios.get('/api/causegenderissues')
+    const getCauseGenderIssues = async (query = {}) => {
+        let response = await axios.get('/api/causegenderissues', {
+            params: query
+        })
         causegenderissues.value = response.data.data
     }
  
@@ -33,9 +36,19 @@ export default function useCauseGenderIssues(){
         try {
             await axios.post('/api/causegenderissues', data)
             await router.push({ name: 'causegenderissues.index' })
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Cause Gender Issue successfully saved',
+                life: 3000
+            })
         } catch (e) {
-            console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -50,9 +63,19 @@ export default function useCauseGenderIssues(){
         try {
             await axios.patch(`/api/causegenderissues/${id}`, causegenderissue.value)
             await router.push({ name: 'causegenderissues.index' })
-            toaster.success(`Successfully Updated!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Cause Gender Issue successfully updated',
+                life: 3000
+            })
         } catch (e) {
-            console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -64,10 +87,19 @@ export default function useCauseGenderIssues(){
     const destroyCauseGenderIssue = async (id) => {
         try {
             await axios.delete(`/api/causegenderissues/${id}`)
-            toaster.info(`Deleted!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Cause Gender Issue successfully deleted',
+                life: 3000
+            })
         } catch (e) {
-            // console.log(e);
-            toaster.info(`Oops! Something went wrong please try again.`);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
         }
     }
 

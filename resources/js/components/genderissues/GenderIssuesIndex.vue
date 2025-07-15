@@ -30,25 +30,30 @@
             </thead>
  
             <tbody class="bg-white divide-y divide-gray-200 divide-solid">
-            <template v-for="item in genderissues" :key="item.id">
-                <tr class="bg-white">
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span>{{ item.mandate_year }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span>{{ item.gender_issue_mandate }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;" v-if="item.is_active_gender_issue==1">Active</span>
-                        <span style="text-transform: capitalize;" v-if="item.is_active_gender_issue==0">Inactive</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <router-link :to="{ name: 'genderissues.edit', params: { id: item.id } }" class="inline-flex items-center mr-2 px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
-                        <button @click="deleteGenderIsssue(item.id)" class="inline-flex items-center px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
-                            Delete</button>
-                    </td>
-                </tr>
-            </template>
+                <template v-for="item in genderissues" :key="item.id">
+                    <tr class="bg-white">
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ item.mandate_year }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ item.gender_issue_mandate }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;" v-if="item.is_active_gender_issue==1">Active</span>
+                            <span style="text-transform: capitalize;" v-if="item.is_active_gender_issue==0">Inactive</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <router-link :to="{ name: 'genderissues.edit', params: { id: item.id } }" class="inline-flex items-center mr-2 px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
+                            <button @click="deleteGenderIsssue(item.id)" class="inline-flex items-center px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
+                                Delete</button>
+                        </td>
+                    </tr>
+                </template>
+                <template v-if="genderissues.length == 0">
+                    <tr>
+                        <td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found</td>
+                    </tr>
+                </template>
             </tbody>
         </table>
     </div>
@@ -56,9 +61,11 @@
 
 <script setup>
 import useGenderIssues from '../../composables/genderissues'
+import useAuth from '../../composables/auth'
 import { onMounted } from 'vue'
 
-const { genderissues, getGenderIssues, destroyGenderIssue } = useGenderIssues()
+const { genderissues, getGenderIssues, destroyGenderIssue } = useGenderIssues();
+const { user:authUser, getUser } = useAuth();
 
 const deleteGenderIsssue = async (id) => {
     // console.log(id);
@@ -66,9 +73,16 @@ const deleteGenderIsssue = async (id) => {
         return
     }
     await destroyGenderIssue(id)
-    await getGenderIssues()
+    await getGenderIssues({
+        office_id: authUser.value.office_id
+    });
 }
 
 // We get the companies immediately
-onMounted(getGenderIssues)
+onMounted(async () => {
+    await getUser();
+    await getGenderIssues({
+        office_id: authUser.value.office_id
+    });
+});
 </script>

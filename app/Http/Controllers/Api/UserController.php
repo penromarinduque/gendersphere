@@ -39,7 +39,7 @@ class UserController extends Controller
         $_personinfo = new PersonInfo;
 
         $request->validate([
-            'person_info_id' => ['required'],
+            'person_info_id' => ['required', 'exists:person_infos,id'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', Rules\Password::defaults()],
             'usertype' => ['required'],
@@ -50,9 +50,14 @@ class UserController extends Controller
         $personinfo = PersonInfo::find($person_info_id);
 
         $name = "na";
+        
         if (!empty($personinfo)) {
             $extname = ($personinfo->extname!=NULL) ? ' '.$personinfo->extname : '';
             $name = $personinfo->lastname.', '.$personinfo->firstname.' '.$personinfo->middlename.$extname;
+        }
+
+        if(!in_array($personinfo->user_id, [null, 0])){
+            return response()->json(['message' => 'User already has an account'], 422);
         }
 
         $user = User::create([
@@ -60,7 +65,8 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'usertype' => $request->usertype,
-            'is_active' => 1
+            'is_active' => 1,
+            'office_id' => auth()->user()->office_id
         ]);
 
         PersonInfo::find($request->person_info_id)->update(['user_id' => $user->id]);
@@ -78,7 +84,7 @@ class UserController extends Controller
             'first_name' => ['required', 'string', 'max:150'],
             'last_name' => ['required', 'string', 'max:150'],
             'middle_name' => ['required', 'string', 'max:150'],
-            'gender' => ['required', Rule::in(['male', 'female', 'lgbtqia+'])],
+            // 'gender' => ['required', Rule::in(['male', 'female', 'lgbtqia+'])],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'office_id' => ['required', 'exists:offices,id'],
             'password' => ['required'],
@@ -97,16 +103,6 @@ class UserController extends Controller
                 'usertype' => $request->usertype,
                 'is_active' => 1,
                 'usertype' => 3,
-                'office_id' => $request->office_id
-            ]);
-
-            $personInfo = PersonInfo::create([
-                'user_id' => $user->id,
-                'lastname' => $request->last_name,
-                'firstname' => $request->first_name,
-                'middlename' => $request->middle_name,
-                'gender' => $request->gender,
-                'person_type' => 1,
                 'office_id' => $request->office_id
             ]);
 
@@ -174,6 +170,9 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $person_info_id = PersonInfo::where('user_id', $user->id)->update([
+            'user_id' => 0
+        ]);
         $user->delete();
 
         return response()->noContent(); 

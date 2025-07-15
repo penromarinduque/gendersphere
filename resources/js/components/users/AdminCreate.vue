@@ -23,13 +23,13 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
+            <!-- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div class="pb-1">
                     <label for="name" class="block text-md font-medium text-gray-700">Gender <span class="text-red-500">*</span></label>
                     <Select v-model="form.gender" :options="[{label: 'Male', value: 'male'}, {label: 'Female', value: 'female'}, {label: 'LGBTQIA+', value: 'lgbtqia+'}]" name="gender" id="gender" size="small" class="w-full" optionLabel="label" optionValue="value" placeholder="Gender"></Select>
                     <span class="text-sm text-red-600" v-if="errors?.gender">{{ errors.gender[0] }}</span>
                 </div>
-            </div>
+            </div> -->
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div class="pb-1">

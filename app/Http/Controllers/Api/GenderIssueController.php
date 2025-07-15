@@ -5,16 +5,22 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GenderIssueResource;
 use App\Models\GenderIssue;
+use App\Models\PlanBudget;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class GenderIssueController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $genderissues = GenderIssue::all();
+        $query = GenderIssue::query();
+        if($request->has('office_id')) {
+            $query->where('office_id', $request->office_id);
+        }
+        $genderissues = $query->get();
         return GenderIssueResource::collection($genderissues);
     }
 
@@ -31,7 +37,8 @@ class GenderIssueController extends Controller
         $genderissue = GenderIssue::create([
             'mandate_year' => $request->mandate_year,
             'gender_issue_mandate' => $request->gender_issue_mandate,
-            'is_active_gender_issue' => 1
+            'is_active_gender_issue' => 1,
+            'office_id' => auth()->user()->office_id
         ]);
 
         return new GenderIssueResource($genderissue);
@@ -59,7 +66,9 @@ class GenderIssueController extends Controller
             'is_active_gender_issue.required' => 'The status field is required.'
         ]);
 
-        $genderissue_updated = GenderIssue::find($id)->update([
+        $genderissue = GenderIssue::find($id);
+        Gate::authorize('update', $genderissue);
+        $genderissue->update([
             'mandate_year' => $request->mandate_year,
             'gender_issue_mandate' => $request->gender_issue_mandate,
             'is_active_gender_issue' => $request->is_active_gender_issue,
@@ -75,7 +84,14 @@ class GenderIssueController extends Controller
      */
     public function destroy($id)
     {
-        $genderissue = GenderIssue::find($id)->delete();
+        $genderissue = GenderIssue::find($id);
+        
+        Gate::authorize('delete', $genderissue);
+        $isUsed = PlanBudget::where('gender_issue_id', $genderissue->id)->exists();
+        if($isUsed) {
+            return response()->json(['message' => 'This gender issue is used in a plan budget therefore it cannot be deleted.'], 403);
+        }
+        $genderissue->delete();
  
         return response()->noContent();
     }

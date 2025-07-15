@@ -58,6 +58,7 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('summary', [PersonInfoController::class, 'summary']);
         Route::get('get-employees', [PersonInfoController::class, 'getEmployees']);
         Route::get('get-chart-data', [PersonInfoController::class, 'getChartData']);
+        Route::get('all/persons', [PersonInfoController::class, 'all']);
     });
 
     Route::prefix('committees')->group(function () {
@@ -118,10 +119,6 @@ Route::middleware('auth:sanctum')->group( function () {
         'offices' => OfficeController::class,
         'roles' => RoleController::class,
     ]);
-    // PersonInfo
-    Route::prefix('personinfos')->group(function () {
-        Route::get('all/persons', [PersonInfoController::class, 'all']);
-    });
     Route::get('yearlist', [CommitteeController::class, 'yearlist']);
     Route::get('genderissuebyyear/{year}', [GenderIssueController::class, 'genderIssueByYear']);
     Route::get('permittypebystatus/{status}', [PermitTypeController::class, 'getPermitTypeByStatus']);

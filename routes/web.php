@@ -6,7 +6,14 @@ use App\Http\Controllers\Api\BarangayController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Models\ActivityDetail;
+use App\Models\CauseGenderIssue;
+use App\Models\CommitteePosition;
+use App\Models\FrontlineServiceType;
+use App\Models\GenderIssue;
+use App\Models\Goal;
+use App\Models\Objective;
 use App\Models\Office;
+use App\Models\PermitType;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -88,7 +95,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/maintenance/committeepositions/{any?}', function () {
         return view('maintenance.committeepositions');
         Route::view('/maintenance/committeepositions/{any}', 'maintenance.committeepositions')->where('any', '.*');
-    })->where('any', '.*')->name('maintenance.committeepositions');
+    })->where('any', '.*')->name('maintenance.committeepositions')->can('viewAny', CommitteePosition::class);
 
     // Maintenance - Goals
     // Route::get('/maintenance/goals/{any?}', function () {
@@ -98,37 +105,37 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/maintenance/goals/{any?}', function () {
         return view('maintenance.goals');
-    })->where('any', '.*')->name('maintenance.goals');
+    })->where('any', '.*')->name('maintenance.goals')->can('viewAny', Goal::class);
 
     // Maintenance - Gender Issues
     Route::get('/maintenance/genderissues/{any?}', function () {
         return view('maintenance.genderissues');
         Route::view('/maintenance/genderissues/{any}', 'maintenance.genderissues')->where('any', '.*');
-    })->where('any', '.*')->name('maintenance.genderissues');
+    })->where('any', '.*')->name('maintenance.genderissues')->can('viewAny', GenderIssue::class);
 
     // Maintenance - Causes  of Gender Issues
     Route::get('/maintenance/causegenderissues/{any?}', function () {
         return view('maintenance.causegenderissues');
         Route::view('/maintenance/causegenderissues/{any}', 'maintenance.causegenderissues')->where('any', '.*');
-    })->where('any', '.*')->name('maintenance.causegenderissues');
+    })->where('any', '.*')->name('maintenance.causegenderissues')->can('viewAny', CauseGenderIssue::class);
 
     // Maintenance - GAD Objectives
     Route::get('/maintenance/objectives/{any?}', function () {
         return view('maintenance.objectives');
         Route::view('/maintenance/objectives/{any}', 'maintenance.objectives')->where('any', '.*');
-    })->where('any', '.*')->name('maintenance.objectives');
+    })->where('any', '.*')->name('maintenance.objectives')->can('viewAny', Objective::class);
 
     // Maintenance - Frontline Services Types
     Route::get('/maintenance/frontlineservicetypes/{any?}', function () {
         return view('maintenance.frontlineservicetypes');
         Route::view('/maintenance/frontlineservicetypes/{any}', 'maintenance.frontlineservicetypes')->where('any', '.*');
-    })->where('any', '.*')->name('maintenance.frontlineservicetypes');
+    })->where('any', '.*')->name('maintenance.frontlineservicetypes')->can('viewAny', FrontlineServiceType::class);
 
     // Maintenance - Permit Types
     Route::get('/maintenance/permittypes/{any?}', function () {
         return view('maintenance.permittypes');
         Route::view('/maintenance/permittypes/{any}', 'maintenance.permittypes')->where('any', '.*');
-    })->where('any', '.*')->name('maintenance.permittypes');
+    })->where('any', '.*')->name('maintenance.permittypes')->can('viewAny', PermitType::class);
 
     // Maintenance - Offices
     Route::get('/maintenance/offices/{any?}', function () {
@@ -148,6 +155,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/sexaggregated', [ReportController::class, 'sexAggregated'])->name('sexaggregated');
         Route::get('/sexaggregated-print', [ReportController::class, 'sexAggregatedPrint'])->name('sexaggregated-print');
         Route::get('/getpermittypes/{frontlineservicetype_id?}', [ReportController::class, 'getPermitTypes'])->name('getpermittypes');
+    });
+    
+    Route::group(['prefix'=>'error/{any?}', 'as' => 'error.'], function(){
+        Route::view('', 'error')->name('error');
+     
     });
 
 });

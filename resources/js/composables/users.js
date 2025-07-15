@@ -54,9 +54,20 @@ export default function useUsers() {
         try {
             await axios.post('/api/users', data)
             await router.push({ name: 'users.index' })
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'User successfully saved',
+                life: 3000
+            })
         } catch (e) {
             console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            });
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -132,8 +143,10 @@ export default function useUsers() {
         
     }
 
-    const getPersonInfos = async () => {
-        let response = await axios.get('/api/personinfos/all/persons')
+    const getPersonInfos = async (query = {}) => {
+        let response = await axios.get('/api/personinfos/all/persons', {
+            params: query
+        })
         personinfos.value = response.data.data
         console.log(personinfos.value);
     }

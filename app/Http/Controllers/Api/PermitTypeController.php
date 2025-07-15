@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PermitTypeResource;
+use App\Models\FrontlineService;
 use App\Models\PermitType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PermitTypeController extends Controller
 {
@@ -32,6 +34,8 @@ class PermitTypeController extends Controller
         ], [
             'frontline_service_type_id.required' => 'The frontline service type field is required.',
         ]);
+
+        Gate::authorize('create', PermitType::class);
 
         $permittype = PermitType::create([
             'frontline_service_type_id' => $request->frontline_service_type_id,
@@ -65,7 +69,9 @@ class PermitTypeController extends Controller
             'is_active_ptype.required' => 'The status field is required.',
         ]);
 
-        $permittype_updated = PermitType::find($id)->update([
+        $permittype = PermitType::find($id);
+        Gate::authorize('update', $permittype);
+        $permittype->update([
             'frontline_service_type_id' => $request->frontline_service_type_id,
             'permit_type' => $request->permit_type,
             'report_heading' => $request->report_heading,
@@ -82,8 +88,14 @@ class PermitTypeController extends Controller
      */
     public function destroy($id)
     {
-        $permittype = PermitType::find($id)->delete();
- 
+        $permittype = PermitType::find($id);
+        $isUsed = FrontlineService::where('permit_type_id', $permittype->id)->exists();
+        if($isUsed) {
+            return response()->json(['message' => 'This permit type is used in a frontline service therefore it cannot be deleted.'], 403);
+        }
+        Gate::authorize('delete', $permittype);
+        $permittype->delete();
+        
         return response()->noContent();
     }
 

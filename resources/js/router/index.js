@@ -58,6 +58,7 @@ import OfficesIndex from "../components/offices/OfficesIndex.vue";
 import OfficesCreate from "../components/offices/OfficesCreate.vue";
 import OfficesEdit from "../components/offices/OfficesEdit.vue";
 import AdminCreate from "../components/users/AdminCreate.vue";
+import Unauthorized from "../components/errors/Unauthorized.vue";
 import useAuth from "../composables/auth";
 
 const routes = [
@@ -343,6 +344,16 @@ const routes = [
         component: UsersCreate,
         meta: {
             title: 'Add User'
+        },
+        beforeEnter : async (to, from, next) => {
+            const auth = useAuth();
+            await auth.getUser();
+            if(auth.user.value.is_super_admin == 1){
+                next({
+                    name: 'unauthorized'
+                });
+            }
+            next();
         }
     },
     {
@@ -351,6 +362,16 @@ const routes = [
         component: AdminCreate,
         meta: {
             title: 'Add Admin User'
+        },
+        beforeEnter : async (to, from, next) => {
+            const auth = useAuth();
+            await auth.getUser();
+            if(auth.user.value.is_super_admin != 1){
+                next({
+                    name: 'unauthorized'
+                });
+            }
+            next();
         }
     },
     {
@@ -579,7 +600,15 @@ const routes = [
         meta: {
             title: 'Reports'
         }
-    }
+    },
+     {
+        path: '/error/403',
+        name: 'unauthorized',
+        component: Unauthorized,
+        meta: {
+            title: 'Unauthorized'
+        }
+     }
 
 ];
 
@@ -590,11 +619,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
 
-    const auth = useAuth();
-
     document.title = `${to.meta.title ? to.meta.title : ''} | GenderSphere`;
-
-    await auth.getUser();
 
     next();
 });

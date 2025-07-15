@@ -70,6 +70,7 @@
  
 <script setup>
 import useUsers from '../../composables/users'
+import useAuth from '../../composables/auth'
 import { reactive, onMounted } from 'vue'
  
 const form = reactive({
@@ -79,7 +80,8 @@ const form = reactive({
     usertype: ''
 })
  
-const { errors, personinfos, storeUser, generatePassword, getPersonInfos, getPersonEmail } = useUsers()
+const { errors, personinfos, storeUser, generatePassword, getPersonInfos, getPersonEmail } = useUsers();
+const { user: authUser, getUser } = useAuth();
  
 const saveUser = async () => {
     await storeUser({ ...form })
@@ -102,7 +104,12 @@ const generatePass = async (chkbox_fld) => {
     }
 }
 
-onMounted(getPersonInfos)
+onMounted(async () => {
+    await getUser();
+    await getPersonInfos({
+        office_id: authUser.value.office_id
+    });
+});
 
 const showPass = async (chkbox_fld, passw_fld) => {
     let chkbox = document.getElementById(chkbox_fld);

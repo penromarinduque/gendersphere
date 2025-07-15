@@ -43,6 +43,11 @@
                     </td>
                 </tr>
             </template>
+            <template v-if="objectives.length == 0">
+                <tr>
+                    <td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found</td>
+                </tr>
+            </template>
             </tbody>
         </table>
     </div>
@@ -50,9 +55,11 @@
 
 <script setup>
 import useObjectives from '../../composables/objectives'
+import useAuth from '../../composables/auth'
 import { onMounted } from 'vue'
 
-const { objectives, getObjectives, destroyObjective } = useObjectives()
+const { objectives, getObjectives, destroyObjective } = useObjectives();
+const { user: authUser, getUser } = useAuth();
 
 const deleteObjective = async (id) => {
     // console.log(id);
@@ -60,9 +67,16 @@ const deleteObjective = async (id) => {
         return
     }
     await destroyObjective(id)
-    await getObjectives()
+    await getObjectives({
+        office_id: authUser.value.office_id
+    });
 }
 
 // We get the companies immediately
-onMounted(getObjectives)
+onMounted(async () => {
+    await getUser();
+    await getObjectives({
+        office_id: authUser.value.office_id
+    }) 
+})
 </script>

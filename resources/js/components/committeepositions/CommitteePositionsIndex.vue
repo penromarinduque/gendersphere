@@ -49,10 +49,12 @@
 </template>
 
 <script setup>
+import useAuth from '../../composables/auth';
 import useCommitteePositions from '../../composables/committeepositions'
 import { onMounted } from 'vue'
 
-const { committeepositions, getCommitteePositions, destroyCommitteePosition } = useCommitteePositions()
+const { committeepositions, getCommitteePositions, destroyCommitteePosition } = useCommitteePositions();
+const { user: authUser, getUser } = useAuth();
 
 const deleteCommitteePosition = async (id) => {
     // console.log(id);
@@ -64,5 +66,10 @@ const deleteCommitteePosition = async (id) => {
 }
 
 // We get the companies immediately
-onMounted(getCommitteePositions)
+onMounted(async () => {
+    await getUser();
+    await getCommitteePositions({
+        office_id: authUser.value.office_id
+    })
+});
 </script>

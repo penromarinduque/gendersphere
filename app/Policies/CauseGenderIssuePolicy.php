@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\CauseGenderIssue;
+use App\Models\User;
+use Illuminate\Auth\Access\Response;
+
+class CauseGenderIssuePolicy
+{
+    /**
+     * Determine whether the user can view any models.
+     */
+    public function viewAny(User $user): bool
+    {
+        //
+        return $user->roles->contains('role_type', 'admin');
+    }
+
+    /**
+     * Determine whether the user can view the model.
+     */
+    public function view(User $user, CauseGenderIssue $causeGenderIssue): bool
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can create models.
+     */
+    public function create(User $user): bool
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(User $user, CauseGenderIssue $causeGenderIssue): bool
+    {
+        //
+        return $user->roles->contains(function($role) use($causeGenderIssue) {
+            return $role->role_type === 'admin' && $role->office_id === $causeGenderIssue->office_id;
+        });
+    }
+
+    /**
+     * Determine whether the user can delete the model.
+     */
+    public function delete(User $user, CauseGenderIssue $causeGenderIssue): bool
+    {
+        //
+        return $user->roles->contains(function($role) use($causeGenderIssue) {
+            return $role->role_type === 'admin' && $role->office_id === $causeGenderIssue->office_id;
+        });
+    }
+
+    /**
+     * Determine whether the user can restore the model.
+     */
+    public function restore(User $user, CauseGenderIssue $causeGenderIssue): bool
+    {
+        //
+    }
+
+    /**
+     * Determine whether the user can permanently delete the model.
+     */
+    public function forceDelete(User $user, CauseGenderIssue $causeGenderIssue): bool
+    {
+        //
+        return $user->roles->contains(function($role) use($causeGenderIssue) {
+            return $role->role_type === 'admin' && $role->office_id === $causeGenderIssue->office_id;
+        });
+    }
+}
