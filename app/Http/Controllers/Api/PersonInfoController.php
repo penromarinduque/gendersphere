@@ -10,6 +10,7 @@ use App\Models\PersonInfo;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 
 class PersonInfoController extends Controller
 {
@@ -25,6 +26,11 @@ class PersonInfoController extends Controller
             ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
             ->join('provinces', 'provinces.id', 'municipalities.province_id')
             ->where('person_type',1);
+        
+            if($request->has('office_id')){
+            $personinfo_qry->where('person_infos.office_id', $request->office_id);
+        }
+
         if ($searchkey!="") {
             $personinfo_qry->where(function ($qry) use ($searchkey) {
                 $qry->where('lastname','LIKE',"%{$searchkey}%")
@@ -50,7 +56,13 @@ class PersonInfoController extends Controller
      */
     public function store(PersonInfoRequest $request)
     {
-        $personInfo = PersonInfo::create($request->validated());
+
+        Gate::authorize('create', PersonInfo::class);
+        
+        $personInfo = PersonInfo::create([
+            ...$request->validated(),
+            'office_id' => auth()->user()->office_id
+        ]);
 
         $person_info = PersonInfo::find($personInfo->id);
         if (!empty($person_info)) {
@@ -115,7 +127,9 @@ class PersonInfoController extends Controller
             'position' => [$position_nullable, 'string']
         ]);
 
-        PersonInfo::find($id)->update([
+        $personinfo = PersonInfo::find($id);
+        Gate::authorize('update', $personinfo);
+        $personinfo->update([
             'lastname' => $request->lastname,
             'firstname' => $request->firstname,
             'middlename' => $request->middlename,
@@ -161,7 +175,9 @@ class PersonInfoController extends Controller
      */
     public function destroy($id)
     {
-        $personInfo = PersonInfo::find($id)->delete();
+        $personInfo = PersonInfo::find($id);
+        Gate::allows('delete', $personInfo);
+        $personInfo->delete();
 
         return response()->noContent();
     }

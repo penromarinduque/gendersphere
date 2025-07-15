@@ -14,6 +14,7 @@ class PersonInfoPolicy
     public function viewAny(User $user): bool
     {
         //
+        return $user->roles->contains('role_type', 'encoder');
     }
 
     /**
@@ -30,7 +31,7 @@ class PersonInfoPolicy
     public function create(User $user): bool
     {
         //
-        
+        return $user->roles->contains('role_type', 'encoder');
     }
 
     /**
@@ -39,6 +40,9 @@ class PersonInfoPolicy
     public function update(User $user, PersonInfo $personInfo): bool
     {
         //
+        return $user->roles->contains(function($role) use($personInfo) {
+            return $role->role_type == 'encoder' && $role->office_id == $personInfo->office_id;
+        });
     }
 
     /**
@@ -47,6 +51,9 @@ class PersonInfoPolicy
     public function delete(User $user, PersonInfo $personInfo): bool
     {
         //
+        return $user->roles->contains(function($role) use($personInfo) {
+            return $role->role_type == 'encoder' && $role->office_id == $personInfo->office_id;
+        });
     }
 
     /**
@@ -63,5 +70,8 @@ class PersonInfoPolicy
     public function forceDelete(User $user, PersonInfo $personInfo): bool
     {
         //
+        return $user->roles->contains(function($role) use($personInfo) {
+            return $role->role_type == 'encoder' && $role->office_id == $personInfo->office_id;
+        });
     }
 }

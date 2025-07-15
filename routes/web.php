@@ -14,6 +14,7 @@ use App\Models\Goal;
 use App\Models\Objective;
 use App\Models\Office;
 use App\Models\PermitType;
+use App\Models\PersonInfo;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,7 +42,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/personinfos/{any?}', function () {
         return view('personinfos');
         // Route::view('/personinfos/{any}', 'personinfos')->where('any', '.*');
-    })->where('any', '.*')->name('personinfos');
+    })->where('any', '.*')->name('personinfos')->can('viewAny', PersonInfo::class);
 
     // Route::view('/personinfos/{any}', 'personinfos')
     // ->middleware(['auth'])

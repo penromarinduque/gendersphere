@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from '../utils/axios'
 import { useRouter } from 'vue-router'
 import { createToaster } from '@meforma/vue-toaster'
+import { useToast } from 'primevue/usetoast'
  
 export default function usePersonInfos() {
     const personinfo = ref([])
@@ -19,14 +20,23 @@ export default function usePersonInfos() {
 
     const errors = ref('');
     const router = useRouter();
-
+    const toast = useToast();
     const toaster = createToaster({ 
         position: "top"
         // max:
     });
  
-    const getPersonInfos = async (page = 1, searchkey = "") => {
-        let response = await axios.get('/api/personinfos', { params: { page:page, searchkey:searchkey, gender:genderFilter.value, employment_status:employmentStatusFilter.value } })
+    const getPersonInfos = async (page = 1, searchkey = "", otherParams = {}) => {
+
+        let response = await axios.get('/api/personinfos', {
+            params: { 
+                ...otherParams,
+                page:page, 
+                searchkey:searchkey, 
+                gender:genderFilter.value, 
+                employment_status:employmentStatusFilter.value 
+            } 
+        });
         // console.log(response.data)
         personinfos.value = response.data
     }
@@ -44,10 +54,21 @@ export default function usePersonInfos() {
         try {
             await axios.post('/api/personinfos', data)
             await router.push({ name: 'personinfos.index' })
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Person successfully saved',
+                life: 3000
+            })
             loading.value = false;
         } catch (e) {
             console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -65,9 +86,20 @@ export default function usePersonInfos() {
         try {
             await axios.patch(`/api/personinfos/${id}`, personinfo.value)
             await router.push({ name: 'personinfos.index' })
-            toaster.success(`Successfully Updated!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Person successfully updated',
+                life: 3000
+            })
             loading.value = false;
         } catch (e) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             console.log(e);
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
@@ -82,11 +114,21 @@ export default function usePersonInfos() {
         loading.value = true;
         try {
             await axios.delete(`/api/personinfos/${id}`)
-            toaster.info(`Deleted!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Person successfully deleted',
+                life: 3000
+            })
             loading.value = false;
         } catch (e) {
             // console.log(e);
-            toaster.info(`Oops! Something went wrong please try again.`);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             loading.value = false;
         }
         
