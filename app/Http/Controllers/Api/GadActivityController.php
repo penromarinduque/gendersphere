@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\GadActivityResource;
 use App\Models\GadActivity;
+use App\Models\PlanBudget;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class GadActivityController extends Controller
 {
@@ -27,6 +29,16 @@ class GadActivityController extends Controller
         ], [
             'main_activity.required' => 'GAD Activity field is required.'
         ]);
+
+        $planbudget = PlanBudget::find($request->plan_budget_id);
+
+        if (!$planbudget) {
+            return response()->json([
+                'message' => 'Plan budget not found.'
+            ], 404);
+        }
+
+        Gate::authorize('create', [GadActivity::class, $planbudget]);
 
         $gadactivity = GadActivity::create([
             'plan_budget_id' => $request->plan_budget_id,
@@ -55,7 +67,9 @@ class GadActivityController extends Controller
             'main_activity' => ['required'],
         ]);
 
-        $gadactivity_update = GadActivity::find($id)->update([
+        $gadactivity = GadActivity::find($id);
+        Gate::authorize('update', $gadactivity);
+        $gadactivity->update([
             'main_activity' => $request->main_activity,
         ]);
 
@@ -69,7 +83,9 @@ class GadActivityController extends Controller
      */
     public function destroy($id)
     {
-        $gadactivity = GadActivity::find($id)->delete();
+        $gadactivity = GadActivity::find($id);
+        Gate::authorize('delete', $gadactivity);
+        $gadactivity->delete();
  
         return response()->noContent();
     }

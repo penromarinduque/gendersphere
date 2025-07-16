@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PlanBudgetResource;
 use App\Models\PlanBudget;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PlanBudgetController extends Controller
 {
@@ -15,7 +16,7 @@ class PlanBudgetController extends Controller
     public function index(Request $request)
     {
         $year = $request->year ?? date('Y');
-        $planbudgets = PlanBudget::select('plan_budgets.*', 'goals.goal_no', 'goals.gad_goal', 'gender_issues.gender_issue_mandate', 'cause_gender_issues.cause as cause_gender_issue', 'objectives.gad_objective')
+        $query = PlanBudget::query()->select('plan_budgets.*', 'goals.goal_no', 'goals.gad_goal', 'gender_issues.gender_issue_mandate', 'cause_gender_issues.cause as cause_gender_issue', 'objectives.gad_objective')
             ->with(['gad_activities' => function ($gad_activities) {
                 $gad_activities->select('gad_activities.id', 'gad_activities.plan_budget_id', 'gad_activities.main_activity')
                 ->with(['activity_details' => function ($activity_details) {
@@ -25,9 +26,13 @@ class PlanBudgetController extends Controller
             ->leftJoin('goals', 'goals.id', 'plan_budgets.goal_id')
             ->leftJoin('gender_issues', 'gender_issues.id', 'plan_budgets.gender_issue_id')
             ->leftJoin('cause_gender_issues', 'cause_gender_issues.id', 'plan_budgets.cause_gender_issue_id')
-            ->leftJoin('objectives', 'objectives.id', 'plan_budgets.objective_id')
-            ->where('plan_budgets.year', $year)
-            ->get();
+            ->leftJoin('objectives', 'objectives.id', 'plan_budgets.objective_id');
+
+        if($request->has('office_id')){
+            $query->where('plan_budgets.office_id', $request->office_id);
+        }
+            
+        $planbudgets = $query->where('plan_budgets.year', $year)->get();
         return PlanBudgetResource::collection($planbudgets);
     }
 
@@ -50,6 +55,8 @@ class PlanBudgetController extends Controller
             'relevant_org.required' => 'The Relevant Organization field is required.',
         ]);
 
+        Gate::authorize('create', PlanBudget::class);
+
         $planbudget = PlanBudget::create([
             'year' => $request->year,
             'focus' => $request->focus,
@@ -58,6 +65,7 @@ class PlanBudgetController extends Controller
             'cause_gender_issue_id' => $request->cause_gender_issue_id,
             'objective_id' => $request->objective_id,
             'relevant_org' => $request->relevant_org,
+            'office_id'=> auth()->user()->office_id
         ]);
 
         return new PlanBudgetResource($planbudget);
@@ -91,7 +99,9 @@ class PlanBudgetController extends Controller
             'relevant_org.required' => 'The Relevant Organization field is required.',
         ]);
 
-        $planbudget_update = PlanBudget::find($id)->update([
+        $planbudget = PlanBudget::find($id);
+        Gate::authorize('update', $planbudget);
+        $planbudget->update([
             'year' => $request->year,
             'focus' => $request->focus,
             'goal_id' => $request->goal_id,
@@ -100,6 +110,7 @@ class PlanBudgetController extends Controller
             'objective_id' => $request->objective_id,
             'relevant_org' => $request->relevant_org,
         ]);
+
         $planbudget = PlanBudget::find($id);
 
         return new PlanBudgetResource($planbudget);
@@ -111,7 +122,9 @@ class PlanBudgetController extends Controller
     public function destroy($id)
     {
         // $planBudget->delete();
-        $planBudget = PlanBudget::find($id)->delete();
+        $planBudget = PlanBudget::find($id);
+        Gate::authorize('delete', $planBudget);
+        $planBudget->delete();
  
         return response()->noContent();
     }

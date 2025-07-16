@@ -12,7 +12,7 @@
     
     <div>
         <Select @change="handleYearChange" v-model="selectedYear" :options="yearlist" optionLabel="year" optionValue="year"  placeholder="Filter Year"  class="w-full md:w-56 mb-2 me-2" size="small" />
-        <Select @change="getFrontlineServices" v-model="selectedPermitType" :options="permittypes" optionLabel="permit_type" optionValue="id"  placeholder="Filter Permit Type" class="w-full md:w-56 mb-2" size="small" />
+        <Select @change="getFrontlineServices(undefined, {office_id: authUser.office_id})" v-model="selectedPermitType" :options="permittypes" optionLabel="permit_type" optionValue="id"  placeholder="Filter Permit Type" class="w-full md:w-56 mb-2" size="small" />
     </div>
 
     <Panel class="mb-3" header="Summary">
@@ -87,9 +87,11 @@
                     </td>
                 </tr>
             </template>
-            <tr v-if="!frontlineservices.length && frontlineservices.length < 1">
-                <td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found </td>
-            </tr>
+            <template v-if="frontlineservices ||frontlineservices.data.length == 0">
+                <tr >
+                    <td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found </td>
+                </tr>
+            </template>
             </tbody>
         </table>
     </div>
@@ -103,6 +105,7 @@
 import useFrontlineServices from '../../composables/frontlineservices';
 import useFrontlineServiceTypes from '../../composables/frontlineservicetypes';
 import usePermitTypes from '../../composables/permittypes';
+import useAuth from '../../composables/auth';
 import { onMounted } from 'vue'
 import Select from 'primevue/select';
 import Paginator from 'primevue/paginator';
@@ -113,6 +116,7 @@ import Panel from 'primevue/panel';
 const { frontlineservices, selectedYear, yearlist, selectedPermitType, frontlineServiceSummary, getFrontlineServices, destroyFrontlineService, getYearlist, getFrontlineServiceSummary } = useFrontlineServices();
 const { getFrontlineServiceTypes, frontlineservicetypes } = useFrontlineServiceTypes();
 const { permittypes, getPermitTypes } = usePermitTypes();
+const { user:authUser, getUser } = useAuth();
 
 const deleteFrontlineService = async (id) => {
     // console.log(id);
@@ -120,16 +124,23 @@ const deleteFrontlineService = async (id) => {
         return
     }
     await destroyFrontlineService(id)
-    await getFrontlineServices()
+    await getFrontlineServices(undefined, {
+        office_id: authUser.value.office_id
+    })
 }
 
 const handleYearChange = () => {
-    getFrontlineServices();
+    getFrontlineServices(undefined, {
+        office_id: authUser.value.office_id
+    });
     getFrontlineServiceSummary();
 }
 
-onMounted(() => {
-    getFrontlineServices();
+onMounted(async () => {
+    await getUser();
+    getFrontlineServices(undefined, {
+        office_id: authUser.value.office_id
+    });
     getFrontlineServiceTypes();
     getYearlist();
     getPermitTypes();

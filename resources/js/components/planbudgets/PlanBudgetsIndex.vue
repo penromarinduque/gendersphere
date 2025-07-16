@@ -104,7 +104,7 @@
                     </td>
                 </tr>
             </template>
-            <template v-if="!planbudgets.length">
+            <template v-if="planbudgets.length == 0">
                 <tr>
                     <td colspan="9" class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
                         No records found
@@ -146,6 +146,7 @@
 // Here we're using a Composable file, its code is above
 import usePlanBudgets from '@/composables/planbudgets'
 import useGadActivities from '@/composables/gadactivities'
+import useAuth from '@/composables/auth'
 import BaseModal from '@/components/modals/BaseModal.vue'
 import Select from 'primevue/select';
 
@@ -155,6 +156,7 @@ import { onMounted, ref, reactive } from 'vue';
 // We need only two things from the useCompanies() composable
 const { planbudgets, getPlanBudgets, destroyPlanBudget, yearlist, getYearlist } = usePlanBudgets();
 const { errors, planbudget_id, isModalOpened, storeGadActivity, putPlanBudgetId, openModal, closeModal } = useGadActivities();
+const {user:authUser, getUser} = useAuth();
 
 let curr_year = new Date().getFullYear();
 const selectedYear = ref(curr_year)
@@ -170,13 +172,16 @@ const deletePlanBudget = async (id) => {
     }
     
     await destroyPlanBudget(id)
-    await getPlanBudgets()
+    await getPlanBudgets(undefined, {
+        office_id: authUser.value.office_id
+    })
     // console.log(1);
 }
 
 // We get the companies immediately
-onMounted(() => {
+onMounted(async () => {
     // getPlanBudgets();
+    await getUser();
     getYearlist();
     getByYear();
 })
@@ -188,12 +193,15 @@ const saveActivity = async () => {
 const putId = async (event) => {
     let pb_id = event.target.value;
     // console.log(pb_id)
-    putPlanBudgetId(pb_id)
+    putPlanBudgetId(pb_id);
 }
 
 const getByYear = async (event) => {
     let get_year = event ? event.value : new Date().getFullYear();
-    console.log(get_year);
-    await getPlanBudgets(get_year);
+    console.log(authUser.value.office_id);
+    await getPlanBudgets(get_year, {
+        office_id: authUser.value.office_id
+    });
+    console.log(planbudgets.value);
 }
 </script>

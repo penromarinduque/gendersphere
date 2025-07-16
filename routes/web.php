@@ -7,7 +7,9 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Models\ActivityDetail;
 use App\Models\CauseGenderIssue;
+use App\Models\Committee;
 use App\Models\CommitteePosition;
+use App\Models\FrontlineService;
 use App\Models\FrontlineServiceType;
 use App\Models\GenderIssue;
 use App\Models\Goal;
@@ -15,6 +17,7 @@ use App\Models\Objective;
 use App\Models\Office;
 use App\Models\PermitType;
 use App\Models\PersonInfo;
+use App\Models\PlanBudget;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,13 +55,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/committees/{any?}', function () {
         return view('committees');
         Route::view('/committees/{any}', 'committees')->where('any', '.*');
-    })->where('any', '.*')->name('committees');
+    })->where('any', '.*')->name('committees')->can('viewAny', Committee::class);
 
     // GAD Plan and Budget
     Route::get('/planbudgets/{any?}', function () {
         return view('planbudgets');
         Route::view('/planbudgets/{any}', 'planbudgets')->where('any', '.*');
-    })->where('any', '.*')->name('planbudgets');
+    })->where('any', '.*')->name('planbudgets')->can('viewAny', PlanBudget::class);
 
     // GAD Activities
     Route::get('/activities/{any?}', function () {
@@ -84,7 +87,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/frontlineservices/{any?}', function () {
         return view('frontlineservices');
         Route::view('/frontlineservices/{any}', 'frontlineservices')->where('any', '.*');
-    })->where('any', '.*')->name('frontlineservices');
+    })->where('any', '.*')->name('frontlineservices')->can('viewAny', FrontlineService::class);
 
     // Users
     Route::get('/users/{any?}', function () {

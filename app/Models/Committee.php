@@ -11,5 +11,7 @@ class Committee extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['person_info_id', 'year_covered', 'committee_position_id'];
+    protected $fillable = ['person_info_id', 'year_covered', 'committee_position_id', 'office_id'];
+
+    
 }

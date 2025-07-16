@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from '../utils/axios'
 import { useRouter } from 'vue-router'
 import { createToaster } from '@meforma/vue-toaster'
+import { useToast } from 'primevue/usetoast'
 
 export default function useActivities() {
     const activity = ref([])
@@ -16,7 +17,7 @@ export default function useActivities() {
 
     const errors = ref('')
     const router = useRouter()
-
+    const toast = useToast();
     const toaster = createToaster({ 
         position: "top"
         // max:
@@ -38,9 +39,20 @@ export default function useActivities() {
         try {
             await axios.post('/api/activities', data)
             await router.push({ name: 'activities.index' })
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Activity successfully saved',
+                life: 3000
+            })
         } catch (e) {
             console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -55,9 +67,20 @@ export default function useActivities() {
         try {
             await axios.patch(`/api/activities/${id}`, activity.value)
             await router.push({ name: 'activities.index' })
-            toaster.success(`Successfully Updated!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Activity successfully updated',
+                life: 3000
+            })
         } catch (e) {
             console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -69,10 +92,20 @@ export default function useActivities() {
     const destroyActivity = async (id) => {
         try {
             await axios.delete(`/api/activities/${id}`)
-            toaster.info(`Deleted!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Activity successfully deleted',
+                life: 3000
+            })
         } catch (e) {
             // console.log(e);
-            toaster.info(`Oops! Something went wrong please try again.`);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
         }
     }
 
@@ -98,9 +131,20 @@ export default function useActivities() {
         try {
             await axios.post('/api/attendees', data)
             await router.push({ name: 'activities.attendees' })
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Attendee successfully saved',
+                life: 3000
+            })
         } catch (e) {
             console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -115,9 +159,20 @@ export default function useActivities() {
         try {
             await axios.patch(`/api/personinfos/${id}`, personinfo.value)
             await router.push({ name: 'activities.attendees', params: { id: activity_id } })
-            toaster.success(`Successfully Updated!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Person successfully updated',
+                life: 3000
+            })
         } catch (e) {
             console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -130,10 +185,20 @@ export default function useActivities() {
         console.log(id);
         try {
             await axios.delete(`/api/attendees/${id}`)
-            toaster.info(`Deleted!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Attendee successfully deleted',
+                life: 3000
+            })
         } catch (e) {
             console.log(e);
-            toaster.info(`Oops! Something went wrong please try again.`);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
         }
         
     }

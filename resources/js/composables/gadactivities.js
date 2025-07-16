@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import axios from '../utils/axios'
 import { useRouter } from 'vue-router'
 import { createToaster } from '@meforma/vue-toaster'
+import { useToast } from 'primevue/usetoast'
 
 export default function useGadActivities(){
     const gadactivity = ref([])
@@ -11,7 +12,7 @@ export default function useGadActivities(){
 
     const errors = ref('')
     const router = useRouter()
-
+    const toast = useToast()
     const toaster = createToaster({ 
         position: "top"
         // max:
@@ -36,7 +37,12 @@ export default function useGadActivities(){
             await axios.post('/api/gadactivities', data)
             // await router.push({ name: 'planbudgets.index', replace:true })
             await router.go(0)
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'GAD Activity successfully saved',
+                life: 3000
+            })
             closeModal()
         } catch (e) {
             openModal()
@@ -55,9 +61,20 @@ export default function useGadActivities(){
         try {
             await axios.patch(`/api/gadactivities/${id}`, gadactivity.value)
             await router.push({ name: 'activitydetails.index', params: { ga_id: ga_id} })
-            toaster.success(`Successfully updated!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'GAD Activity successfully updated',
+                life: 3000
+            })
         } catch (e) {
             console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -70,10 +87,20 @@ export default function useGadActivities(){
         try {
             await axios.delete(`/api/gadactivities/${id}`)
             await router.push({ name: 'planbudgets.index' })
-            toaster.info(`Deleted!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'GAD Activity successfully deleted',
+                life: 3000
+            })
         } catch (e) {
             // console.log(e);
-            toaster.info(`Oops! Something went wrong please try again.`);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
         }
     }
 

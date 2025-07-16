@@ -701,6 +701,7 @@ const app = createApp({});
 
 app.use(router)
 .use(PrimeVue, {
+    ripple: true,
     theme: {
         preset: MyPreset,
         options: {

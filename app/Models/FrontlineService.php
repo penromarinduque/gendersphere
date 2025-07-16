@@ -9,7 +9,7 @@ class FrontlineService extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['permit_type_id', 'permit_no', 'client_name', 'gender', 'date_applied', 'date_released', 'barangay_id'];
+    protected $fillable = ['permit_type_id', 'permit_no', 'client_name', 'gender', 'date_applied', 'date_released', 'barangay_id', 'office_id'];
 
     public function getFrontlineServicesByPermitType($permit_type_id, $year)
     {

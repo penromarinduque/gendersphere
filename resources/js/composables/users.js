@@ -111,9 +111,19 @@ export default function useUsers() {
         try {
             await axios.patch(`/api/users/${id}`, user.value)
             await router.push({ name: 'users.index' })
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'User successfully updated',
+                life: 3000
+            })
         } catch (e) {
-            console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors

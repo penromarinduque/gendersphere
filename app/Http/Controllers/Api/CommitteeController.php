@@ -7,6 +7,7 @@ use App\Http\Resources\CommitteeResource;
 use App\Models\Committee;
 use App\Models\PersonInfo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CommitteeController extends Controller
 {
@@ -35,7 +36,7 @@ class CommitteeController extends Controller
         }
 
         if($request->has('office_id')){
-            $committees->where('office_id', $request->office_id);
+            $committees->where('committees.office_id', $request->office_id);
         }
  
         return CommitteeResource::collection($committees->paginate(15));
@@ -55,10 +56,13 @@ class CommitteeController extends Controller
             'committee_position_id.required' => 'The position field is required.',
         ]);
 
+        Gate::authorize('create', Committee::class);
+
         $committee = Committee::create([
             'person_info_id' => $request->person_info_id,
             'year_covered' => $request->year_covered,
             'committee_position_id' => $request->committee_position_id,
+            'office_id' => auth()->user()->office_id
         ]);
 
         return new CommitteeResource($committee);
@@ -86,7 +90,9 @@ class CommitteeController extends Controller
             'committee_position_id.required' => 'The position field is required.',
         ]);
 
-        $committee_update = Committee::find($id)->update([
+        $committee = Committee::find($id);
+        Gate::authorize('update', $committee);
+        $committee->update([
             'person_info_id' => $request->person_info_id,
             'year_covered' => $request->year_covered,
             'committee_position_id' => $request->committee_position_id,
@@ -103,6 +109,7 @@ class CommitteeController extends Controller
     public function destroy(Committee $committee)
     {
         // $committee = Committee::find($id)->delete();
+        Gate::authorize('delete', $committee);
         $committee->delete();
  
         return response()->noContent();

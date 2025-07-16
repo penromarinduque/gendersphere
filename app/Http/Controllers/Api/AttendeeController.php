@@ -8,6 +8,7 @@ use App\Models\PersonInfo;
 use App\Models\ActivityDetail;
 use App\Models\Attendee;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class AttendeeController extends Controller
 {
@@ -28,7 +29,6 @@ class AttendeeController extends Controller
     public function store(Request $request)
     {
         $_activitydetail = new ActivityDetail;
-
         
         if ($request->person_type==1) {
             $request->validate([
@@ -39,6 +39,9 @@ class AttendeeController extends Controller
 
             $person_info_id = $request->person_info_id;
             $activity_id = $request->activity_id;
+
+            $activityDetail = ActivityDetail::find($activity_id);
+            Gate::authorize('create', [Attendee::class, $activityDetail]);
     
             $attendee = Attendee::create([
                 'activity_id' => $activity_id,
@@ -80,6 +83,9 @@ class AttendeeController extends Controller
     
             $person_info_id = $personInfo->id;
             $activity_id = $request->activity_id;
+
+            $activityDetail = ActivityDetail::find($activity_id);
+            Gate::authorize('create', [Attendee::class, $activityDetail]);
     
             $attendee = Attendee::create([
                 'activity_id' => $activity_id,
@@ -120,6 +126,8 @@ class AttendeeController extends Controller
     public function destroy($id)
     {
         $attendee = Attendee::find($id);
+
+        Gate::authorize('delete', $attendee);
 
         if (!empty($attendee)) {
             $personInfo = PersonInfo::find($attendee->person_info_id);

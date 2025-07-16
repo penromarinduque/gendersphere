@@ -116,6 +116,7 @@ import useGoals from '../../composables/goals'
 import useGenderIssues from '../../composables/genderissues'
 import useCauseGenderIssues from '../../composables/causegenderissues'
 import useObjectives from '../../composables/objectives'
+import useAuth from '../../composables/auth'
 import { reactive, onMounted, watch } from 'vue'
 
 const { errors, planbudget, yearlist, loading, getYearlist, getPlanBudget, updatePlanBudget } = usePlanBudgets()
@@ -123,6 +124,7 @@ const { goals, getGoals } = useGoals()
 const { genderissuesbyyear, getGenderIssuesByYear } = useGenderIssues()
 const { causegenderissues, getCauseGenderIssues } = useCauseGenderIssues()
 const { objectives, getObjectives } = useObjectives()
+const { user:authUser, getUser } = useAuth();
 
 const props = defineProps({
     id: {
@@ -131,11 +133,23 @@ const props = defineProps({
     }
 })
 
-onMounted(getYearlist)
-onMounted(getGoals)
-onMounted(getCauseGenderIssues)
-onMounted(getObjectives)
-onMounted(() => getPlanBudget(props.id))
+onMounted(async()=>{
+    await getUser();
+    getYearlist()
+    await Promise.all([
+        getGoals({
+            office_id: authUser.value.office_id
+        }),
+        getCauseGenderIssues({
+            office_id: authUser.value.office_id
+        }),
+        getObjectives({
+            office_id: authUser.value.office_id
+        })
+    ]);
+    getPlanBudget(props.id)
+})
+
 watch(planbudget, () => {
     // console.log(planbudget.value.year)
     getGenderIssuesByYear(planbudget.value.year)

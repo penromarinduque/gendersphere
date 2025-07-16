@@ -17,4 +17,9 @@ class GadActivity extends Model implements Auditable
     {
         return $this->hasMany(ActivityDetail::class, 'gad_activity_id');
     }
+
+    public function plan_budget()
+    {
+        return $this->belongsTo(PlanBudget::class);
+    }
 }

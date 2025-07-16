@@ -116,6 +116,7 @@ import useGoals from '../../composables/goals'
 import useGenderIssues from '../../composables/genderissues'
 import useCauseGenderIssues from '../../composables/causegenderissues'
 import useObjectives from '../../composables/objectives'
+import useAuth from '../../composables/auth'
 import { reactive, onMounted } from 'vue'
 
 const form = reactive({
@@ -133,11 +134,22 @@ const { goals, getGoals } = useGoals()
 const { genderissuesbyyear, getGenderIssuesByYear } = useGenderIssues()
 const { causegenderissues, getCauseGenderIssues } = useCauseGenderIssues()
 const { objectives, getObjectives } = useObjectives()
+const { user:authUser, getUser } = useAuth();
 
-onMounted(getYearlist)
-onMounted(getGoals)
-onMounted(getCauseGenderIssues)
-onMounted(getObjectives)
+
+onMounted(async()=>{
+    await getUser();
+    getYearlist()
+    getGoals({
+        office_id: authUser.value.office_id
+    })
+    getCauseGenderIssues({
+        office_id: authUser.value.office_id
+    })
+    getObjectives({
+        office_id: authUser.value.office_id
+    })
+})
 
 const savePlanBudget  = async () => {
     await storePlanBudget({ ...form })

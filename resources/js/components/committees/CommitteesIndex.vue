@@ -4,9 +4,9 @@
             <h3 class="text-lg"><b>List of GADFPS Committees</b></h3>
         </div>
         <div class="col-span-4 flex justify-end">
-            <button class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
-                <router-link :to="{ name: 'committees.create' }" class="text-sm font-medium">Add New</router-link>
-            </button>
+            <Button asChild v-slot="props" size="small">
+                <router-link :to="{ name: 'committees.create' }" :class="props.class">Add New</router-link>
+            </Button>
         </div>
     </div>
 
@@ -113,6 +113,7 @@ import { ref } from 'vue';
 import { TailwindPagination } from 'laravel-vue-pagination';
 import useCommittees from '@/composables/committees';
 import Select from 'primevue/select';
+import Button from 'primevue/button';
 import { onMounted } from 'vue';
 import Panel from 'primevue/panel';
 import usePersonInfos from '../../composables/personinfos';
@@ -133,7 +134,7 @@ const deleteCommittee = async (id) => {
     }
     
     await destroyCommittee(id);
-    await getCommittees();
+    await getCommittees(1, selectedYear.value, selectedEmpStatus.value, selectedGender.value, authUser.value.office_id);
     // console.log(1);
 }
 

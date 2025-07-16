@@ -84,7 +84,12 @@ export default function useGenderIssues(){
     const destroyGenderIssue = async (id) => {
         try {
             await axios.delete(`/api/genderissues/${id}`)
-            toaster.info(`Deleted!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'Gender Issue successfully deleted',
+                life: 3000
+            })
         } catch (e) {
             // console.log(e);
             toast.add({
