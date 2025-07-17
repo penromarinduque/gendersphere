@@ -42,7 +42,9 @@ class PersonInfoPolicy
     public function viewEmployeeReport(User $user): bool
     {
         //
-        return $user->roles->contains('role_type', 'viewer');
+        return $user->roles->contains(function($role) {
+            return $role->role_type == 'encoder' || $role->role_type == 'viewer';
+        });
     }
 
 

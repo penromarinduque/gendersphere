@@ -17,14 +17,14 @@
                     </x-nav-link>
                     
                     <!-- Data Entry -->
-                    <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
-                        @php
-                            $can_view_data_entry = Auth::user()->can('viewAny', App\Models\PersonInfo::class) 
-                            || Auth::user()->can('viewAny', App\Models\Committee::class)
-                            || Auth::user()->can('viewAny', App\Models\PlanBudget::class)
-                            || Auth::user()->can('viewAny', App\Models\FrontlineService::class);
-                        @endphp
-                        @if ($can_view_data_entry)
+                    @php
+                        $can_view_data_entry = Auth::user()->can('viewAny', App\Models\PersonInfo::class) 
+                        || Auth::user()->can('viewAny', App\Models\Committee::class)
+                        || Auth::user()->can('viewAny', App\Models\PlanBudget::class)
+                        || Auth::user()->can('viewAny', App\Models\FrontlineService::class);
+                    @endphp
+                    @if ($can_view_data_entry)
+                        <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
                             <x-dropdown align="right" width="48">
                                 <x-slot name="trigger">
                                     <button class="inline-flex items-center px-1 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
@@ -61,17 +61,17 @@
                                     @endcan
                                 </x-slot>
                             </x-dropdown>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
 
                     <!-- Reports Dropdown -->
-                    <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
-                        @php
-                            $can_view_reports = Auth::user()->can('viewEmployeeReport', App\Models\PersonInfo::class) 
-                            || Auth::user()->can('viewAccomplishmentReport', App\Models\PlanBudget::class)
-                            || Auth::user()->can('viewSexAggregatedDataReport', App\Models\FrontlineService::class);
-                        @endphp
-                        @if ($can_view_reports)
+                    @php
+                        $can_view_reports = Auth::user()->can('viewEmployeeReport', App\Models\PersonInfo::class) 
+                        || Auth::user()->can('viewAccomplishmentReport', App\Models\PlanBudget::class)
+                        || Auth::user()->can('viewSexAggregatedDataReport', App\Models\FrontlineService::class);
+                    @endphp
+                    @if ($can_view_reports)
+                        <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
                             <x-dropdown align="right" width="48">
                                 <x-slot name="trigger">
                                     <button class="inline-flex items-center px-1 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
@@ -103,23 +103,23 @@
                                     @endcan
                                 </x-slot>
                             </x-dropdown>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
 
                     <!-- Maintenance Dropdown -->
-                    <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
-                        @php
-                            $can_view_maintenance = Auth::user()->can('viewAny', App\Models\Office::class) 
-                            || Auth::user()->can('viewAny', App\Models\Goal::class)
-                            || Auth::user()->can('viewAny', App\Models\GenderIssue::class)
-                            || Auth::user()->can('viewAny', App\Models\CauseGenderIssue::class)
-                            || Auth::user()->can('viewAny', App\Models\Objective::class)
-                            || Auth::user()->can('viewAny', App\Models\FrontlineServiceType::class)
-                            || Auth::user()->can('viewAny', App\Models\PermitType::class)
-                            || Auth::user()->can('viewAny', App\Models\CommitteePosition::class)
-                            || Auth::user()->is_super_admin;
-                        @endphp
-                        @if ($can_view_maintenance)
+                    @php
+                        $can_view_maintenance = Auth::user()->can('viewAny', App\Models\Office::class) 
+                        || Auth::user()->can('viewAny', App\Models\Goal::class)
+                        || Auth::user()->can('viewAny', App\Models\GenderIssue::class)
+                        || Auth::user()->can('viewAny', App\Models\CauseGenderIssue::class)
+                        || Auth::user()->can('viewAny', App\Models\Objective::class)
+                        || Auth::user()->can('viewAny', App\Models\FrontlineServiceType::class)
+                        || Auth::user()->can('viewAny', App\Models\PermitType::class)
+                        || Auth::user()->can('viewAny', App\Models\CommitteePosition::class)
+                        || Auth::user()->is_super_admin;
+                    @endphp
+                    @if ($can_view_maintenance)
+                        <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
                             <x-dropdown align="right" width="48">
                                 <x-slot name="trigger">
                                     <button class="inline-flex items-center px-1 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
@@ -179,8 +179,8 @@
                                     @endcan
                                 </x-slot>
                             </x-dropdown>
-                        @endif
-                    </div>
+                        </div>
+                    @endif
                 </div>
             </div>
 

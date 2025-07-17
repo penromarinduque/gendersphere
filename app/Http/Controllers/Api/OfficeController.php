@@ -48,6 +48,17 @@ class OfficeController extends Controller
             ], 409);
         }
 
+        if($request->office_type == 'penro' && !Office::where(['id' => $request->parent_id, 'office_type' => 'region'])->exists()) {
+            return response()->json([
+                'message' => 'Invalid parent office. A PENRO office should have a parent office which is a REGION office'
+            ], 409);
+        }
+        if($request->office_type == 'cenro' && !Office::where(['id' => $request->parent_id, 'office_type' => 'penro'])->exists()) {
+            return response()->json([
+                'message' => 'Invalid parent office. A CENRO office should have a parent office which is a PENRO office'
+            ], 409);
+        }
+
         Office::create([
             'office_type' => $request->office_type,
             'region_id' => $request->office_type == 'region' ? $request->region_id : null,
