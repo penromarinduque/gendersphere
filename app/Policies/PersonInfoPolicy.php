@@ -35,6 +35,17 @@ class PersonInfoPolicy
     }
 
     /**
+     * Determine whether the user can view the employee list report.
+     */
+    public function viewEmployeeReport(User $user): bool
+    {
+        //
+        return $user->roles->contains('role_type', 'viewer');
+    }
+
+
+
+    /**
      * Determine whether the user can update the model.
      */
     public function update(User $user, PersonInfo $personInfo): bool

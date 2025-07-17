@@ -8,19 +8,26 @@ use App\Models\PlanBudget;
 use App\Models\FrontlineServiceType;
 use App\Models\PermitType;
 use App\Models\FrontlineService;
+use Illuminate\Support\Facades\Gate;
 
 class ReportController extends Controller
 {
-    public function employees($type='permanent')
+    public function employees(Request $request, $type='permanent')
     {
-        $employees = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
-        // , 'barangays.barangay_name', 'municipalities.municipality_name, provinces.province_name'
+        Gate::authorize('viewEmployeeReport', PersonInfo::class);
+        $query = PersonInfo::query()->select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
             ->join('provinces', 'provinces.id', 'person_infos.province_id')
             ->join('municipalities', 'municipalities.id', 'person_infos.municipality_id')
             ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
             ->where('person_type',1)
-            ->where('employment_type', $type)
-            ->get();
+            ->where('employment_type', $type);
+        
+        if($request->has('office_id')){
+            $query->where('person_infos.office_id', $request->office_id);
+        }
+
+        $employees = $query->get();
+
         return view('pages.reports.employees', [
             'employees' => $employees,
             'type' => $type
@@ -31,9 +38,11 @@ class ReportController extends Controller
     {
         $_planbudget = new PlanBudget;
 
+        Gate::authorize('viewAccomplishmentReport', PlanBudget::class);
+
         $year = ($request->year) ? $request->year : date('Y');
-        $goals = $_planbudget->getPlanBudgetGoals($year);
-        $planbudgets = $_planbudget->getPlanBudgetByYear($year);
+        $goals = $_planbudget->getPlanBudgetGoals($year, auth()->user()->office_id);
+        $planbudgets = $_planbudget->getPlanBudgetByYear($year, auth()->user()->office_id);
 
         $str = '';
         $str = '<table border="1" style="border-collapse: collapse;">
@@ -267,21 +276,27 @@ class ReportController extends Controller
         $_permittype = new PermitType;
         $_frontlinservice = new FrontlineService;
 
+        Gate::authorize('viewSexAggregatedDataReport', FrontlineService::class);
+
         $year = ($request->year) ? $request->year : date('Y');
         $frontline_service_type_id = ($request->frontline_service_type_id) ? $request->frontline_service_type_id : 0;
         $permit_type_id = $request->permit_type_id ? $request->permit_type_id : 1;
+
+        $office_query = $request->has('office_id') ? ['office_id' => $request->office_id] : [];
 
         $counts = [
             "frontline_service_type" => [],
             "permit_type" => [],
             "gender" => [
                 "male" => FrontlineService::where([
-                            "gender" => "male"
+                            "gender" => "male",
+                            ...$office_query
                         ])
                         ->whereYear('date_released', $year)
                         ->count(),
                 "female" => FrontlineService::where([
-                            "gender" => "female"
+                            "gender" => "female",
+                            ...$office_query
                         ])
                         ->whereYear('date_released', $year)
                         ->count(),
@@ -303,7 +318,7 @@ class ReportController extends Controller
             ])->pluck("id");
             $counts["frontline_service_type"][] = [
                 "name" => $ftype->service,
-                "count" => FrontlineService::whereIn("permit_type_id", $ptype_ids)->count()
+                "count" => FrontlineService::whereIn("permit_type_id", $ptype_ids)->where([...$office_query])->count()
             ];
         }
 

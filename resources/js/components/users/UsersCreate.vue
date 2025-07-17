@@ -44,15 +44,15 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div class="pb-1">
-                    <label for="usertype" class="block text-md font-medium text-gray-700">Role</label>
+                    <label for="user_role" class="block text-md font-medium text-gray-700">Role</label>
                     <div class="mt-1">
-                        <select name="usertype" id="usertype" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        v-model="form.usertype">
+                        <select name="user_role" id="user_role" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        v-model="form.user_role">
                             <option value="">-Select Role-</option>
-                            <option value="2">Encoder</option>
-                            <option value="3">Viewer</option>
+                            <option value="encoder">Encoder</option>
+                            <option value="viewer">Viewer</option>
                         </select>
-                        <span class="text-sm text-red-600" v-if="errors?.usertype">{{ errors.usertype[0] }}</span>
+                        <span class="text-sm text-red-600" v-if="errors?.user_role">{{ errors.user_role[0] }}</span>
                     </div>
                 </div>
             </div>
@@ -77,7 +77,7 @@ const form = reactive({
     person_info_id: '',
     email: '',
     password: '',
-    usertype: ''
+    user_role: ''
 })
  
 const { errors, personinfos, storeUser, generatePassword, getPersonInfos, getPersonEmail } = useUsers();

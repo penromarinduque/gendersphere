@@ -26,6 +26,15 @@ class FrontlineServicePolicy
     }
 
     /**
+     * Determine whether the user can view the sex aggregated data report.
+     */
+    public function viewSexAggregatedDataReport(User $user): bool
+    {
+        //
+        return $user->roles->contains('role_type', 'viewer');
+    }
+
+    /**
      * Determine whether the user can create models.
      */
     public function create(User $user): bool

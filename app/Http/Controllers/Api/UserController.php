@@ -42,38 +42,48 @@ class UserController extends Controller
             'person_info_id' => ['required', 'exists:person_infos,id'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', Rules\Password::defaults()],
-            'usertype' => ['required'],
+            'user_role' => ['required', Rule::in(['encoder', 'viewer'])],
         ], [
             'person_info_id.required' => 'The personnel field is required.'
         ]);
-        $person_info_id = $request->person_info_id;
-        $personinfo = PersonInfo::find($person_info_id);
 
-        $name = "na";
-        
-        if (!empty($personinfo)) {
-            $extname = ($personinfo->extname!=NULL) ? ' '.$personinfo->extname : '';
-            $name = $personinfo->lastname.', '.$personinfo->firstname.' '.$personinfo->middlename.$extname;
-        }
-
-        if(!in_array($personinfo->user_id, [null, 0])){
-            return response()->json(['message' => 'User already has an account'], 422);
-        }
-
-        $user = User::create([
-            'name' => $name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'usertype' => $request->usertype,
-            'is_active' => 1,
-            'office_id' => auth()->user()->office_id
-        ]);
-
-        PersonInfo::find($request->person_info_id)->update(['user_id' => $user->id]);
-
-        // $user = User::create($request->validated());
-
-        return new UserResource($user);
+        return DB::transaction(function () use ($request, $_personinfo) {
+            $person_info_id = $request->person_info_id;
+            $personinfo = PersonInfo::find($person_info_id);
+    
+            $name = "na";
+            
+            if (!empty($personinfo)) {
+                $extname = ($personinfo->extname!=NULL) ? ' '.$personinfo->extname : '';
+                $name = $personinfo->lastname.', '.$personinfo->firstname.' '.$personinfo->middlename.$extname;
+            }
+    
+            if(!in_array($personinfo->user_id, [null, 0])){
+                return response()->json(['message' => 'User already has an account'], 422);
+            }
+    
+    
+            $user = User::create([
+                'name' => $name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'usertype' => $request->user_role == 'encoder' ? 2 : 3,
+                'is_active' => 1,
+                'office_id' => auth()->user()->office_id
+            ]);
+    
+            Role::create([
+                'user_id' => $user->id,
+                'office_id' => auth()->user()->office_id,
+                'role_type' => $request->user_role
+            ]);
+    
+            PersonInfo::find($request->person_info_id)->update(['user_id' => $user->id]);
+    
+            // $user = User::create($request->validated());
+    
+            return new UserResource($user);
+        });
     }
 
     public function storeAdmin(Request $request)
