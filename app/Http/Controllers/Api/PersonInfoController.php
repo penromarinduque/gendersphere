@@ -176,7 +176,7 @@ class PersonInfoController extends Controller
     public function destroy($id)
     {
         $personInfo = PersonInfo::find($id);
-        Gate::allows('delete', $personInfo);
+        Gate::authorize('delete', $personInfo);
         $personInfo->delete();
 
         return response()->noContent();

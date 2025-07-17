@@ -13,7 +13,7 @@ class AuthController extends Controller
 {
     //
     public function user() {
-        return UserResource::make(auth()->user());  
+        return UserResource::make(auth()->user()->load('roles'));  
     }
 
     public function canAccess(Request $request) {
