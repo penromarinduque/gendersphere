@@ -14,6 +14,24 @@
                 </Select>
                <span class="text-sm text-red-600" v-if="errors?.role">{{ errors.role[0] }}</span>
            </div>
+           <div class="mb-2" v-if="form.role === 'encoder'">
+                <MultiSelect v-model="form.encoder_permissions" 
+                            :options="[
+                                { name: 'Personnel', value: 'PersonInfo' },
+                                { name: 'GADFPS Committee', value: 'Committee' },
+                                { name: 'Frontline Service', value: 'FrontlineService' },
+                                { name: 'GAD Plan and Budget', value: 'PlanBudget' },
+                            ]" 
+                                option-label="name"
+                                option-value="value"
+                                placeholder="Select Encoder Permissions"
+                                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-[42px]"
+                                :show-clear="true"
+                                :filter="true"
+                                :filter-placeholder="'Search Encoder Permissions'">
+                </MultiSelect>
+                <span class="text-sm text-red-600" v-if="errors?.encoder_permissions">{{ errors.encoder_permissions[0] }}</span>
+            </div>
            <div class="mb-2">
                <label for="username" class="font-semibold">Office</label><br>
                <Select 
@@ -41,6 +59,7 @@
     import Button from "primevue/button";
     import Select from 'primevue/select';
     import AddRoleDialog from './AddRoleDialog.vue';
+    import MultiSelect from 'primevue/multiselect';
 
     import useUsers from '@/composables/users';
     import { defineProps, onMounted, reactive, ref, watch, watchEffect } from 'vue';
@@ -61,7 +80,8 @@
     const form = reactive({
         role: '',
         office_id: '',
-        user_id: ''
+        user_id: '',
+        encoder_permissions: []
     });
     const isVisible = ref(false);
 

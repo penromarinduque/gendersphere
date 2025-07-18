@@ -33,9 +33,17 @@ export default function useAuth() {
         }
     }
 
+    const hasRole = (role) => {
+        if (!user.value) {
+            return false;
+        }
+        return user.value.roles && user.value.roles.find(r => r.role_type === role);
+    }
+
     return {
         getUser,
         canAccess,
+        hasRole,
         can,
         user
     }

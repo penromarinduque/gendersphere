@@ -6,13 +6,22 @@
         <h5 class="mb-2 text-lg font-bold">{{ props.user.name }}</h5>
         <DataView :value="props.user.roles">
             <template #list="slotProps">
-                <div class="flex flex-col p-2">
+                <div class="flex flex-col p-2 gap-1">
                     <div v-for="(item, index) in slotProps.items" :key="index">
                         <div class="p-2 border border-gray-200 flex justify-between align-items-center" >
                             <div class="">
                                 <Tag severity="secondary" :value="item.role_type.toUpperCase()"></Tag>-<Tag severity="secondary" :value="item.office.office_name"></Tag>
+                                <template v-if="item.role_type == 'encoder'">
+                                    <br>
+                                    <div class="flex flex-col gap-1 mt-2">
+                                        Encoder Permissions: 
+                                        <template v-for="permission in item.encoder_permissions">
+                                            <Tag  severity="secondary" :value="permission.permission.toUpperCase()"></Tag>
+                                        </template>
+                                    </div>
+                                </template>
                             </div>
-                            <Button size="small" severity="danger" label="Delete" variant="outlined" class="float-right" @click="_deleteRole(item.id)" :loading="loading"></Button>
+                            <Button size="small" severity="danger" label="Delete" variant="outlined" class="float-right self-start" @click="_deleteRole(item.id)" :loading="loading"></Button>
                         </div>  
                     </div>
                 </div>
@@ -24,7 +33,6 @@
     </Drawer>
 
     <AddRoleDialog :visible="addRoleVisible" @close="addRoleVisible = false" :user="props.user" @saved="roleAdded()" :loading="loading" />
-
 </template>
 
 <script setup>
@@ -36,7 +44,7 @@
     import Tag from 'primevue/tag';
     import Card from "primevue/card";
     import { useConfirm } from "primevue/useconfirm";
-import useRoles from '../../composables/roles';
+    import useRoles from '../../composables/roles';
 
     const { deleteRole } = useRoles();
     const loading = ref(false);
@@ -49,7 +57,7 @@ import useRoles from '../../composables/roles';
     const addRoleVisible = ref(false);
 
     watchEffect(() => {
-        console.log(props.user);
+        console.log("USEWR " , props.user);
     })
 
     watch(() => props.visible, (newVal) => {

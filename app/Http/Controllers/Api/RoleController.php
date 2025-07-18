@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\EncoderPermission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ class RoleController extends Controller
             'role' => ['required', Rule::in(['admin', 'viewer', 'encoder'])],
             'user_id' => ['required', 'exists:users,id'],
             'office_id' => ['required', 'exists:offices,id'],
+            'encoder_permissions' => ['required_if:role,encoder', 'array'],
         ],[], [
             'user_id' => 'user',
             'office_id' => 'office'
@@ -54,7 +56,9 @@ class RoleController extends Controller
         }
 
         if($user->office_id != $request->office_id) {
-            
+            return response()->json([
+                'message' => 'User does not belong to the specified office'
+            ], 400);
         }
 
         $role = Role::create([
@@ -62,6 +66,19 @@ class RoleController extends Controller
             'user_id' => $request->user_id,
             'office_id' => $request->office_id,
         ]);
+
+        if($role->role_type == 'encoder' && $request->has('encoder_permissions')) {
+            EncoderPermission::insert(
+                array_map(function($permission) use ($role) {
+                    return [
+                        'role_id' => $role->id,
+                        'permission' => $permission,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
+                }, $request->input('encoder_permissions'))
+            );
+        }
 
         return response()->json($role, 201);
     }
@@ -89,6 +106,7 @@ class RoleController extends Controller
     {
         //
         Role::where('id', $id)->delete();
+        EncoderPermission::where('role_id', $id)->delete();
 
         return response()->json([
             'message' => 'Role deleted successfully'

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest;
 use App\Http\Resources\UserResource;
+use App\Models\EncoderPermission;
 use App\Models\User;
 use App\Models\PersonInfo;
 use App\Models\Role;
@@ -27,7 +28,7 @@ class UserController extends Controller
         if($request->has('office_id')) {
             $query->where('office_id', $request->office_id);
         }
-        $query->with('office', 'roles.office');
+        $query->with('office', 'roles.office', 'roles.encoderPermissions');
         return UserResource::collection($query->get());
     }
 
@@ -43,6 +44,7 @@ class UserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', Rules\Password::defaults()],
             'user_role' => ['required', Rule::in(['encoder', 'viewer'])],
+            'encoder_permissions' => ['required_if:user_role,encoder', 'array'],
         ], [
             'person_info_id.required' => 'The personnel field is required.'
         ]);
@@ -72,11 +74,24 @@ class UserController extends Controller
                 'office_id' => auth()->user()->office_id
             ]);
     
-            Role::create([
+            $role = Role::create([
                 'user_id' => $user->id,
                 'office_id' => auth()->user()->office_id,
                 'role_type' => $request->user_role
             ]);
+
+            if($request->input('user_role') == 'encoder' && !empty($request->input('encoder_permissions'))) {
+                EncoderPermission::insert(
+                    array_map(function($permission) use ($user, $role) {
+                        return [
+                            'role_id' => $role->id,
+                            'permission' => $permission,
+                            'created_at' => now(),
+                            'updated_at' => now()
+                        ];
+                    }, $request->input('encoder_permissions'))
+                );
+            }
     
             PersonInfo::find($request->person_info_id)->update(['user_id' => $user->id]);
     

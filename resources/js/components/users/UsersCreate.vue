@@ -55,6 +55,27 @@
                         <span class="text-sm text-red-600" v-if="errors?.user_role">{{ errors.user_role[0] }}</span>
                     </div>
                 </div>
+                <div class="pb-1" v-if="form.user_role === 'encoder'">
+                    <label for="user_role" class="block text-md font-medium text-gray-700">Encoder Permissions</label>
+                    <div class="mt-0 align-top ">
+                        <MultiSelect v-model="form.encoder_permissions" 
+                                    :options="[
+                                        { name: 'Personnel', value: 'PersonInfo' },
+                                        { name: 'GADFPS Committee', value: 'Committee' },
+                                        { name: 'Frontline Service', value: 'FrontlineService' },
+                                        { name: 'GAD Plan and Budget', value: 'PlanBudget' },
+                                    ]" 
+                                     option-label="name"
+                                     option-value="value"
+                                     placeholder="Select Encoder Permissions"
+                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-[42px]"
+                                     :show-clear="true"
+                                     :filter="true"
+                                     :filter-placeholder="'Search Encoder Permissions'">
+                        </MultiSelect>
+                        <span class="text-sm text-red-600" v-if="errors?.encoder_permissions">{{ errors.encoder_permissions[0] }}</span>
+                    </div>
+                </div>
             </div>
             <div class="float-right py-4">
                 <button type="button" class="inline-flex items-center px-4 py-2 mr-5 text-sm font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md ring-gray-300 hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring disabled:opacity-25">
@@ -71,13 +92,15 @@
 <script setup>
 import useUsers from '../../composables/users'
 import useAuth from '../../composables/auth'
-import { reactive, onMounted } from 'vue'
+import { reactive, onMounted } from 'vue';
+import MultiSelect from 'primevue/multiselect';
  
 const form = reactive({
     person_info_id: '',
     email: '',
     password: '',
-    user_role: ''
+    user_role: '',
+    encoder_permissions: []
 })
  
 const { errors, personinfos, storeUser, generatePassword, getPersonInfos, getPersonEmail } = useUsers();
