@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\ActivityDetail;
+use App\Models\EncoderPermission;
 use App\Models\GadActivity;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -31,7 +32,7 @@ class ActivityDetailPolicy
     public function create(User $user, GadActivity $gadActivity): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $gadActivity->plan_budget->office_id == $user->office_id;
+        return $user->roles->contains('role_type', 'encoder') && $user->roles->encoderPermissions->contains('permission', EncoderPermission::PERMISSIONS[0]) && $gadActivity->plan_budget->office_id == $user->office_id;
     }
 
     /**

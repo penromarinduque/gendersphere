@@ -11,4 +11,11 @@ class EncoderPermission extends Model
 
     protected $guarded = [];
 
+    const PERMISSIONS = [
+        'PersonInfo',
+        'PlanBudget',
+        'Committee',
+        'FrontlineService'
+    ];
+
 }
