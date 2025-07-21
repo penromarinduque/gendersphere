@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\ActivityDetail;
 use App\Models\Attendee;
+use App\Models\EncoderPermission;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -31,7 +32,11 @@ class AttendeePolicy
     public function create(User $user, ActivityDetail $activityDetail): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $user->office_id == $activityDetail->gad_activity->plan_budget->office_id;
+        return $user->roles->contains('role_type', 'encoder') 
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PlanBudget']);
+        })
+        && $user->office_id == $activityDetail->gad_activity->plan_budget->office_id;
     }
 
     /**
@@ -40,7 +45,11 @@ class AttendeePolicy
     public function update(User $user, Attendee $attendee): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $user->office_id == $attendee->activity_detail->gad_activity->plan_budget->office_id;
+        return $user->roles->contains('role_type', 'encoder') 
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PlanBudget']);
+        })
+        && $user->office_id == $attendee->activity_detail->gad_activity->plan_budget->office_id;
     }
 
     /**
@@ -49,7 +58,11 @@ class AttendeePolicy
     public function delete(User $user, Attendee $attendee): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $user->office_id == $attendee->activityDetail->gad_activity->plan_budget->office_id;
+        return $user->roles->contains('role_type', 'encoder') 
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PlanBudget']);
+        })
+        && $user->office_id == $attendee->activityDetail->gad_activity->plan_budget->office_id;
     }
 
     /**
@@ -66,6 +79,10 @@ class AttendeePolicy
     public function forceDelete(User $user, Attendee $attendee): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $user->office_id == $attendee->activity_detail->gad_activity->plan_budget->office_id;
+        return $user->roles->contains('role_type', 'encoder') 
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PlanBudget']);
+        })
+        && $user->office_id == $attendee->activity_detail->gad_activity->plan_budget->office_id;
     }
 }

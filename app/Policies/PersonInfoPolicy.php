@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\EncoderPermission;
 use Illuminate\Auth\Access\Response;
 use App\Models\PersonInfo;
 use App\Models\User;
@@ -33,7 +34,10 @@ class PersonInfoPolicy
     public function create(User $user): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder');
+        return $user->roles->contains('role_type', 'encoder')
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PersonInfo']);
+        });
     }
 
     /**
@@ -57,6 +61,9 @@ class PersonInfoPolicy
         //
         return $user->roles->contains(function($role) use($personInfo) {
             return $role->role_type == 'encoder' && $role->office_id == $personInfo->office_id;
+        })
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PersonInfo']);
         });
     }
 
@@ -68,6 +75,9 @@ class PersonInfoPolicy
         //
         return $user->roles->contains(function($role) use($personInfo) {
             return $role->role_type == 'encoder' && $role->office_id == $personInfo->office_id;
+        })
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PersonInfo']);
         });
     }
 
@@ -87,6 +97,9 @@ class PersonInfoPolicy
         //
         return $user->roles->contains(function($role) use($personInfo) {
             return $role->role_type == 'encoder' && $role->office_id == $personInfo->office_id;
+        })
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PersonInfo']);
         });
     }
 }

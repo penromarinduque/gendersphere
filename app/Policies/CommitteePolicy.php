@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Committee;
+use App\Models\EncoderPermission;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -33,7 +34,10 @@ class CommitteePolicy
     public function create(User $user): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder');
+        return $user->roles->contains('role_type', 'encoder') 
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['Committee']);
+        });
     }
 
     /**
@@ -44,6 +48,9 @@ class CommitteePolicy
         //
         return $user->roles->contains(function($role) use ($committee) {
            return $role->role_type === 'encoder' && $role->office_id === $committee->office_id; 
+        }) 
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['Committee']);
         });
     }
 
@@ -55,6 +62,9 @@ class CommitteePolicy
         //
         return $user->roles->contains(function($role) use ($committee) {
            return $role->role_type === 'encoder' && $role->office_id === $committee->office_id; 
+        })
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['Committee']);
         });
     }
 
@@ -74,6 +84,9 @@ class CommitteePolicy
         //
         return $user->roles->contains(function($role) use ($committee) {
            return $role->role_type === 'encoder' && $role->office_id === $committee->office_id; 
+        })
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['Committee']);
         });
     }
 }

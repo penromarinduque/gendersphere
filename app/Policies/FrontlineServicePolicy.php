@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\EncoderPermission;
 use App\Models\FrontlineService;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -44,7 +45,10 @@ class FrontlineServicePolicy
     public function create(User $user): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder');
+        return $user->roles->contains('role_type', 'encoder')
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['FrontlineService']);
+        });
     }
 
     /**
@@ -53,7 +57,11 @@ class FrontlineServicePolicy
     public function update(User $user, FrontlineService $frontlineService): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $user->office_id == $frontlineService->office_id;
+        return $user->roles->contains('role_type', 'encoder') 
+        && $user->office_id == $frontlineService->office_id
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['FrontlineService']);
+        });
     }
 
     /**
@@ -62,7 +70,11 @@ class FrontlineServicePolicy
     public function delete(User $user, FrontlineService $frontlineService): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $user->office_id == $frontlineService->office_id;
+        return $user->roles->contains('role_type', 'encoder') 
+        && $user->office_id == $frontlineService->office_id
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['FrontlineService']);
+        });
     }
 
     /**
@@ -79,6 +91,10 @@ class FrontlineServicePolicy
     public function forceDelete(User $user, FrontlineService $frontlineService): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $user->office_id == $frontlineService->office_id;
+        return $user->roles->contains('role_type', 'encoder') 
+        && $user->office_id == $frontlineService->office_id
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['FrontlineService']);
+        });
     }
 }
