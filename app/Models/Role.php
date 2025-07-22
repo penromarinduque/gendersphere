@@ -16,6 +16,7 @@ class Role extends Model
         return $this->belongsTo(Office::class);
     }
 
+
     public function encoderPermissions()
     {
         return $this->hasMany(EncoderPermission::class);

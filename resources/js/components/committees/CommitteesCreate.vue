@@ -60,6 +60,7 @@
 <script setup>
 import Button from "primevue/button";
 import useCommittees from '../../composables/committees'
+import useAuth from '../../composables/auth'
 import { reactive, onMounted } from 'vue'
 
 const form = reactive({
@@ -68,11 +69,19 @@ const form = reactive({
     year_covered: '',
 })
 
-const { errors, yearlist, personinfos, committeepositions, loading, getYearlist, getPersonInfos, getCommitteePositions, storeCommittee } = useCommittees()
+const { user : authUser , getUser } = useAuth();
+const { errors, yearlist, personinfos, committeepositions, loading, getYearlist, getPersonInfos, getCommitteePositions, storeCommittee } = useCommittees();
 
-onMounted(getPersonInfos)
-onMounted(getCommitteePositions)
-onMounted(getYearlist)
+onMounted(async() => {
+    await getUser();
+    getPersonInfos({
+        office_id: authUser.value.office_id
+    });
+    getCommitteePositions({
+        office_id: authUser.value.office_id
+    });
+    getYearlist();
+})
 
 const saveCommittee  = async () => {
     await storeCommittee({ ...form })

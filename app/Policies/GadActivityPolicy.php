@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\EncoderPermission;
 use App\Models\GadActivity;
 use App\Models\PlanBudget;
 use App\Models\User;
@@ -32,7 +33,11 @@ class GadActivityPolicy
     public function create(User $user, PlanBudget $planBudget): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $planBudget->office_id == $user->office_id;
+        return $user->roles->contains('role_type', 'encoder') 
+        && $planBudget->office_id == $user->office_id
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PlanBudget']);
+        });
     }
 
     /**
@@ -41,7 +46,11 @@ class GadActivityPolicy
     public function update(User $user, GadActivity $gadActivity): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $gadActivity->plan_budget->office_id == $user->office_id;
+        return $user->roles->contains('role_type', 'encoder') 
+        && $gadActivity->plan_budget->office_id == $user->office_id
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PlanBudget']);
+        });
     }
 
     /**
@@ -50,7 +59,11 @@ class GadActivityPolicy
     public function delete(User $user, GadActivity $gadActivity): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $gadActivity->plan_budget->office_id == $user->office_id;
+        return $user->roles->contains('role_type', 'encoder') 
+        && $gadActivity->plan_budget->office_id == $user->office_id
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PlanBudget']);
+        });
     }
 
     /**
@@ -67,6 +80,10 @@ class GadActivityPolicy
     public function forceDelete(User $user, GadActivity $gadActivity): bool
     {
         //
-        return $user->roles->contains('role_type', 'encoder') && $gadActivity->plan_budget->office_id == $user->office_id;
+        return $user->roles->contains('role_type', 'encoder')
+        && $gadActivity->plan_budget->office_id == $user->office_id
+        && $user->roles->contains(function($role) {
+            return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['PlanBudget']);
+        });
     }
 }
