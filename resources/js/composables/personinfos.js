@@ -152,8 +152,10 @@ export default function usePersonInfos() {
         // console.log(response.data);
     }
 
-    const getPersonInfoSummary = async () => {
-        let response = await axios.get('/api/personinfos/summary');
+    const getPersonInfoSummary = async ($query) => {
+        let response = await axios.get('/api/personinfos/summary', {
+            params: $query
+        });
         summary.value = response.data
     }
     

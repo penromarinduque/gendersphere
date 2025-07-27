@@ -4,6 +4,7 @@ import axios from '../utils/axios'
 import { useRouter } from 'vue-router'
 import { createToaster } from '@meforma/vue-toaster'
 import { useToast } from 'primevue/usetoast'
+import useAuth from './auth'
 
 export default function useCommittees() {
     const committee = ref([])
@@ -24,12 +25,16 @@ export default function useCommittees() {
         position: "top"
         // max:
     });
+    const { user: authUser, getUser } = useAuth();
 
     const getCommittees = async (page = 1, year = null, emp_status = 'all', gender = 'all', office_id = null) => {
         try {
             let response = await axios.get('/api/committees', {params: { page:page, year:year, employment_status:emp_status, gender:gender, office_id:office_id } });
             committees.value = response.data;
-            await getCommitteeSummary();
+            await getUser();
+            await getCommitteeSummary({
+                office_id: authUser.value.office_id
+            });
         }
         catch (e) {
             console.log(e);
@@ -144,8 +149,8 @@ export default function useCommittees() {
         yearlist.value = response.data
     }
 
-    const getCommitteeSummary = async () => {
-        const response = await axios.get(`/api/committees/summary` , { params: { year: selectedYear.value} });
+    const getCommitteeSummary = async ($query) => {
+        const response = await axios.get(`/api/committees/summary` , { params: { year: selectedYear.value, ...$query} });
         console.log(response.data);
         committeeSummary.value = response.data;
     }

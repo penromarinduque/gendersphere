@@ -201,13 +201,17 @@ class PersonInfoController extends Controller
     }
 
     public function summary(Request $request){
+        $office_filter = [];
+        if($request->has('office_id')) {
+            $office_filter = ['office_id' => $request->office_id];
+        }
         return (object)[
-            "total_employees" => PersonInfo::query()->where("person_type", 1)->count(),
-            "total_cos" => PersonInfo::query()->where('employment_type', 'cos')->where("person_type", 1)->count(),
-            "total_permanents" => PersonInfo::query()->where('employment_type', 'permanent')->where("person_type", 1)->count(),
-            "total_males" => PersonInfo::query()->where('gender', 'male')->where("person_type", 1)->count(),
-            "total_females" => PersonInfo::query()->where('gender', 'female')->where("person_type", 1)->count(),
-            "total_lgbtqiaplus" => PersonInfo::query()->where('gender', 'lgbtqia+')->where("person_type", 1)->count(),
+            "total_employees" => PersonInfo::query()->where(["person_type" => 1, ...$office_filter])->count(),
+            "total_cos" => PersonInfo::query()->where(['employment_type' => 'cos', ...$office_filter])->where("person_type", 1)->count(),
+            "total_permanents" => PersonInfo::query()->where(['employment_type' => 'permanent', ...$office_filter])->where("person_type", 1)->count(),
+            "total_males" => PersonInfo::query()->where(['gender' => 'male', ...$office_filter])->where("person_type", 1)->count(),
+            "total_females" => PersonInfo::query()->where(['gender' =>'female', ...$office_filter])->where("person_type", 1)->count(),
+            "total_lgbtqiaplus" => PersonInfo::query()->where(['gender' => 'lgbtqia+', ...$office_filter])->where("person_type", 1)->count(),
         ];
     }
 

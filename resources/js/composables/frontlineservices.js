@@ -134,9 +134,9 @@ export default function useFrontlineServices() {
         }
     }
 
-    const getFrontlineServiceSummary = async () => {
+    const getFrontlineServiceSummary = async ($query) => {
         console.log("test");
-        const response = await axios.get(`/api/frontlineservices/summary` , { params: { year: selectedYear.value} });
+        const response = await axios.get(`/api/frontlineservices/summary` , { params: { year: selectedYear.value, ...$query} });
         frontlineServiceSummary.value = response.data;
         console.log(response.data);
     }

@@ -144,7 +144,9 @@ onMounted(async () => {
     getFrontlineServiceTypes();
     getYearlist();
     getPermitTypes();
-    getFrontlineServiceSummary();
+    getFrontlineServiceSummary({
+        office_id: authUser.value.office_id
+    });
 });
 
 </script>

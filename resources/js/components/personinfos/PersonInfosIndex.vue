@@ -199,7 +199,9 @@ onMounted(async () => {
         }
     );
     console.log("personinfos : ", personinfos.value);
-    getPersonInfoSummary();
+    getPersonInfoSummary({
+        office_id: authUser.value.office_id
+    });
 });
 
 </script>

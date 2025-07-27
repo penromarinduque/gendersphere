@@ -168,11 +168,11 @@ class UserController extends Controller
 
         $passw = ($request->password!="") ? Hash::make($request->password) : $user_data->password;
 
-        $name = "na";
-        if (!empty($personinfo)) {
-            $extname = ($personinfo->extname!=NULL) ? ' '.$personinfo->extname : '';
-            $name = $personinfo->lastname.', '.$personinfo->firstname.' '.$personinfo->middlename.$extname;
-        }
+        // $name = "na";
+        // if (!empty($personinfo)) {
+        //     $extname = ($personinfo->extname!=NULL) ? ' '.$personinfo->extname : '';
+        //     $name = $personinfo->lastname.', '.$personinfo->firstname.' '.$personinfo->middlename.$extname;
+        // }
 
         $user_update = User::find($id)->update([
             'name' => $name,
