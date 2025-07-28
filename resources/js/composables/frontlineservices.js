@@ -30,17 +30,22 @@ export default function useFrontlineServices() {
     
 
     const getFrontlineServices = async (page=1, query = {}) => {
-        let response = await axios.get(`/api/frontlineservices`, {
-            params: {
-                year: selectedYear.value,
-                permit_type: selectedPermitType.value,
-                page : page,
-                ...query
-            }
-        })
-        frontlineservices.value = response.data
-        console.log(' frontlineservices' , frontlineservices.value);
-        return response.data
+        try {
+            
+            let response = await axios.get(`/api/frontlineservices`, {
+                params: {
+                    year: selectedYear.value,
+                    permit_type: selectedPermitType.value,
+                    page : page,
+                    ...query
+                }
+            })
+            frontlineservices.value = response.data
+            console.log(' frontlineservices' , frontlineservices.value);
+            return response.data
+        } catch (error) {
+            consol.log(error);
+        }
     }
  
     const getFrontlineService = async (id) => {

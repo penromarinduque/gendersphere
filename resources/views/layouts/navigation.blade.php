@@ -97,7 +97,7 @@
                                         </x-dropdown-link>
                                     @endcan
                                     @can('viewSexAggregatedDataReport', App\Models\FrontlineService::class)
-                                        <x-dropdown-link :href="route('report.sexaggregated')">
+                                        <x-dropdown-link :href="route('report.sexaggregated', ['office_id' => Auth::user()->office_id])">
                                             {{ __('Sex Dis-Aggregated Data') }}
                                         </x-dropdown-link>
                                     @endcan

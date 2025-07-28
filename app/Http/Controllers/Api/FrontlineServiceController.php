@@ -147,9 +147,12 @@ class FrontlineServiceController extends Controller
             ->with(['permitTypes' => function ($query) use ($request) {
                 $query->withCount(['services as services_count' => function ($query) use ($request) {
                     $query->whereYear('date_applied', $request->year);
+                    if ($request->has('office_id')) {
+                        $query->where('office_id', $request->office_id);
+                    }
                 }]);
-            }, ...$office_filter])
-            ->where('fs_status', 1)
+            }])
+            ->where(['fs_status' => 1])
             ->get();
     }
 

@@ -307,7 +307,7 @@ class ReportController extends Controller
         foreach($permit_types as $ptype){
             $counts["permit_type"][] = [
                 "name" => $ptype->permit_type,
-                "count" => FrontlineService::where("permit_type_id", $ptype->id)->count()
+                "count" => FrontlineService::where(["permit_type_id" => $ptype->id, ...$office_query])->count()
             ];
         }
 
@@ -324,7 +324,7 @@ class ReportController extends Controller
 
         $frontlineservicetypes = $_frontlineservicetype->getFrontlineServiceType(1);
         $permittypes = $_permittype->getPermitTypes($frontline_service_type_id);
-        $frontlineservices = $_frontlinservice->getFrontlineServicesByPermitType($permit_type_id, $year);
+        $frontlineservices = $_frontlinservice->getFrontlineServicesByPermitType($permit_type_id, $year, $request->has('office_id') ? $request->office_id : null);
         $permit_type = ($permit_type_id!=0) ? $_permittype->getPermitType($permit_type_id) : [];
         $report_heading = "";
         if (!empty($permit_type)) {
