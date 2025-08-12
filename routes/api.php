@@ -21,6 +21,7 @@ use App\Http\Controllers\Api\GenderIssueController;
 use App\Http\Controllers\Api\CauseGenderIssueController;
 use App\Http\Controllers\Api\ObjectiveController;
 use App\Http\Controllers\Api\FrontlineServiceController;
+use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\Api\FrontlineServiceTypeController;
 use App\Http\Controllers\Api\PermitTypeController;
 use App\Http\Controllers\Api\EmployeeSalaryController;
@@ -52,6 +53,27 @@ Route::middleware('auth:sanctum')->group( function () {
     
     Route::prefix('frontlineservices')->group(function () {
         Route::get('summary', [FrontlineServiceController::class, 'summary']);
+    });
+
+Route::prefix('trainings')->group(function () {
+    Route::get('summary', [TrainingController::class, 'summary']);
+    
+    // Attendees routes
+    Route::get('{id}/attendees', [TrainingController::class, 'attendees']);
+    Route::post('{id}/attendees', [TrainingController::class, 'addAttendees']);
+    Route::delete('{training}/attendees/{user}', [TrainingController::class, 'removeAttendee']);
+    
+ 
+
+    // Specific training title by ID
+    Route::get('{id}/training_title', function ($id) {
+        $training = \App\Models\Training::findOrFail($id);
+        return response()->json(['training_title' => $training->training_title]);
+    });
+
+/*      Route::get('get-employees', [PersonInfoController::class, 'getEmployees']);
+        Route::get('get-chart-data', [PersonInfoController::class, 'getChartData']); 
+        Route::get('all/persons', [PersonInfoController::class, 'all']); */
     });
 
     Route::prefix('personinfos')->group(function () {
@@ -105,6 +127,7 @@ Route::middleware('auth:sanctum')->group( function () {
         'activitydetailreports' => ActivityDetailReportController::class,
         'attendees' => AttendeeController::class,
         'frontlineservices' => FrontlineServiceController::class,
+        'trainings' => TrainingController::class,
         'provinces' => ProvinceController::class,
         'municipalities' => MunicipalityController::class,
         'barangays' => BarangayController::class,
@@ -118,13 +141,15 @@ Route::middleware('auth:sanctum')->group( function () {
         'employeesalaries' => EmployeeSalaryController::class,
         'offices' => OfficeController::class,
         'roles' => RoleController::class,
+        
     ]);
     Route::get('yearlist', [CommitteeController::class, 'yearlist']);
     Route::get('genderissuebyyear/{year}', [GenderIssueController::class, 'genderIssueByYear']);
     Route::get('permittypebystatus/{status}', [PermitTypeController::class, 'getPermitTypeByStatus']);
     Route::post('updateaccom/{id}', [ActivityDetailController::class, 'updateAccom']);
-
-    
+    Route::get('employeedropdown', [PersonInfoController::class, 'getEmployeeList']);
+       // Training title list for filter
+    Route::get('traininglist', [TrainingController::class, 'getTrainingList']);
 });
 
 // Route::apiResource('personinfos', PersonInfoController::class);

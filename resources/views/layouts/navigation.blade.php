@@ -59,6 +59,11 @@
                                             {{ __('Frontline Services') }}
                                         </x-dropdown-link>
                                     @endcan
+                                    @can('viewAny', App\Models\Training::class)
+                                        <x-dropdown-link :href="route('trainings')">
+                                            {{ __('GAD Related Trainings') }}
+                                        </x-dropdown-link>
+                                    @endcan
                                 </x-slot>
                             </x-dropdown>
                         </div>

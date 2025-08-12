@@ -127,7 +127,7 @@ const deleteFrontlineService = async (id) => {
     await getFrontlineServices(undefined, {
         office_id: authUser.value.office_id
     })
-}
+} 
 
 const handleYearChange = () => {
     getFrontlineServices(undefined, {
