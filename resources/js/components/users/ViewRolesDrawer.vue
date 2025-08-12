@@ -1,5 +1,6 @@
 <template>
-    <Drawer v-model:visible="isVisible" header="Roles" position="right" class="!w-full md:!w-80 lg:!w-[30rem]" @hide="$emit('close')">
+    <Drawer v-model:visible="isVisible" header="Roles" position="right" class="!w-full md:!w-80 lg:!w-[30rem]" @hide="emit('close')">
+        <p>Dialog visible: {{ addRoleVisible }}</p>
         <div class="flex justify-end">
             <Button label="Add Role" @click="addRoleVisible = true" size="small"></Button>
         </div>
@@ -90,5 +91,7 @@
             }   
         });
     }
+
+    const emit = defineEmits(['close'])
 
 </script>

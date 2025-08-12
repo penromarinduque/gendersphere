@@ -10,6 +10,7 @@ use App\Models\CauseGenderIssue;
 use App\Models\Committee;
 use App\Models\CommitteePosition;
 use App\Models\FrontlineService;
+use App\Models\Training; 
 use App\Models\FrontlineServiceType;
 use App\Models\GenderIssue;
 use App\Models\Goal;
@@ -88,6 +89,12 @@ Route::middleware('auth')->group(function () {
         return view('frontlineservices');
         Route::view('/frontlineservices/{any}', 'frontlineservices')->where('any', '.*');
     })->where('any', '.*')->name('frontlineservices')->can('viewAny', FrontlineService::class);
+
+    //Training
+    Route::get('/trainings/{any?}', function () {
+        return view('trainings');
+        Route::view('/trainings/{any}', 'trainings')->where('any', '.*');
+    })->where('any', '.*')->name('trainings')->can('viewAny', Training::class);
 
     // Users
     Route::get('/users/{any?}', function () {

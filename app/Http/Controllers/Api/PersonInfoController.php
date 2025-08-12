@@ -264,4 +264,20 @@ class PersonInfoController extends Controller
             'cos_by_gender' => $cos_by_gender,
         ];
     }
+    
+    public function getEmployeeList()
+    {   
+        $user = auth()->user();
+        $office_id = $user->office_id; 
+        $users = PersonInfo::select('id', 'firstname', 'middlename', 'lastname', 'office_id')->where('office_id', $office_id)
+            ->get()
+            ->map(function ($p) {
+                return [
+                    'id' => $p->id,
+                    'name' => trim("{$p->firstname} {$p->middlename} {$p->lastname}")
+                ];
+            });
+
+        return response()->json(['data' => $users]);
+    }
 }

@@ -31,6 +31,9 @@ import PlanBudgetsEdit from "../components/planbudgets/PlanBudgetsEdit.vue";
 import FrontlineServicesIndex from "../components/frontlineservices/FrontlineServicesIndex.vue";
 import FrontlineServicesCreate from "../components/frontlineservices/FrontlineServicesCreate.vue";
 import FrontlineServicesEdit from "../components/frontlineservices/FrontlineServicesEdit.vue";
+import TrainingsIndex from "../components/trainings/TrainingsIndex.vue";
+import TrainingsCreate from "../components/trainings/TrainingsCreate.vue";
+import TrainingsEdit from "../components/trainings/TrainingsEdit.vue";
 import GoalsIndex from "../components/goals/GoalsIndex.vue";
 import GoalsCreate from "../components/goals/GoalsCreate.vue";
 import GoalsEdit from "../components/goals/GoalsEdit.vue";
@@ -326,6 +329,33 @@ const routes = [
         props: true,
         meta: {
             title: 'Edit Frontline Services Data'
+        }
+    },
+
+    // Training
+    {
+        path: '/trainings',
+        name: 'trainings.index',
+        component: TrainingsIndex,
+        meta: {
+            title: 'Trainings'
+        }
+    },
+    {
+        path: '/trainings/create',
+        name: 'trainings.create',
+        component: TrainingsCreate,
+        meta: {
+            title: 'Add Training'
+        }
+    },
+    {
+        path: '/trainings/:id/edit',
+        name: 'trainings.edit',
+        component: TrainingsEdit,
+        props: true,
+        meta: {
+            title: 'Edit Training'
         }
     },
 
