@@ -27,7 +27,6 @@ use App\Http\Controllers\Api\PermitTypeController;
 use App\Http\Controllers\Api\EmployeeSalaryController;
 use App\Http\Controllers\Api\OfficeController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\Api\TrainingController;
 
 /*
 |--------------------------------------------------------------------------
