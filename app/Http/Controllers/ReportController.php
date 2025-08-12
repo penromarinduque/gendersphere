@@ -14,20 +14,18 @@ class ReportController extends Controller
 {
     public function employees(Request $request, $type='permanent')
     {
-        Gate::authorize('viewEmployeeReport', PersonInfo::class);
-        $query = PersonInfo::query()->select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
+        $user = auth()->user();
+        $office_id = $user->office_id; 
+
+        $employees = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
+        // , 'barangays.barangay_name', 'municipalities.municipality_name, provinces.province_name'
             ->join('provinces', 'provinces.id', 'person_infos.province_id')
             ->join('municipalities', 'municipalities.id', 'person_infos.municipality_id')
             ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
             ->where('person_type',1)
-            ->where('employment_type', $type);
-        
-        if($request->has('office_id')){
-            $query->where('person_infos.office_id', $request->office_id);
-        }
-
-        $employees = $query->get();
-
+            ->where('employment_type', $type)
+            ->where('person_infos.office_id', $office_id)
+            ->get();
         return view('pages.reports.employees', [
             'employees' => $employees,
             'type' => $type

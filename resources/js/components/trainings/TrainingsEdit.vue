@@ -10,7 +10,7 @@
                     <div class="mt-1">
                         <input type="text" name="trainingtitle" id="trainingtitle" 
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="training.training_title">
+                                v-model="form.training_title">
                         <span class="text-sm text-red-600" v-if="errors?.training_title">{{ errors.training_title[0] }}</span>
                     </div>
                 </div>
@@ -19,7 +19,7 @@
                     <div class="mt-1">
                         <input type="datetime-local" name="trainingstart" id="trainingstart" 
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="training.training_start">
+                                v-model="form.training_start">
                         <span class="text-sm text-red-600" v-if="errors?.training_start">{{ errors.training_start[0] }}</span>
                     </div>
                 </div>
@@ -28,7 +28,7 @@
                     <div class="mt-1">
                         <input type="datetime-local" name="trainingend" id="trainingend" 
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="training.training_end">
+                                v-model="form.training_end">
                         <span class="text-sm text-red-600" v-if="errors?.training_end">{{ errors.training_end[0] }}</span>
                     </div>
                 </div>
@@ -37,7 +37,7 @@
                     <div class="mt-1">
                         <input type="text" readonly name="durationhours" id="durationhours"
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="training.duration_hours">
+                                v-model="form.duration_hours">
                         <span class="text-sm text-red-600" v-if="errors?.duration_hours">{{ errors.durationhours[0] }}</span>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                     <label for="trainingtype" class="block text-md font-medium text-gray-700">Learning Description Type <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="trainingtype" id="trainingtype" placeholder="-Select Training Type-" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        v-model="training.learning_description_type">
+                        v-model="form.learning_description_type">
                             <option value="" disabled selected>-Select Learning Description Type-</option>
                             <option value="managerial">Managerial</option>
                             <option value="supervisory">Supervisory</option>
@@ -57,7 +57,7 @@
                 <div class="pb-1">
                     <label for="sponsor" class="block text-md font-medium text-gray-700">Sponsor/Facilitator<span class="text-red-500">*</span></label>
                     <input type="text" name="sponsor" id="sponsor" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="training.sponsor_facilitator">
+                                v-model="form.sponsor_facilitator">
                     <span class="text-sm text-red-600" v-if="errors?.sponsor_facilitator">{{ errors.sponsor_facilitator[0] }}</span>
                 </div>
             </div>

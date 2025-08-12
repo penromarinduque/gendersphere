@@ -332,13 +332,13 @@ const routes = [
         }
     },
 
-    // Training
+      // Trainings
     {
         path: '/trainings',
         name: 'trainings.index',
         component: TrainingsIndex,
         meta: {
-            title: 'Trainings'
+            title: 'Training Data'
         }
     },
     {
@@ -346,7 +346,7 @@ const routes = [
         name: 'trainings.create',
         component: TrainingsCreate,
         meta: {
-            title: 'Add Training'
+            title: 'Add Training Data'
         }
     },
     {
@@ -355,10 +355,10 @@ const routes = [
         component: TrainingsEdit,
         props: true,
         meta: {
-            title: 'Edit Training'
+            title: 'Edit Training Data'
         }
     },
-
+   
     // Users
     {
         path: '/users',

@@ -147,7 +147,7 @@ import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import Panel from 'primevue/panel';
 import Badge from 'primevue/badge';
-
+import { ref } from 'vue'
 // Here we're using a Composable file, its code is above
 import usePersonInfos from '@/composables/personinfos';
 import useAuth from '@/composables/auth';
@@ -174,7 +174,7 @@ const deletePersonInfo = async (id) => {
     );
     // console.log(1);
 }
-
+const searchkey = ref('');
 const searchKey = async (event) => {
     let search_key = event.target.value;
     await getPersonInfos(1, search_key, {

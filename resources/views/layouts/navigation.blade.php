@@ -17,18 +17,11 @@
                     </x-nav-link>
                     
                     <!-- Data Entry -->
-                    @php
-                        $can_view_data_entry = Auth::user()->can('viewAny', App\Models\PersonInfo::class) 
-                        || Auth::user()->can('viewAny', App\Models\Committee::class)
-                        || Auth::user()->can('viewAny', App\Models\PlanBudget::class)
-                        || Auth::user()->can('viewAny', App\Models\FrontlineService::class);
-                    @endphp
-                    @if ($can_view_data_entry)
-                        <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
-                            <x-dropdown align="right" width="48">
-                                <x-slot name="trigger">
-                                    <button class="inline-flex items-center px-1 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                        <div>Data Entry</div>
+                    <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap">
+                        <x-dropdown align="right" width="48">
+                            <x-slot name="trigger">
+                                <button class="inline-flex items-center px-1 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                    <div>Data Entry</div>
 
                                         <div class="ms-1">
                                             <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
@@ -38,36 +31,25 @@
                                     </button>
                                 </x-slot>
 
-                                <x-slot name="content">
-                                    @can('viewAny', App\Models\PersonInfo::class)
-                                        <x-dropdown-link :href="route('personinfos')">
-                                            {{ __('Personnel') }}
-                                        </x-dropdown-link>
-                                    @endcan
-                                    @can('viewAny', App\Models\Committee::class)
-                                        <x-dropdown-link :href="route('committees')">
-                                            {{ __('GADFPS Committee') }}
-                                        </x-dropdown-link>
-                                    @endcan
-                                    @can('viewAny', App\Models\PlanBudget::class)
-                                        <x-dropdown-link :href="route('planbudgets')">
-                                            {{ __('GAD Plan and Budget') }}
-                                        </x-dropdown-link>
-                                    @endcan
-                                    @can('viewAny', App\Models\FrontlineService::class)
-                                        <x-dropdown-link :href="route('frontlineservices')">
-                                            {{ __('Frontline Services') }}
-                                        </x-dropdown-link>
-                                    @endcan
-                                    @can('viewAny', App\Models\Training::class)
-                                        <x-dropdown-link :href="route('trainings')">
-                                            {{ __('GAD Related Trainings') }}
-                                        </x-dropdown-link>
-                                    @endcan
-                                </x-slot>
-                            </x-dropdown>
-                        </div>
-                    @endif
+                            <x-slot name="content">
+                                <x-dropdown-link :href="route('personinfos')">
+                                    {{ __('Personnel') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('committees')">
+                                    {{ __('GADFPS Committee') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('planbudgets')">
+                                    {{ __('GAD Plan and Budget') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('frontlineservices')">
+                                    {{ __('Frontline Services') }}
+                                </x-dropdown-link>
+                                <x-dropdown-link :href="route('trainings')">
+                                    {{ __('GAD Related Trainings') }}
+                                </x-dropdown-link>
+                            </x-slot>
+                        </x-dropdown>
+                    </div>
 
                     <!-- Reports Dropdown -->
                     @php

@@ -19,13 +19,13 @@ class DashboardController extends Controller
         $office_id = $user->office_id; 
             
         if ($user?->is_super_admin) {
-            $user_count = User::where('is_active', 1)->whereYear('created_at', $year)->count();
-            $personnel_count = PersonInfo::where('person_type', 1)->whereYear('created_at', $year)->count();
+            $user_count = User::where('is_active', 1)->count();
+            $personnel_count = PersonInfo::where('person_type', 1)->count();
             $committee_count = Committee::where('year_covered', $year)->count();
             $frontline_service_count= FrontlineService::whereYear('date_released', $year)->count();
         } else {
-            $user_count = User::where('is_active', 1)->where('office_id', $office_id)->whereYear('created_at', $year)->count();
-            $personnel_count = PersonInfo::where('person_type', 1)->where('office_id', $office_id)->whereYear('created_at', $year)->count();
+            $user_count = User::where('is_active', 1)->where('office_id', $office_id)->count();
+            $personnel_count = PersonInfo::where('person_type', 1)->where('office_id', $office_id)->count();
             $committee_count = Committee::where('year_covered', $year)->where('office_id', $office_id)->count();
             $frontline_service_count = FrontlineService::whereYear('date_released', $year)->where('office_id', $office_id)->count();
         }

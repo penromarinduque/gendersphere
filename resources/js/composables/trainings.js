@@ -8,7 +8,7 @@ export default function useTrainings() {
     const training = ref([])
     const trainings = ref([])
     const loading = ref(false);
-    const trainingTypeFilter = ref('');
+    const trainingTypeFilter = ref('all');
     const summary = ref({});
 
     const errors = ref('');
@@ -19,21 +19,11 @@ export default function useTrainings() {
         // max:
     });
  
-    const getTrainings = async (page = 1, search = null, filters = {}) => {
-    try {
-        const response = await axios.get('/api/trainings', {
-        params: {
-            page,
-            search,
-            ...filters // 👈 This spreads your filters into query params
-        }
-        });
-
-        trainings.value = response.data;
-    } catch (error) {
-        console.error('Failed to fetch trainings:', error);
+    const getTrainings = async (page = 1, searchkey = "" ) => {
+        let response = await axios.get('/api/trainings', { params: { page:page, searchkey:searchkey, training_type:trainingTypeFilter.value } })
+        // console.log(response.data)
+        trainings.value = response.data
     }
-    };
 
     const getTraining = async (id) => {
         let response = await axios.get(`/api/trainings/${id}`)

@@ -96,6 +96,12 @@ Route::middleware('auth')->group(function () {
         Route::view('/trainings/{any}', 'trainings')->where('any', '.*');
     })->where('any', '.*')->name('trainings')->can('viewAny', Training::class);
 
+    // Trainings
+    Route::get('/trainings/{any?}', function () {
+        return view('trainings');
+        Route::view('/trainings/{any}', 'trainings')->where('any', '.*');
+    })->where('any', '.*')->name('trainings');
+
     // Users
     Route::get('/users/{any?}', function () {
         return view('users');

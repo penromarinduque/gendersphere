@@ -17,12 +17,24 @@ class FrontlineServiceController extends Controller
     public function index(Request $request)
     {
         $frontlineservices = FrontlineService::query();
-        
-        $frontlineservices->select('frontline_services.*', 'permit_types.permit_type', 'frontline_service_types.service', 'municipalities.id as municipality_id', 'municipalities.municipality_name', 'barangays.barangay_name')
-        ->join('permit_types', 'permit_types.id', 'frontline_services.permit_type_id')
-        ->join('frontline_service_types', 'frontline_service_types.id', 'permit_types.frontline_service_type_id')
-        ->join('barangays', 'barangays.id', 'frontline_services.barangay_id')
-        ->join('municipalities', 'municipalities.id', 'barangays.municipality_id');
+        $user = auth()->user();
+        $office_id = $user->office_id;
+
+        if($user?->is_super_admin){
+            $frontlineservices->select('frontline_services.*', 'permit_types.permit_type', 'frontline_service_types.service', 'municipalities.id as municipality_id', 'municipalities.municipality_name', 'barangays.barangay_name')
+            ->join('permit_types', 'permit_types.id', 'frontline_services.permit_type_id')
+            ->join('frontline_service_types', 'frontline_service_types.id', 'permit_types.frontline_service_type_id')
+            ->join('barangays', 'barangays.id', 'frontline_services.barangay_id')
+            ->join('municipalities', 'municipalities.id', 'barangays.municipality_id');
+        } 
+        else {
+            $frontlineservices->select('frontline_services.*', 'permit_types.permit_type', 'frontline_service_types.service', 'municipalities.id as municipality_id', 'municipalities.municipality_name', 'barangays.barangay_name')
+            ->join('permit_types', 'permit_types.id', 'frontline_services.permit_type_id')
+            ->join('frontline_service_types', 'frontline_service_types.id', 'permit_types.frontline_service_type_id')
+            ->join('barangays', 'barangays.id', 'frontline_services.barangay_id')
+            ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
+            ->where('frontline_services.office_id', $office_id);
+        }
         
         if($request->permit_type){
             $frontlineservices->where('permit_type_id', $request->permit_type);
@@ -78,13 +90,28 @@ class FrontlineServiceController extends Controller
      */
     public function show($id)
     {
-        $frontlineservice = FrontlineService::select('frontline_services.*', 'permit_types.permit_type', 'frontline_service_types.service', 'municipalities.id as municipality_id', 'municipalities.municipality_name', 'barangays.barangay_name')
+        $user = auth()->user();
+        $office_id = $user->office_id;
+        
+        if($user?->is_super_admin){
+            $frontlineservice = FrontlineService::select('frontline_services.*', 'permit_types.permit_type', 'frontline_service_types.service', 'municipalities.id as municipality_id', 'municipalities.municipality_name', 'barangays.barangay_name')
             ->join('permit_types', 'permit_types.id', 'frontline_services.permit_type_id')
             ->join('frontline_service_types', 'frontline_service_types.id', 'permit_types.frontline_service_type_id')
             ->join('barangays', 'barangays.id', 'frontline_services.barangay_id')
             ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
             ->where('frontline_services.id',$id)
             ->first();
+        } 
+        else {
+        $frontlineservice = FrontlineService::select('frontline_services.*', 'permit_types.permit_type', 'frontline_service_types.service', 'municipalities.id as municipality_id', 'municipalities.municipality_name', 'barangays.barangay_name')
+            ->join('permit_types', 'permit_types.id', 'frontline_services.permit_type_id')
+            ->join('frontline_service_types', 'frontline_service_types.id', 'permit_types.frontline_service_type_id')
+            ->join('barangays', 'barangays.id', 'frontline_services.barangay_id')
+            ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
+            ->where('frontline_services.id',$id)
+            ->where('frontline_services.office_id', $office_id)
+            ->first();
+        }
         return new FrontlineServiceResource($frontlineservice);
     }
 
@@ -139,23 +166,39 @@ class FrontlineServiceController extends Controller
 
     public function summary(Request $request)
     {
-        $office_filter = [];
-        if($request->has('office_id')) {
-            $office_filter = ['office_id' => $request->office_id];
-        }
-        $frontlineservices = FrontlineServiceType::query()
-            ->with(['permitTypes' => function ($query) use ($request) {
-                $query->withCount(['services as services_count' => function ($query) use ($request) {
-                    $query->whereYear('date_applied', $request->year);
-                    if ($request->has('office_id')) {
-                        $query->where('office_id', $request->office_id);
-                    }
-                }]);
-            }])
-            ->where(['fs_status' => 1])
-            ->get();
-        
-        return $frontlineservices;
-    }
+        $user = auth()->user();
+        $office_id = $user->office_id;
 
+        if($user?->is_super_admin)
+        {
+            $frontlineServicesSummary = FrontlineServiceType::query()
+            ->with([
+                'permitTypes' => function ($query) use ($request, $user, $office_id) {
+                    $query->withCount([
+                        'Services as services_count' => function ($query) use ($request, $user, $office_id) {
+                            $query->whereYear('date_applied', $request->year);
+                        }
+                    ]);
+                }
+            ])
+            ->where('fs_status', 1)
+            ->get();
+        } 
+        else {
+            $frontlineServicesSummary = FrontlineServiceType::query()
+            ->with([
+                'permitTypes' => function ($query) use ($request, $user, $office_id) {
+                    $query->withCount([
+                        'Services as services_count' => function ($query) use ($request, $user, $office_id) {
+                            $query->whereYear('date_applied', $request->year)
+                                  ->where('office_id', $office_id);
+                        }
+                    ]);
+                }
+            ])
+            ->where('fs_status', 1)
+            ->get();
+        }
+        return $frontlineServicesSummary; 
+    }
 }
