@@ -17,6 +17,13 @@
                     </x-nav-link>
                     
                     <!-- Data Entry -->
+                     @php
+                        $can_view_data_entry = Auth::user()->can('viewAny', App\Models\PersonInfo::class) 
+                        || Auth::user()->can('viewAny', App\Models\Committee::class)
+                        || Auth::user()->can('viewAny', App\Models\PlanBudget::class)
+                        || Auth::user()->can('viewAny', App\Models\FrontlineService::class);
+                    @endphp
+                    @if ($can_view_data_entry)
                     <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">

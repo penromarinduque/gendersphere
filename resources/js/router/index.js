@@ -59,6 +59,9 @@ import OfficesCreate from "../components/offices/OfficesCreate.vue";
 import OfficesEdit from "../components/offices/OfficesEdit.vue";
 import AdminCreate from "../components/users/AdminCreate.vue";
 import Unauthorized from "../components/errors/Unauthorized.vue";
+import TrainingsIndex from "../components/trainings/TrainingsIndex.vue";
+import TrainingsCreate from "../components/trainings/TrainingsCreate.vue";
+import TrainingsEdit from "../components/trainings/TrainingsEdit.vue";
 import useAuth from "../composables/auth";
 
 const routes = [
