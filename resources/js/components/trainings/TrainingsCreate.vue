@@ -49,6 +49,7 @@
                             <option value="managerial">Managerial</option>
                             <option value="supervisory">Supervisory</option>
                             <option value="technical">Technical</option>
+                            <option value="foundation">Foundation</option>
                         </select>
                         <span class="text-sm text-red-600" v-if="localErrors.learning_description_type">{{ localErrors.learning_description_type }}</span>
                     </div>
@@ -122,6 +123,10 @@ const validateForm = () => {
     localErrors.training_title = 'Required'
     valid = false
   }
+  if (errors.value.training_title) {
+    localErrors.training_title = errors.value.training_title
+    valid = false
+  }
 
   if (!form.training_start) {
     localErrors.training_start = 'Required'
@@ -172,7 +177,23 @@ watch(() => [form.training_start, form.training_end],
 
       if (!isNaN(startDate) && !isNaN(endDate) && endDate >= startDate) {
         const msDifference = endDate - startDate
-        const hours = msDifference / (1000*60*60) // includes start and end day
+        const inputHours = msDifference / (1000*60*60) // includes start and end day
+
+function calculateHours(hours) {
+  if (hours <= 8) {
+    return Math.max(0, hours); // Clamp at min 0
+  } else if (hours < 24) {
+    return 8;
+  } else {
+    const fullDays = Math.floor(hours / 24);
+    const remainder = hours % 24;
+    return fullDays * 8 + remainder;
+  }
+}
+
+const hours = calculateHours(inputHours); 
+
+          // Set duration_hours to 2 decimal places
         form.duration_hours = hours.toFixed(2) // Format to 2 decimal places
       } else {
         form.duration_hours = ''

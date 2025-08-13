@@ -22,7 +22,7 @@ class TrainingRequest extends FormRequest
     public function rules() : array
     {
         return [
-            'training_title' => ['required', 'string'],
+            'training_title' => ['required', 'string', 'unique:trainings,training_title,NULL,id,office_id,' . auth()->user()->office_id],
             'training_start' => ['required'],
             'training_end' => ['required'],
             'duration_hours' => 'required|numeric|min:0',

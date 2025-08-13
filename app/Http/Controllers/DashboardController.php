@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
-
     public function summary(Request $request)
     {
         $year = $request->has('year') ? $request->year : date('Y');
@@ -32,10 +31,10 @@ class DashboardController extends Controller
         
         return (object)[
             'totals' => [
-                'users' => $user_count,
-                'personnels' => $personnel_count,             
-                'committees' => $committee_count,
-                'frontlineServices' => $frontline_service_count,
+                'users' => User::where('is_active', 1)->count(),
+                'personnels' => PersonInfo::where('person_type', 1)->count(),
+                'committees' => Committee::where('year_covered', $year)->count(),
+                'frontlineServices' => FrontlineService::whereYear('date_released', $year)->count(),
             ]
         ];
     }

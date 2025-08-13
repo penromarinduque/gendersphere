@@ -21,11 +21,12 @@ use App\Http\Controllers\Api\GenderIssueController;
 use App\Http\Controllers\Api\CauseGenderIssueController;
 use App\Http\Controllers\Api\ObjectiveController;
 use App\Http\Controllers\Api\FrontlineServiceController;
-use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\Api\FrontlineServiceTypeController;
 use App\Http\Controllers\Api\PermitTypeController;
 use App\Http\Controllers\Api\EmployeeSalaryController;
 use App\Http\Controllers\Api\OfficeController;
+use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\DashboardController;
 
 /*
@@ -57,6 +58,7 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('summary', [TrainingController::class, 'summary']);
         Route::get('all/persons', [PersonInfoController::class, 'all']);
     });
+
     Route::prefix('personinfos')->group(function () {
         Route::get('summary', [PersonInfoController::class, 'summary']);
         Route::get('get-employees', [PersonInfoController::class, 'getEmployees']);
@@ -108,7 +110,6 @@ Route::middleware('auth:sanctum')->group( function () {
         'activitydetailreports' => ActivityDetailReportController::class,
         'attendees' => AttendeeController::class,
         'frontlineservices' => FrontlineServiceController::class,
-        'trainings' => TrainingController::class,
         'provinces' => ProvinceController::class,
         'municipalities' => MunicipalityController::class,
         'barangays' => BarangayController::class,
@@ -121,16 +122,16 @@ Route::middleware('auth:sanctum')->group( function () {
         'permittypes' => PermitTypeController::class,
         'employeesalaries' => EmployeeSalaryController::class,
         'trainings' => TrainingController::class,
-
+        'offices' => OfficeController::class,
+        'roles' => RoleController::class,
     ]);
 
     Route::get('yearlist', [CommitteeController::class, 'yearlist']);
     Route::get('genderissuebyyear/{year}', [GenderIssueController::class, 'genderIssueByYear']);
     Route::get('permittypebystatus/{status}', [PermitTypeController::class, 'getPermitTypeByStatus']);
     Route::post('updateaccom/{id}', [ActivityDetailController::class, 'updateAccom']);
-    Route::get('employeedropdown', [PersonInfoController::class, 'getEmployeeList']);
-       // Training title list for filter
-    Route::get('traininglist', [TrainingController::class, 'getTrainingList']);
+
+    
 });
 
 // Route::apiResource('personinfos', PersonInfoController::class);

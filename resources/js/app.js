@@ -9,7 +9,6 @@ Alpine.start();
 import { createApp } from 'vue';
 import router from './router';
 import ToastService from 'primevue/toastservice';
-import Select from 'primevue/select';
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -712,7 +711,6 @@ app.use(router)
 })
 .use(ToastService)
 .use(ConfirmationService)
-.use(Select)
 
 app.component('App', App);
 app.mount('#app');

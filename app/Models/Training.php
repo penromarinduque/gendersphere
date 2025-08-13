@@ -30,5 +30,9 @@ class Training extends Model implements Auditable
 
     return Carbon::parse($this->training_start)->floatDiffInHours(Carbon::parse($this->training_end));
 } */
+    public function attendees()
+    {
+        return $this->belongsToMany(PersonInfo::class, 'training_users');
+    }
 }
 

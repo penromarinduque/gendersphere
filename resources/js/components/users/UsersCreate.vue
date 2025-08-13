@@ -64,7 +64,6 @@
                                         { name: 'GADFPS Committee', value: 'Committee' },
                                         { name: 'Frontline Service', value: 'FrontlineService' },
                                         { name: 'GAD Plan and Budget', value: 'PlanBudget' },
-                                         { name: 'GAD Related Training', value: 'Training' },
                                     ]" 
                                      option-label="name"
                                      option-value="value"

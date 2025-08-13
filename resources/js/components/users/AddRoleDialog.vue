@@ -20,7 +20,6 @@
                                 { name: 'Personnel', value: 'PersonInfo' },
                                 { name: 'GADFPS Committee', value: 'Committee' },
                                 { name: 'Frontline Service', value: 'FrontlineService' },
-                                { name: 'GAD Related Training', value: 'Training' },
                                 { name: 'GAD Plan and Budget', value: 'PlanBudget' },
                             ]" 
                                 option-label="name"
@@ -59,6 +58,7 @@
     import Dialog from 'primevue/dialog';
     import Button from "primevue/button";
     import Select from 'primevue/select';
+    import AddRoleDialog from './AddRoleDialog.vue';
     import MultiSelect from 'primevue/multiselect';
 
     import useUsers from '@/composables/users';

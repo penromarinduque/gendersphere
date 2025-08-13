@@ -31,25 +31,34 @@
                                     </button>
                                 </x-slot>
 
-                            <x-slot name="content">
-                                <x-dropdown-link :href="route('personinfos')">
-                                    {{ __('Personnel') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('committees')">
-                                    {{ __('GADFPS Committee') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('planbudgets')">
-                                    {{ __('GAD Plan and Budget') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('frontlineservices')">
-                                    {{ __('Frontline Services') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('trainings')">
-                                    {{ __('GAD Related Trainings') }}
-                                </x-dropdown-link>
-                            </x-slot>
-                        </x-dropdown>
-                    </div>
+                                <x-slot name="content">
+                                    @can('viewAny', App\Models\PersonInfo::class)
+                                        <x-dropdown-link :href="route('personinfos')">
+                                            {{ __('Personnel') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\Committee::class)
+                                        <x-dropdown-link :href="route('committees')">
+                                            {{ __('GADFPS Committee') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\PlanBudget::class)
+                                        <x-dropdown-link :href="route('planbudgets')">
+                                            {{ __('GAD Plan and Budget') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\FrontlineService::class)
+                                        <x-dropdown-link :href="route('frontlineservices')">
+                                            {{ __('Frontline Services') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    <x-dropdown-link :href="route('trainings')">
+                                        {{ __('GAD Related Trainings') }}
+                                    </x-dropdown-link>
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+                    @endif
 
                     <!-- Reports Dropdown -->
                     @php

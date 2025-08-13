@@ -24,14 +24,4 @@ class PersonInfo extends Model implements Auditable
             'graduate_studies' => 'Graduate Studies',
         ];
     }
-    public function trainings()    
-    {
-        // This defines a many-to-many relationship with the Training model
-        // using the 'training_user' pivot table.
-        // The second parameter specifies the pivot table name.
-        // The third parameter specifies the foreign key for the Training model.
-        // The fourth parameter specifies the foreign key for the User model.
-        // The pivot table is assumed to have 'training_id' and 'user_id' columns
-    return $this->belongsToMany(Training::class, 'training_users');
-    }
 }

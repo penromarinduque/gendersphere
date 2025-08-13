@@ -9,6 +9,8 @@ use App\Models\Training;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+
 
 class TrainingController extends Controller
 {
@@ -17,64 +19,63 @@ class TrainingController extends Controller
      */
     public function index(Request $request)
     {
-        $searchkey = $request->searchkey;
         $user = auth()->user();
         $office_id = $user->office_id; 
        
 
         if($user?->is_super_admin) {
-            $training_qry = Training::select('trainings.*');
+            $query = Training::select('trainings.*');
         } 
         else {
-            $training_qry = Training::select('trainings.*')
+            $query = Training::select('trainings.*')
                 ->where('trainings.office_id', $office_id);
         }
-        if ($searchkey!="") {
-            $training_qry->where(function ($qry) use ($searchkey) {
-                $qry->where('training_title','LIKE',"%{$searchkey}%")
-                    ->orWhere('learning_description_type','LIKE',"%{$searchkey}%")
-                    ->orWhere('training_start','LIKE',"%{$searchkey}%");
+
+        if ($request->has('year')) {
+            $query->whereYear('training_start', $request->year);
+        }
+
+        if ($request->has('title')) {
+            $query->where('training_title', 'like', '%' . $request->title . '%');
+        }
+
+        if ($request->has('employee_id')) {
+            $query->whereHas('attendees', function ($q) use ($request) {
+                $q->where('person_info_id', $request->employee_id);
             });
         }
-        if($request->learning_description_type && $request->learning_description_type != 'all'){
-            $training_qry->where('learning_description_type', $request->learning_description_type);
+
+        if ($request->has('type')) {
+            $query->where('learning_description_type', $request->type);
         }
 
+        return $query->paginate(10);
+    
+        }
 
-        $trainings = $training_qry->orderBy('training_start', 'ASC')
-            ->paginate(15)
-            ->withQueryString();
-        // $trainings->appends(['searchkey' => $searchkey]);
-        return TrainingResource::collection($trainings);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(TrainingRequest $request)
-    {
-        $training = Training::create($request->validated());
-        $training = Training::find($training->id);
-
-/*         if ($training->training_start && $training->training_end) {
-            $training->duration_hours = Carbon::parse($training->training_start)
-                ->floatDiffInHours(Carbon::parse($training->training_end));
-        } */
-
-        return new TrainingResource($training);
-    }
-
-    /**
-     * Display the specified resource.
-     */
+        /**
+         * Display the specified resource.
+         */
     public function show($id)
     {
-        // return new PersonInfoResource($personInfo);
-
+            // return new PersonInfoResource($personInfo);
         $training = Training::find($id);
         return new TrainingResource($training);
     }
 
+    public function store(TrainingRequest $request)
+    {
+
+        Gate::authorize('create', Training::class);
+        
+        $training = Training::create([
+            ...$request->validated(),
+            'office_id' => auth()->user()->office_id
+        ]);
+
+        $training = Training::find($training->id);
+        return new TrainingResource($training);
+    }
     /**
      * Update the specified resource in storage.
      */
@@ -95,8 +96,8 @@ class TrainingController extends Controller
             'learning_description_type' => ['required', 'string'],
             'sponsor_facilitator' => ['required', 'string'],
         ]);
-
-        Training::find($id)->update([
+        
+        Training::findOrFail($id)->update([
             'training_title' => $training_title,
             'training_start' => $training_start,
             'training_end' => $training_end,
@@ -147,46 +148,60 @@ class TrainingController extends Controller
             $total_managerial = Training::query()->where('learning_description_type', 'managerial')->count();
             $total_supervisory = Training::query()->where('learning_description_type', 'supervisory')->count();
             $total_technical = Training::query()->where('learning_description_type', 'technical')->count();
+            $total_foundation = Training::query()->where('learning_description_type', 'foundation')->count();
+
         }
         else {
             $total_trainings = Training::query()->where('office_id', $office_id)->count();
             $total_managerial = Training::query()->where('learning_description_type', 'managerial')->where('office_id', $office_id)->count();
             $total_supervisory = Training::query()->where('learning_description_type', 'supervisory')->where('office_id', $office_id)->count();
             $total_technical = Training::query()->where('learning_description_type', 'technical')->where('office_id', $office_id)->count();
+            $total_foundation = Training::query()->where('learning_description_type', 'foundation')->where('office_id', $office_id)->count();
         }
         return response()->json([
             "total_trainings" => $total_trainings,
             "total_managerial" => $total_managerial,
             "total_supervisory" => $total_supervisory,
+            "total_foundation" => $total_foundation,
             "total_technical" => $total_technical,
         ]);
     }
+    public function attendees($id)
+    {
+        $training = Training::with('attendees')->findOrFail($id);
+        return response()->json($training->attendees);
+    }
 
- /*    public function getEmployees(Request $request){
+    public function addAttendees(Request $request, $id)
+    {
+        $request->validate([
+            'person_info_ids' => 'required|array',
+            'person_info_ids.*' => 'exists:person_infos,id',
+        ]);
+
+        $training = Training::findOrFail($id);
+        $training->attendees()->syncWithoutDetaching($request->person_info_ids);
+
+        return response()->json(['message' => 'Attendees added successfully.']);
+    }
+
+    public function removeAttendee($trainingId, $userId)
+    {
+        $training = Training::findOrFail($trainingId);
+        $training->attendees()->detach($userId);
+
+        return response()->json(['message' => 'Attendee removed']);
+    }
+
+    public function getTrainingList()
+    {   
         $user = auth()->user();
         $office_id = $user->office_id; 
+        $titles = Training::select('training_title')
+            ->where('office_id', $office_id)
+            ->distinct()
+            ->pluck('training_title');
 
-        if($user?->is_super_admin) {
-            $query = PersonInfo::query()->select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
-                ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
-                ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
-                ->join('provinces', 'provinces.id', 'municipalities.province_id')
-                ->where("person_type", 1);
-        } 
-        else {
-            $query = PersonInfo::query()->select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
-                ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
-                ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
-                ->join('provinces', 'provinces.id', 'municipalities.province_id')
-                ->where("person_type", 1)
-                ->where('person_infos.office_id', $office_id);
-        }
-
-        if($request->has('employment_type') && $request->employment_type != 'all'){
-            $query->where("employment_type", $request->employment_type);
-        }
-
-        return $query->get();
-    } */
-
+        return response()->json(['data' => $titles]);
+    }
 }

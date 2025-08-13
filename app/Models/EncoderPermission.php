@@ -15,8 +15,7 @@ class EncoderPermission extends Model
         'PersonInfo' => 'PersonInfo',
         'PlanBudget' => 'PlanBudget',
         'Committee' => 'Committee',
-        'FrontlineService' => 'FrontlineService',
-        'Training' => 'Training'
+        'FrontlineService' => 'FrontlineService'
     ];
 
 }
