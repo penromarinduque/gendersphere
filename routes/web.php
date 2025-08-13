@@ -76,6 +76,12 @@ Route::middleware('auth')->group(function () {
         Route::view('/frontlineservices/{any}', 'frontlineservices')->where('any', '.*');
     })->where('any', '.*')->name('frontlineservices');
 
+    // Trainings
+    Route::get('/trainings/{any?}', function () {
+        return view('trainings');
+        Route::view('/trainings/{any}', 'trainings')->where('any', '.*');
+    })->where('any', '.*')->name('trainings');
+
     // Users
     Route::get('/users/{any?}', function () {
         return view('users');

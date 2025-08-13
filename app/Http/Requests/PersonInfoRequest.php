@@ -21,6 +21,29 @@ class PersonInfoRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules() : array
+/*     {
+            $validator = Validator::make($request->all(), [
+        'first_name' => 'required|string',
+        'middle_name' => 'required|string',
+        'last_name' => 'required|string',
+        // ... other fields
+    ]);
+
+    // Add custom rule: combination must be unique
+    $validator->after(function ($validator) use ($request) {
+        $exists = User::where('first_name', $request->first_name)
+            ->where('middle_name', $request->middle_name)
+            ->where('last_name', $request->last_name)
+            ->exists();
+
+        if ($exists) {
+            $validator->errors()->add('first_name', 'A user with the same first, middle, and last name already exists.');
+        }
+    });
+
+    if ($validator->fails()) {
+        return back()->withErrors($validator)->withInput();
+    } */
     {
         return [
             'lastname' => ['required', 'string'],

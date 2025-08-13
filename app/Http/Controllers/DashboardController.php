@@ -11,16 +11,31 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+
     public function summary(Request $request)
     {
         $year = $request->has('year') ? $request->year : date('Y');
-
+        $user = auth()->user();
+        $office_id = $user->office_id; 
+            
+        if ($user?->is_super_admin) {
+            $user_count = User::where('is_active', 1)->count();
+            $personnel_count = PersonInfo::where('person_type', 1)->count();
+            $committee_count = Committee::where('year_covered', $year)->count();
+            $frontline_service_count= FrontlineService::whereYear('date_released', $year)->count();
+        } else {
+            $user_count = User::where('is_active', 1)->where('office_id', $office_id)->count();
+            $personnel_count = PersonInfo::where('person_type', 1)->where('office_id', $office_id)->count();
+            $committee_count = Committee::where('year_covered', $year)->where('office_id', $office_id)->count();
+            $frontline_service_count = FrontlineService::whereYear('date_released', $year)->where('office_id', $office_id)->count();
+        }
+        
         return (object)[
             'totals' => [
-                'users' => User::where('is_active', 1)->count(),
-                'personnels' => PersonInfo::where('person_type', 1)->count(),
-                'committees' => Committee::where('year_covered', $year)->count(),
-                'frontlineServices' => FrontlineService::whereYear('date_released', $year)->count(),
+                'users' => $user_count,
+                'personnels' => $personnel_count,             
+                'committees' => $committee_count,
+                'frontlineServices' => $frontline_service_count,
             ]
         ];
     }

@@ -98,22 +98,26 @@
 
     const setPieChartData = (data) => {
         const documentStyle = getComputedStyle(document.body);
+        const colorKeys = [
+            '--p-purple-500',
+            '--p-purple-400',
+            '--p-purple-300',
+            '--p-purple-200',
+            '--p-purple-100'
+        ];
+
+        const getColorValues = (keys) => keys.map(key => documentStyle.getPropertyValue(key));
+
+        const backgroundColors = getColorValues(colorKeys.slice(0, data.length));
+        const hoverColors = getColorValues(colorKeys.slice(1, data.length + 1));
 
         return {
-            labels: data.map((data) => data.name),
+            labels: data.map(item => item.name),
             datasets: [
                 {
-                    data: data.map((data) => data.total),
-                    backgroundColor: [
-                        documentStyle.getPropertyValue('--p-purple-500'),
-                        documentStyle.getPropertyValue('--p-purple-400'),
-                        documentStyle.getPropertyValue('--p-purple-300')
-                    ],
-                    hoverBackgroundColor: [
-                        documentStyle.getPropertyValue('--p-purple-400'),
-                        documentStyle.getPropertyValue('--p-purple-300'),
-                        documentStyle.getPropertyValue('--p-purple-200')
-                    ]
+                    data: data.map(item => item.total),
+                    backgroundColor: backgroundColors,
+                    hoverBackgroundColor: hoverColors
                 }
             ]
         };
