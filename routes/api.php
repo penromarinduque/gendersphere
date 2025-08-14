@@ -55,10 +55,28 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('summary', [FrontlineServiceController::class, 'summary']);
     });
 
+    // Route::prefix('trainings')->group(function () {
+    //     Route::get('summary', [TrainingController::class, 'summary']);
+    //     Route::get('all/persons', [PersonInfoController::class, 'all']);
+    // });
+
     Route::prefix('trainings')->group(function () {
         Route::get('summary', [TrainingController::class, 'summary']);
-        Route::get('all/persons', [PersonInfoController::class, 'all']);
+        
+        // Attendees routes
+        Route::get('{id}/attendees', [TrainingController::class, 'attendees']);
+        Route::post('{id}/attendees', [TrainingController::class, 'addAttendees']);
+        Route::delete('{training}/attendees/{user}', [TrainingController::class, 'removeAttendee']);
+        
+    
+
+        // Specific training title by ID
+        Route::get('{id}/training_title', function ($id) {
+            $training = \App\Models\Training::findOrFail($id);
+            return response()->json(['training_title' => $training->training_title]);
+        });
     });
+
     Route::prefix('personinfos')->group(function () {
         Route::get('summary', [PersonInfoController::class, 'summary']);
         Route::get('get-employees', [PersonInfoController::class, 'getEmployees']);

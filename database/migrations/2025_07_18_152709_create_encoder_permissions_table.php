@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('encoder_permissions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('role_id');
-            $table->enum('permission', ['PersonInfo', 'PlanBudget', 'Committee', 'FrontlineService']);
+            $table->enum('permission', ['PersonInfo', 'PlanBudget', 'Committee', 'FrontlineService', 'Training']);
             $table->timestamps();
         });
     }
