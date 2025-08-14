@@ -26,7 +26,9 @@ use App\Http\Controllers\Api\FrontlineServiceTypeController;
 use App\Http\Controllers\Api\PermitTypeController;
 use App\Http\Controllers\Api\EmployeeSalaryController;
 use App\Http\Controllers\Api\OfficeController;
+use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RegionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -121,7 +123,8 @@ Route::middleware('auth:sanctum')->group( function () {
         'permittypes' => PermitTypeController::class,
         'employeesalaries' => EmployeeSalaryController::class,
         'trainings' => TrainingController::class,
-
+        'offices' => OfficeController::class,
+        'roles' => RoleController::class,
     ]);
 
     Route::get('yearlist', [CommitteeController::class, 'yearlist']);

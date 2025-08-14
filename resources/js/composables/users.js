@@ -33,6 +33,7 @@ export default function useUsers() {
         let response = await axios.get('/api/users', {
             params: data
         })
+        console.log("assdsdf", response.data.data)
         users.value = response.data.data
     }
 

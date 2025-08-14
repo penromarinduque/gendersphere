@@ -27,7 +27,7 @@
                     <router-link  :to="{ name: 'users.edit', params: { id: slotProps.data.id } }" :class="props.class">Edit</router-link> 
                 </Button>&nbsp;
                 <Button size="small" severity="danger"  variant="outlined" :loading="loading" label="Delete" @click="deleteUser($event,slotProps.data.id)"></Button>&nbsp;
-                <Button size="small" severity="contrast"  variant="outlined" :loading="loading" :label="`${slotProps.data.roles.length} Role/s`" @click="viewRoles(slotProps.data)"></Button>
+                <Button size="small" severity="contrast"  variant="outlined" :loading="loading" :label="`${slotProps.data.roles ? slotProps.data.roles.length : 0} Role/s`" @click="viewRoles(slotProps.data)"></Button>
             </template>
         </Column>
         <template #empty> No Users found. </template>

@@ -23,17 +23,13 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $user = auth()->user();
-        $office_id = $user->office_id;
-
-        if($user?->is_super_admin){
-            $users = UserResource::collection(User::where('usertype','<>',1)->get());
+        $query = User::query();
+        $query->where('usertype','<>', 1);
+        if($request->has('office_id')) {
+            $query->where('office_id', $request->office_id);
         }
-        else {
-             $users = UserResource::collection(User::where('usertype','<>',1)
-             ->where('office_id', $office_id)->get());
-        }
-        return $users;
+        $query->with('office', 'roles.office', 'roles.encoderPermissions');
+        return UserResource::collection($query->get());
     }
 
     /**
