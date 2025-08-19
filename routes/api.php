@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\CommitteeRsoAttachmentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RegionController;
+use App\Models\Activity;
 
 /*
 |--------------------------------------------------------------------------
@@ -121,6 +122,10 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::prefix('committee_rso_attachments')->group(function () {
         Route::get('view/{year}', [CommitteeRsoAttachmentController::class, 'show']);
     });
+
+    // Route::prefix('activitydetailreports')->group(function () {
+    //     Route::get('/{id}', [ActivityDetailReportController::class, 'show']);
+    // });
 
     Route::apiResources([
         'personinfos' => PersonInfoController::class,

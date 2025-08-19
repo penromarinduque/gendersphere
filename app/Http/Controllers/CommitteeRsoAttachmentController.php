@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CommitteeRsoAttachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Spatie\FlareClient\Http\Exceptions\NotFound;
 
@@ -23,21 +24,22 @@ class CommitteeRsoAttachmentController extends Controller
 
         return DB::transaction(function () use ($request) {
             $rso = CommitteeRsoAttachment::where('year', $request->year)->first();
-    
-            $request->file('rso')->storeAs('rso_attachments', $request->year . '.' . $request->file('rso')->getClientOriginalExtension(), 'private');
-    
+            $name = auth()->user()->office_id . '_' . $request->year . '.' . $request->file('rso')->getClientOriginalExtension();
+            $request->file('rso')->storeAs('rso_attachments', $name, 'private');
+            Gate::authorize('create', CommitteeRsoAttachment::class);
             if($rso) {
                 // Update existing record
                 $rso->update([
                     'year' => $request->year,
-                    'file_name' => $request->year . '.' . $request->file('rso')->getClientOriginalExtension(),
-    
+                    'file_name' => $name,
+                    'office_id' => auth()->user()->office_id,
                 ]);
             } else {
                 // Create new record
                 CommitteeRsoAttachment::create([
                     'year' => $request->year,
-                    'file_name' => $request->year . '.' . $request->file('rso')->getClientOriginalExtension(),
+                    'file_name' => $name,
+                    'office_id' => auth()->user()->office_id,
                 ]);
             }
     
@@ -48,11 +50,16 @@ class CommitteeRsoAttachmentController extends Controller
     public function show(Request $request)
     {
         // Retrieve the file based on the year
-        $rso = CommitteeRsoAttachment::where('year', $request->year)->first();
-
+        $office_id = auth()->user()->office_id;
+        $rso = CommitteeRsoAttachment::where([
+            'year' => $request->year,
+            'office_id' => $office_id
+        ])->first();
+        
         if (!$rso) {
             abort(404, 'RSO file not found for the specified year.');
         }
+        Gate::authorize('view', $rso);
         // Return the file as a response
         $file = Storage::disk('private')->get('rso_attachments/' . $rso->file_name);
         if (!$file) {
