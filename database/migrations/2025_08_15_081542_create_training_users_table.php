@@ -9,19 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+     public function up(): void
     {
-        Schema::create('trainings', function (Blueprint $table) {
-            $table->id();
-            $table->string('training_title');
-            $table->dateTime('training_start');
-            $table->dateTime('training_end');
-            $table->integer('duration_hours');
-            $table->string('learning_description_type');
-            $table->string('sponsor_facilitator');
-            $table->foreignId('office_id')->nullable()->constrained()->onDelete('set null');
-            $table->timestamps(); // created_at and updated_at
-        });
+      Schema::create('training_users', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('training_id')->nullable()->constrained()->onDelete('cascade');
+        $table->foreignId('person_info_id')->nullable()->constrained()->onDelete('cascade');
+        $table->timestamps();
+    });
     }
 
     /**

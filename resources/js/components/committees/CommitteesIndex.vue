@@ -3,7 +3,8 @@
         <div class="col-span-1">
             <h3 class="text-lg"><b>List of GADFPS Committees</b></h3>
         </div>
-        <div class="col-span-4 flex justify-end">
+        <div class="col-span-4 flex justify-end gap-2">
+            <Button size="small" variant="outlined" @click="showRsoDialog()">RSO</Button>
             <Button asChild v-slot="props" size="small">
                 <router-link :to="{ name: 'committees.create' }" :class="props.class">Add New</router-link>
             </Button>
@@ -106,6 +107,9 @@
          <TailwindPagination :data="committees" @pagination-change-page="paginate" />
      </div>
     </div>
+
+    <RSO :yearlist="yearlist" :rsoDialogVisible="rsoDialogVisible" @close="rsoDialogVisible = false"></RSO>
+
 </template>
 
 <script setup>
@@ -114,19 +118,21 @@ import { TailwindPagination } from 'laravel-vue-pagination';
 import useCommittees from '@/composables/committees';
 import Select from 'primevue/select';
 import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
 import { onMounted } from 'vue';
 import Panel from 'primevue/panel';
 import usePersonInfos from '../../composables/personinfos';
 import useAuth from '../../composables/auth';
+import RSO from './RSO.vue';
 
 const { committees, getCommittees, destroyCommittee, getCommitteeSummary, committeeSummary, getYearlist, yearlist, selectedYear } = useCommittees();
 const { computeAge } = usePersonInfos();
 const { user: authUser, getUser } = useAuth();
 
-
-
 const selectedEmpStatus = ref('all');
 const selectedGender= ref('all');
+
+const rsoDialogVisible = ref(false);
 
 const deleteCommittee = async (id) => {
     if (!window.confirm('You sure you want to delete this record?')) {
@@ -150,6 +156,9 @@ const filterCommittees = async () => {
 
 const paginate = async (page) => {
     await getCommittees(page, selectedYear.value, selectedEmpStatus.value);
+}
+const showRsoDialog = () => {
+    rsoDialogVisible.value = true;
 }
 
 // We get the companies immediately

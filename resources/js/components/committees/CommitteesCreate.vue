@@ -69,8 +69,10 @@ const form = reactive({
     year_covered: '',
 })
 
+
 const { user : authUser , getUser } = useAuth();
 const { errors, yearlist, personinfos, committeepositions, loading, getYearlist, getPersonInfos, getCommitteePositions, storeCommittee } = useCommittees();
+
 
 onMounted(async() => {
     await getUser();
