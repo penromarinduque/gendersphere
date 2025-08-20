@@ -60,7 +60,7 @@
                                         </x-dropdown-link>
                                     @endcan
                                     <x-dropdown-link :href="route('trainings')">
-                                        {{ __('GAD Related Trainings') }}
+                                        {{ __('Personnel Trainings') }}
                                     </x-dropdown-link>
                                 </x-slot>
                             </x-dropdown>

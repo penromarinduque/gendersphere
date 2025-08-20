@@ -16,16 +16,10 @@ class ReportController extends Controller
     {
         $user = auth()->user();
         $office_id = $user->office_id; 
-
-        $employees = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
-        // , 'barangays.barangay_name', 'municipalities.municipality_name, provinces.province_name'
-            ->join('provinces', 'provinces.id', 'person_infos.province_id')
-            ->join('municipalities', 'municipalities.id', 'person_infos.municipality_id')
-            ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
-            ->where('person_type',1)
-            ->where('employment_type', $type)
-            ->where('person_infos.office_id', $office_id)
-            ->get();
+        $employees = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')->join('provinces', 'provinces.id', 'person_infos.province_id')->join('municipalities', 'municipalities.id', 'person_infos.municipality_id')->join('barangays', 'barangays.id', 'person_infos.barangay_id')->where('person_type',1)->where('employment_type', $type)->get();
+        if(!$user->is_super_admin){
+            $employees = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')->join('provinces', 'provinces.id', 'person_infos.province_id')->join('municipalities', 'municipalities.id', 'person_infos.municipality_id')->join('barangays', 'barangays.id', 'person_infos.barangay_id')->where('person_type',1)->where('employment_type', $type)->where('person_infos.office_id', $office_id)->get();
+        }
         return view('pages.reports.employees', [
             'employees' => $employees,
             'type' => $type
@@ -35,12 +29,17 @@ class ReportController extends Controller
     public function gadPlanBudgets(Request $request)
     {
         $_planbudget = new PlanBudget;
-
         Gate::authorize('viewAccomplishmentReport', PlanBudget::class);
-
+        $user = auth()->user();
+        $office_id = $user->office_id; 
         $year = ($request->year) ? $request->year : date('Y');
-        $goals = $_planbudget->getPlanBudgetGoals($year, auth()->user()->office_id);
-        $planbudgets = $_planbudget->getPlanBudgetByYear($year, auth()->user()->office_id);
+        $goals = $_planbudget->getPlanBudgetGoals($year);
+        $planbudgets = $_planbudget->getPlanBudgetByYear($year);
+        
+        if(!$user->is_super_admin){
+            $goals = $_planbudget->getPlanBudgetGoals($year);
+            $planbudgets = $_planbudget->getPlanBudgetByYear($year);
+        }
 
         $str = '';
         $str = '<table border="1" style="border-collapse: collapse;">

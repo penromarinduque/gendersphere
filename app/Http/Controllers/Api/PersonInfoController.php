@@ -22,15 +22,13 @@ class PersonInfoController extends Controller
         $searchkey = $request->searchkey;
         $user = auth()->user();
         $office_id = $user->office_id; 
+        $personinfo_qry = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
+            ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
+            ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
+            ->join('provinces', 'provinces.id', 'municipalities.province_id')
+            ->where('person_type', 1);
 
-        if($user?->is_super_admin) {
-            $personinfo_qry = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
-                ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
-                ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
-                ->join('provinces', 'provinces.id', 'municipalities.province_id')
-                ->where('person_type', 1);
-        } 
-        else {
+        if(!$user?->is_super_admin) {
             $personinfo_qry = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
                 ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
                 ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
@@ -178,9 +176,7 @@ class PersonInfoController extends Controller
         return new PersonInfoResource($personInfo);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    //Remove the specified resource from storage.
     public function destroy($id)
     {
         $personInfo = PersonInfo::find($id);
@@ -193,15 +189,13 @@ class PersonInfoController extends Controller
     public function all(Request $request) {
         $user = auth()->user();
         $office_id = $user->office_id; 
+        $personinfo_qry = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
+            ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
+            ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
+            ->join('provinces', 'provinces.id', 'municipalities.province_id')
+            ->where('person_type', 1);
         
-        if($user?->is_super_admin) {
-            $personinfo_qry = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
-                ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
-                ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
-                ->join('provinces', 'provinces.id', 'municipalities.province_id')
-                ->where('person_type', 1);
-        } 
-        else {
+        if(!$user?->is_super_admin) {
             $personinfo_qry = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
                 ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
                 ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
@@ -212,23 +206,22 @@ class PersonInfoController extends Controller
       
         $personinfos = $personinfo_qry->orderBy('person_infos.lastname', 'ASC')
             ->get();
-        // $personinfos->appends(['searchkey' => $searchkey]);
         return PersonInfoResource::collection($personinfos);
     }
 
+    //Total count
     public function summary(Request $request){
         $user = auth()->user();
         $office_id = $user->office_id; 
-
-        if($user?->is_super_admin) {
-            $total_employees = PersonInfo::query()->where("person_type", 1)->count();
+         $total_employees = PersonInfo::query()->where("person_type", 1)->count();
             $total_cos = PersonInfo::query()->where('employment_type', 'cos')->where("person_type", 1)->count();
             $total_permanents = PersonInfo::query()->where('employment_type', 'permanent')->where("person_type", 1)->count();
             $total_males = PersonInfo::query()->where('gender', 'male')->where("person_type", 1)->count();
             $total_females = PersonInfo::query()->where('gender', 'female')->where("person_type", 1)->count();
             $total_lgbtqiaplus = PersonInfo::query()->where('gender', 'lgbtqia+')->where("person_type", 1)->count();
-        } 
-        else {
+    
+        if(!$user?->is_super_admin) {
+           
             $total_employees = PersonInfo::query()->where('office_id', $office_id)->where("person_type", 1)->count();
             $total_cos = PersonInfo::query()->where('employment_type', 'cos')->where('office_id', $office_id)->where("person_type", 1)->count();
             $total_permanents = PersonInfo::query()->where('employment_type', 'permanent')->where('office_id', $office_id)->where("person_type", 1)->count();
@@ -246,18 +239,17 @@ class PersonInfoController extends Controller
         ];
     }
 
+    //
     public function getEmployees(Request $request){
         $user = auth()->user();
         $office_id = $user->office_id; 
+        $query = PersonInfo::query()->select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
+            ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
+            ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
+            ->join('provinces', 'provinces.id', 'municipalities.province_id')
+            ->where("person_type", 1);
 
-        if($user?->is_super_admin) {
-            $query = PersonInfo::query()->select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
-                ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
-                ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
-                ->join('provinces', 'provinces.id', 'municipalities.province_id')
-                ->where("person_type", 1);
-        } 
-        else {
+        if(!$user?->is_super_admin) {
             $query = PersonInfo::query()->select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
                 ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
                 ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
@@ -272,69 +264,20 @@ class PersonInfoController extends Controller
 
         return $query->get();
     }
-
+    
+    //
     public function getChartData(Request $request){
         $user = auth()->user();
         $office_id = $user->office_id;
-        if($user?->is_super_admin) {
-            $employees_by_gender = PersonInfo::query()
-                            ->select('gender as name', DB::raw('COUNT(*) as total'))
-                            ->where('person_type', 1)
-                            ->groupBy('gender')
-                            ->get()
-                            ->toArray();
-            $permanent_by_gender = PersonInfo::query()
-                            ->select('gender as name', DB::raw('COUNT(*) as total'))
-                            ->where('person_type', 1)
-                            ->where('employment_type', 'permanent')
-                            ->groupBy('gender')
-                            ->get()
-                            ->toArray();
-            $cos_by_gender = PersonInfo::query()
-                            ->select('gender as name', DB::raw('COUNT(*) as total'))
-                            ->where('person_type', 1)
-                            ->where('employment_type', 'cos')
-                            ->groupBy('gender')
-                            ->get()
-                            ->toArray();
-            $employees_by_emp_type = PersonInfo::query()
-                            ->select('employment_type as name', DB::raw('COUNT(*) as total'))
-                            ->where('person_type', 1)
-                            ->groupBy('employment_type')
-                            ->get()
-                            ->toArray();
-        }
-        else{ 
-            $employees_by_gender = PersonInfo::query()
-                            ->select('gender as name', DB::raw('COUNT(*) as total'))
-                            ->where('person_type', 1)
-                            ->where('office_id', $office_id)
-                            ->groupBy('gender')
-                            ->get()
-                            ->toArray();
-            $permanent_by_gender = PersonInfo::query()
-                            ->select('gender as name', DB::raw('COUNT(*) as total'))
-                            ->where('person_type', 1)
-                            ->where('employment_type', 'permanent')
-                            ->where('office_id', $office_id)
-                            ->groupBy('gender')
-                            ->get()
-                            ->toArray();
-            $cos_by_gender = PersonInfo::query()
-                            ->select('gender as name', DB::raw('COUNT(*) as total'))
-                            ->where('person_type', 1)
-                            ->where('employment_type', 'cos')
-                            ->where('office_id', $office_id)
-                            ->groupBy('gender')
-                            ->get()
-                            ->toArray();
-            $employees_by_emp_type = PersonInfo::query()
-                            ->select('employment_type as name', DB::raw('COUNT(*) as total'))
-                            ->where('person_type', 1)
-                            ->groupBy('employment_type')
-                            ->where('office_id', $office_id)
-                            ->get()
-                            ->toArray();
+        $employees_by_gender = PersonInfo::query()->select('gender as name', DB::raw('COUNT(*) as total'))->where('person_type', 1)->groupBy('gender')->get()->toArray();
+        $permanent_by_gender = PersonInfo::query()->select('gender as name', DB::raw('COUNT(*) as total'))->where('person_type', 1)->where('employment_type', 'permanent')->groupBy('gender')->get()->toArray();
+        $cos_by_gender = PersonInfo::query()->select('gender as name', DB::raw('COUNT(*) as total'))->where('person_type', 1)->where('employment_type', 'cos')->groupBy('gender')->get()->toArray();
+        $employees_by_emp_type = PersonInfo::query() ->select('employment_type as name', DB::raw('COUNT(*) as total'))->where('person_type', 1)->groupBy('employment_type')->get()->toArray();
+        if(!$user?->is_super_admin) {
+            $employees_by_gender = PersonInfo::query()->select('gender as name', DB::raw('COUNT(*) as total'))->where('person_type', 1)->where('office_id', $office_id)->groupBy('gender')->get()->toArray();
+            $permanent_by_gender = PersonInfo::query()->select('gender as name', DB::raw('COUNT(*) as total'))->where('person_type', 1)->where('office_id', $office_id)->where('employment_type', 'permanent')->groupBy('gender')->get()->toArray();
+            $cos_by_gender = PersonInfo::query()->select('gender as name', DB::raw('COUNT(*) as total'))->where('person_type', 1)->where('office_id', $office_id)->where('employment_type', 'cos')->groupBy('gender')->get()->toArray();
+            $employees_by_emp_type = PersonInfo::query() ->select('employment_type as name', DB::raw('COUNT(*) as total'))->where('person_type', 1)->where('office_id', $office_id)->groupBy('employment_type')->get()->toArray();
         }              
         return (object)[
             'employees_by_gender' => $employees_by_gender,
@@ -348,7 +291,7 @@ class PersonInfoController extends Controller
     {   
         $user = auth()->user();
         $office_id = $user->office_id; 
-        $users = PersonInfo::select('id', 'firstname', 'middlename', 'lastname', 'office_id')->where('office_id', $office_id)
+        $users = PersonInfo::select('id', 'firstname', 'middlename', 'lastname', 'office_id')->where("person_type", 1)->where('office_id', $office_id)
             ->get()
             ->map(function ($p) {
                 return [

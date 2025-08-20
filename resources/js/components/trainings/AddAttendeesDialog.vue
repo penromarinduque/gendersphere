@@ -19,8 +19,8 @@
     </div>
 
     <template #footer>
-      <Button label="Cancel" @click="emit('close')" severity="secondary" outlined />
-      <Button label="Add" @click="addAttendees" :loading="loading" severity="success"/>
+      <Button label="Cancel" icon="pi pi-times" @click="emit('close')" severity="secondary" outlined />
+      <Button label="Add" icon="pi pi-plus" @click="addAttendees" :loading="loading" severity="success"/>
     </template>
   </Dialog>
 </template>
@@ -92,7 +92,13 @@ const fetchAttendees = async () => {
 const addAttendees = async () => {
 
   if (!props.trainingId || selectedUsers.value.length === 0) {
-    toaster.warning(`No users selected`);
+        // Clear all existing toasts before showing a new one
+    toaster.clear();
+    // Show new warning toast
+    toaster.warning('No users selected', {
+      duration: 1000, // disappears after 1 second
+      position: 'top-right',
+    });
     return;
   }
 

@@ -115,6 +115,8 @@
                             <Badge :severity="setEmpStatusSeverityColor(personinfo.employment_status)" style="text-transform: uppercase;">{{ personinfo.employment_status }}</Badge>
                         </td>
                         <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                        <!--    <Button class="me-2" size="small" variant="outlined" severity="info">View Trainings</Button> -->
+ 
                             <Button class="me-2" @click="$router.push({ name: 'personinfos.edit', params: { id: personinfo.id } })" size="small" variant="outlined" severity="primary">Edit</Button> 
                             
                             <Button @click="deletePersonInfo(personinfo.id)" size="small" variant="outlined" severity="danger">Delete</Button>

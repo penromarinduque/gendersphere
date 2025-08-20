@@ -4,15 +4,15 @@
             <h3 class="text-lg"><b>List of Trainings</b></h3>
         </div>
         <div class="col-span-1">
-            <div class="flex mb-4 place-content-end">
-                <button class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
-                    <router-link :to="{ name: 'trainings.create' }" class="text-sm font-medium">Create Training</router-link>
-                </button>
+            <div class="flex mb-4 place-content-end">                 
+                <router-link :to="{ name: 'trainings.create' }" class="inline-flex items-center mr-2 px-4 py-1 text-s font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
+                    <i class="pi pi-plus mr-2"></i> Create Training
+                </router-link>
             </div>
         </div>
     </div>
     <div class="mb-2">
-        <div class="mb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="mb-2">
   <!-- Year Filter -->
   <Select 
     v-model="filters.year" 
@@ -20,7 +20,8 @@
     optionLabel="label" 
     optionValue="value"
     placeholder="Filter by Year"
-    class="w-full" 
+    size="small" 
+    class="w-full md:w-56 me-2" 
     showClear
     filter
     @change="applyFilters"
@@ -32,7 +33,8 @@
     optionLabel="label" 
     optionValue="value"
     placeholder="Filter by Title"
-    class="w-full" 
+    size="small" 
+    class="w-full md:w-56 me-2" 
     showClear 
     filter 
     @change="applyFilters"
@@ -45,7 +47,8 @@
     optionLabel="label" 
     optionValue="value"
     placeholder="Filter by Employee"
-    class="w-full" 
+    size="small" 
+    class="w-full md:w-56 me-2"
     showClear 
     filter 
     @change="applyFilters"
@@ -58,11 +61,32 @@
     optionLabel="label" 
     optionValue="value"
     placeholder="Filter by Type"
-    class="w-full" 
+    size="small" 
+    class="w-full md:w-56 me-2" 
     showClear 
     filter 
     @change="applyFilters"
   />
+
+    <Select 
+        v-model="filters.trainingNature" 
+        :options="trainingNatureOptions" 
+        optionLabel="label" 
+        optionValue="value"
+        placeholder="Filter by Nature"
+        size="small" 
+        class="w-full md:w-56 me-2"
+        showClear 
+        filter 
+        @change="applyFilters"
+    />
+        <Button 
+            label="Clear Filters" 
+            size="small"
+            class="p-button-outlined p-button-secondary w-full md:w-56 me-2" 
+            :disabled="!Object.values(filters).some(val => val)" 
+            @click="clearFilters"
+        />
 </div>
    </div>
 
@@ -96,7 +120,7 @@
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">From</span>
                 </th>
-                <th class="border border-slate-300 bg-gray-50">
+                <th class="border border-slate-300 px-6 py-1 bg-gray-50">
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">To</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
@@ -106,9 +130,17 @@
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Type of LD (Managerial/Supervisory/Technical/etc)</span>
                 </th>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Conducted/Sponsored by (write in full)</span>
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Sponsor/Facilitator</span>
                 </th>
-                <th class="border border-slate-300 px-6 py-1 bg-gray-50">Actions</th>
+                <th class="border border-slate-300 px-6 py-1 bg-gray-50">
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Training Nature</span>
+                </th>
+                <th class="border border-slate-300 px-6 py-1 bg-gray-50">
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Related</span>
+                </th>
+                <th class="border border-slate-300 px-6 py-1 bg-gray-50">
+                    Actions
+                </th>
             </tr>
             </thead>
  
@@ -116,7 +148,7 @@
             <template v-if="trainings.data && trainings.data.length">
                 <template v-for="training in trainings.data" :key="training.id">
                     <tr class="bg-white whitespace-nowrap"> <!-- This applies no-wrap to the entire row -->
-                        <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">
+                        <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max ">
                             <span class="capitalize">{{ training.training_title }}</span>
                         </td>
                         <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">
@@ -134,15 +166,21 @@
                         <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">
                             <span>{{ training.sponsor_facilitator }}</span>
                         </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">
+                            <span>{{ training.training_nature.charAt(0).toUpperCase() + training.training_nature.slice(1)}}</span>
+                        </td>
+                            <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">
+                            <span>{{ training.is_gad_related? 'Yes' : 'No' }}</span>
+                        </td>
                         <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">                              
-                            <Button class="me-2" label="View Attendees" @click="openDrawer(training.id)" size="small" variant="outlined" severity="info"/>
+                            <Button class="me-2" icon="pi pi-users" label="View Attendees" @click="openDrawer(training.id)" size="small" variant="outlined" severity="info"/>
                                 <ViewAttendeesDrawer
                                 :visible="attendeesDrawerVisible"
                                 :trainingId="selectedTraining"
                                 @close="attendeesDrawerVisible = false"
                                 />
-                            <Button class="me-2" label ="Edit" @click="$router.push({ name: 'trainings.edit', params: { id: training.id } })" size="small" variant="outlined" severity="primary">Edit</Button>
-                            <Button class="me-2" label ="Delete" @click="deleteTraining(training.id)" size="small" variant="outlined" severity="danger">Delete</Button>
+                            <Button class="me-2" icon="pi pi-pencil" label ="Edit" @click="$router.push({ name: 'trainings.edit', params: { id: training.id } })" size="small" variant="outlined" severity="primary"></Button>
+                            <Button class="me-2" icon="pi pi-trash" label ="Delete" @click="deleteTraining(training.id)" size="small" variant="outlined" severity="danger"></Button>
                         </td>
                     </tr>
                 </template>
@@ -169,11 +207,11 @@
 import Button from "primevue/button";
 import { TailwindPagination } from 'laravel-vue-pagination';
 import Select from 'primevue/select';
-import InputText from 'primevue/inputtext';
 import Panel from 'primevue/panel';
 import { onMounted, reactive, ref } from 'vue';
 import ViewAttendeesDrawer from './ViewAttendeesDrawer.vue';
 import axios from 'axios';
+import 'primeicons/primeicons.css';
 
 // Here we're using a Composable file, its code is above
 import useTrainings from '@/composables/trainings'
@@ -195,6 +233,8 @@ const deleteTraining = async (id) => {
 
     await destroyTraining(id);
     await getTrainings();
+    await getTrainingSummary();
+    await fetchFilters();
     // console.log(1);
 }
 
@@ -206,12 +246,15 @@ const searchKey = async (event) => {
 
 
 // Reactive filter object
-const filters = ref({
+const filters = reactive({
   year: null,
   trainingTitle: null,
   employee: null,
   trainingType: null,
+  trainingNature: null,
 });
+
+
 
 // Select options
 const yearOptions = ref([]);
@@ -222,6 +265,10 @@ const trainingTypeOptions = ref([
   { label: 'Supervisory', value: 'supervisory' },
   { label: 'Technical', value: 'technical' },
   { label: 'Foundation', value: 'foundation' },
+]);
+const trainingNatureOptions = ref([
+  { label: 'Attended', value: 'attended' },
+  { label: 'Conducted', value: 'conducted' }
 ]);
 
 // Fetch dynamic options
@@ -242,7 +289,7 @@ const fetchFilters = async () => {
       label: emp.name,
       value: emp.id
     }));
-    console.log('Training list response:', employeeRes.data); 
+    console.log('Employee list response:', employeeRes.data); 
     // Years (e.g., from 2020 to current year)
     const currentYear = new Date().getFullYear();
     yearOptions.value = Array.from({ length: 6 }, (_, i) => {
@@ -258,19 +305,31 @@ const fetchFilters = async () => {
 // Apply filters
 const applyFilters = async () => {
   const query = {
-    year: filters.value.year,
-    title: filters.value.trainingTitle,
-    employee_id: filters.value.employee,
-    type: filters.value.trainingType
+    year: filters.year,
+    title: filters.trainingTitle,
+    employee_id: filters.employee,
+    type: filters.trainingType,
+    training_nature: filters.trainingNature,
   };
 
   await getTrainings(1, null, query); // Assuming you pass filters via 3rd param
 };
 
+const clearFilters = async () => {
+  filters.year = null;
+  filters.trainingTitle = null;
+  filters.employee = null;
+  filters.trainingType = null;
+  filters.trainingNature = null;
+  await getTrainings(); // reload data
+};
+
+
 onMounted(() => {
     getTrainings();
     getTrainingSummary();
     fetchFilters();
+    
 });
 
 /* const filterTrainings = async () => {

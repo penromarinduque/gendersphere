@@ -67,9 +67,11 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('{id}/attendees', [TrainingController::class, 'attendees']);
         Route::post('{id}/attendees', [TrainingController::class, 'addAttendees']);
         Route::delete('{training}/attendees/{user}', [TrainingController::class, 'removeAttendee']);
+        Route::delete('{training}/attendees', [TrainingController::class, 'removeAllAttendees']);
+        Route::get('{training}/certificate/{attendee}', [TrainingController::class, 'getCertificate']);
+        Route::post('{training}/certificate/{attendee}', [TrainingController::class, 'uploadCertificate']);
+        Route::delete('{training}/certificate/{attendee}', [TrainingController::class, 'deleteCertificate']);
         
-    
-
         // Specific training title by ID
         Route::get('{id}/training_title', function ($id) {
             $training = \App\Models\Training::findOrFail($id);

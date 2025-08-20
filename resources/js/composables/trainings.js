@@ -35,52 +35,62 @@ export default function useTrainings() {
     }
     };
 
-    const getTraining = async (id) => {
-        let response = await axios.get(`/api/trainings/${id}`)
-        console.log(response.data.data)
-        training.value = response.data.data
-        // console.log(response.data);
-    }
+ const getTraining = async (id) => {
+    let response = await axios.get(`/api/trainings/${id}`);
+    const data = response.data.data;
 
-    const storeTraining = async (data) => {
-        loading.value = true;
-        errors.value = ''
-        try {
-            await axios.post('/api/trainings', data)
-            await router.push({ name: 'trainings.index' })
-            toaster.success(`Successfully Saved!`);
-            loading.value = false;
-        } catch (e) {
-            console.log(e);
-            if (e.response.status === 422) {
-                for (const key in e.response.data.errors) {
-                    errors.value = e.response.data.errors
-                }
-            }
-            loading.value = false;
-        }
- 
-    }
+    // Force is_gad_related to be a real boolean
+    data.is_gad_related = Boolean(data.is_gad_related);
 
-    const updateTraining = async (id) => {
-        // console.log(training);
-        loading.value = true;
-        errors.value = ''
-        try {
-            await axios.patch(`/api/trainings/${id}`, training.value)
-            await router.push({ name: 'trainings.index' })
-            toaster.success(`Successfully Updated!`);
-            loading.value = false;
-        } catch (e) {
-            console.log(e);
-            if (e.response.status === 422) {
-                for (const key in e.response.data.errors) {
-                    errors.value = e.response.data.errors
-                }
-            }
-            loading.value = false;
+    console.log(data);
+    training.value = data;
+}
+
+  const storeTraining = async (data) => {
+    loading.value = true
+    errors.value = ''
+
+    try {
+        const payload = {
+            ...data,
+            is_gad_related: data.is_gad_related ? 1 : 0  //Ensure it's 1 or 0
         }
+
+        await axios.post('/api/trainings', payload)
+        await router.push({ name: 'trainings.index' })
+        toaster.success(`Successfully Saved!`)
+    } catch (e) {
+        if (e.response?.status === 422) {
+            errors.value = e.response.data.errors
+        }
+        throw e; 
+    } finally {
+        loading.value = false
     }
+}
+
+const updateTraining = async (id) => {
+    loading.value = true
+    errors.value = ''
+
+    try {
+        const payload = {
+            ...training.value,
+            is_gad_related: training.value.is_gad_related ? 1 : 0 // Ensure it's 1 or 0
+        }
+
+        await axios.patch(`/api/trainings/${id}`, payload)
+        await router.push({ name: 'trainings.index' })
+        toaster.success(`Successfully Updated!`)
+    } catch (e) {
+        console.log(e)
+        if (e.response?.status === 422) {
+            errors.value = e.response.data.errors
+        }
+    } finally {
+        loading.value = false
+    }
+}
 
     const destroyTraining = async (id) => {
         loading.value = true;
@@ -110,7 +120,26 @@ export default function useTrainings() {
         employees.value = response.data
     }
  */
+    function msToHours(ms) {
+        return ms / (1000 * 60 * 60);
+    }
 
+    function calculateHours(hours) {
+        hours = hours === 0 ? 8 : hours;
+        if(hours >= 24){
+            hours = ((hours/24)+1)*8
+        }
+        return hours
+    }
+
+    function formatDateToYYYYMMDD(date) {
+        const d = new Date(date)
+        const formatted = d.toISOString().split('T')[0];
+        console.log('Formatted:', formatted);       // "2025-08-18"
+        console.log('Type:', typeof d);       // "object"
+        console.log('Still a Date?', d instanceof Date); 
+        return formatted
+    }
 
     return {
         errors,
@@ -126,5 +155,8 @@ export default function useTrainings() {
         updateTraining,
         destroyTraining,
         getTrainingSummary,
+        calculateHours,
+        msToHours,
+        formatDateToYYYYMMDD,
     }
 }

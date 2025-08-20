@@ -12,7 +12,7 @@ class Training extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['training_title', 'training_start', 'training_end', 'duration_hours', 'learning_description_type', 'sponsor_facilitator', 'created_at', 'updated_at', 'office_id'];
+    protected $fillable = ['training_title', 'training_start', 'training_end', 'duration_hours', 'learning_description_type', 'sponsor_facilitator', 'created_at', 'updated_at', 'office_id', 'is_gad_related', 'training_nature', ];
 
     public function learningDescription($type = null)
     {
@@ -32,7 +32,9 @@ class Training extends Model implements Auditable
 } */
     public function attendees()
     {
-        return $this->belongsToMany(PersonInfo::class, 'training_users');
+        return $this->belongsToMany(PersonInfo::class, 'training_users')
+        ->withPivot('certificate_path')
+        ->withTimestamps();
     }
 }
 

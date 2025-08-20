@@ -14,16 +14,21 @@
                 <section>
                     <header>
                         <div class="flex w-32 mx-auto float-end">
-                            <label class="">YEAR&nbsp;</label>
-                            <select onchange="window.location.href='?year='+this.value" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            <div class="flex items-center space-x-2">
+                            <label class="text-sm font-medium text-gray-700">YEAR</label>
+                            <select
+                                onchange="window.location.href='?year='+this.value"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            >
                                 <option value="">-YEAR-</option>
-                                @for($i=date('Y'); $i >= 2018; $i--)
-                                    <option value="{{$i}}" {{($i==$year) ? 'selected' : ''}}>{{$i}}</option>
+                                @for($i = date('Y'); $i >= 2018; $i--)
+                                <option value="{{ $i }}" {{ $i == $year ? 'selected' : '' }}>{{ $i }}</option>
                                 @endfor
                             </select>
+                            </div>
                         </div>
                         <h2 class="text-lg font-medium text-gray-900">
-                            {{ __('ANNUAL GENDER AND DEVELOPMENT (GAD) PLAN AND BUDGET '.$year) }}
+                            {{ __('ANNUAL GENDER AND DEVELOPMENT (GAD) ACCOMPLISHMENT REPORT '.$year) }}
                         </h2>
                     </header>
                     <div class="min-w-full w-full py-6 overflow-x-scroll">
