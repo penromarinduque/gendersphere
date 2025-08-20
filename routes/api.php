@@ -27,8 +27,10 @@ use App\Http\Controllers\Api\PermitTypeController;
 use App\Http\Controllers\Api\EmployeeSalaryController;
 use App\Http\Controllers\Api\OfficeController;
 use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\CommitteeRsoAttachmentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RegionController;
+use App\Models\Activity;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,6 +121,14 @@ Route::middleware('auth:sanctum')->group( function () {
        Route::get('can-access', [AuthController::class, 'canAccess']); 
     });
 
+    Route::prefix('committee_rso_attachments')->group(function () {
+        Route::get('view/{year}', [CommitteeRsoAttachmentController::class, 'show']);
+    });
+
+    // Route::prefix('activitydetailreports')->group(function () {
+    //     Route::get('/{id}', [ActivityDetailReportController::class, 'show']);
+    // });
+
     Route::apiResources([
         'personinfos' => PersonInfoController::class,
         'users' => UserController::class,
@@ -145,6 +155,7 @@ Route::middleware('auth:sanctum')->group( function () {
         'trainings' => TrainingController::class,
         'offices' => OfficeController::class,
         'roles' => RoleController::class,
+        'committee_rso_attachments' => CommitteeRsoAttachmentController::class,
     ]);
 
     Route::get('yearlist', [CommitteeController::class, 'yearlist']);
@@ -154,6 +165,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('employeedropdown', [PersonInfoController::class, 'getEmployeeList']);
        // Training title list for filter
     Route::get('traininglist', [TrainingController::class, 'getTrainingList']);
+    
 });
 
 // Route::apiResource('personinfos', PersonInfoController::class);

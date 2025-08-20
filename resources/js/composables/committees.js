@@ -155,6 +155,39 @@ export default function useCommittees() {
         committeeSummary.value = response.data;
     }
 
+    const uploadRso = async (uploadRsoForm) => {
+        try {
+            loading.value = true;
+            errors.value = [];
+            const response = await axios.post('/api/committee_rso_attachments', uploadRsoForm, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: response.data.message,
+                life: 3000
+            });
+            loading.value = false;
+        } catch (error) {
+            if( error.response && error.response.status === 422) {
+                errors.value = error.response.data.errors;
+            }
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.response.data.message,
+                life: 3000
+            })
+            loading.value = false;
+            return;
+        }
+    }
+        
+
+
     return {
         errors,
         committee,
@@ -165,6 +198,7 @@ export default function useCommittees() {
         loading,
         committeeSummary,
         selectedYear,
+        uploadRso,
         getCommittee,
         getCommittees,
         storeCommittee,

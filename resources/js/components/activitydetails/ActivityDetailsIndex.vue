@@ -64,80 +64,58 @@
             </thead>
 
             <tbody class="bg-white divide-y divide-gray-200 divide-solid">
-            <template v-for="item in activitydetails" :key="item.id">
-                <tr class="bg-white align-text-top">
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <!-- <span style="text-transform: capitalize;">{{ item.sub_activity }}</span> -->
-                        <span v-html="item.sub_activity"></span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <!-- <span style="text-transform: capitalize;">{{ item.targets }}</span> -->
-                        <span v-html="item.targets"></span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <!-- <span style="text-transform: capitalize;">{{ item.actual_result }}</span> -->
-                        <span v-html="item.actual_result"></span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.gad_budget.toLocaleString() }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;" v-if="item.actual_cost!=0">{{ item.actual_cost.toLocaleString() }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.responsible_unit }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <!-- <span style="text-transform: capitalize;">{{ item.remarks }}</span> -->
-                        <span v-html="item.remarks"></span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap flex flex-wrap gap-1">
-                        <Button asChild v-slot="props" size="small" severity="contrast" variant="outlined">
-                            <router-link :to="{ name: 'activitydetails.updateaccom', params: { id: item.id, ga_id: props.ga_id } }" :class="props.class">Update Accomplishment</router-link>
-                        </Button>
-                        <Button asChild v-slot="props" size="small" severity="contrast" variant="outlined">
-                            <router-link :to="{ name: 'activitydetails.attendees', params: { id: item.id, ga_id: props.ga_id } }" :class="props.class">Attendees</router-link>
-                        </Button>
-                        <Button @click="movFileDialogOpen(item)" size="small" severity="contrast" variant="outlined">
-                           Activity Report
-                        </Button>
-                        <Button @click="deleteActivityDetail(item.id, props.ga_id)" size="small" severity="danger" variant="outlined">
-                           Delete
-                        </Button>
-                        <Button asChild v-slot="props" size="small" >
-                            <router-link :to="{ name: 'activitydetails.edit', params: { id: item.id, ga_id: props.ga_id } }" :class="props.class">Edit</router-link> 
-                        </Button>
-                    </td>
-                </tr>
-            </template>
+                <template v-for="item in activitydetails" :key="item.id">
+                    <tr class="bg-white align-text-top">
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <!-- <span style="text-transform: capitalize;">{{ item.sub_activity }}</span> -->
+                            <span v-html="item.sub_activity"></span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <!-- <span style="text-transform: capitalize;">{{ item.targets }}</span> -->
+                            <span v-html="item.targets"></span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <!-- <span style="text-transform: capitalize;">{{ item.actual_result }}</span> -->
+                            <span v-html="item.actual_result"></span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.gad_budget.toLocaleString() }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;" v-if="item.actual_cost!=0">{{ item.actual_cost.toLocaleString() }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.responsible_unit }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <!-- <span style="text-transform: capitalize;">{{ item.remarks }}</span> -->
+                            <span v-html="item.remarks"></span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap flex flex-wrap gap-1">
+                            <Button asChild v-slot="props" size="small" severity="contrast" variant="outlined">
+                                <router-link :to="{ name: 'activitydetails.updateaccom', params: { id: item.id, ga_id: props.ga_id } }" :class="props.class">Update Accomplishment</router-link>
+                            </Button>
+                            <Button asChild v-slot="props" size="small" severity="contrast" variant="outlined">
+                                <router-link :to="{ name: 'activitydetails.attendees', params: { id: item.id, ga_id: props.ga_id } }" :class="props.class">Attendees</router-link>
+                            </Button>
+                            <Button @click="movFileDialogOpen(item)" size="small" severity="contrast" variant="outlined">
+                            Activity Report
+                            </Button>
+                            <Button @click="deleteActivityDetail(item.id, props.ga_id)" size="small" severity="danger" variant="outlined">
+                            Delete
+                            </Button>
+                            <Button asChild v-slot="props" size="small" >
+                                <router-link :to="{ name: 'activitydetails.edit', params: { id: item.id, ga_id: props.ga_id } }" :class="props.class">Edit</router-link> 
+                            </Button>
+                        </td>
+                    </tr>
+                </template>
             </tbody>
         </table>
+
+        <ActivitityDetailReports :visible="movDialogVisible" @close="movFileDialogClose" :activity_id="activity_id" />
+
     </div>
-
-    <!-- <Dialog v-model:visible="movDialogVisible" modal header="Activity Report" :style="{ width: '25rem' }" :draggable="false" >
-        <form id="movForm" action="/activitydetails/upload-mov" method="post" enctype="multipart/form-data">
-            <input type="hidden" name="_token" :value="csrf" />
-            <input type="hidden" name="id" :value="activity_id" />
-            <div class="flex items-center gap-4 mb-4">
-                <input 
-                    name="mov" 
-                    id="mov"
-                    type="file"
-                    accept="application/pdf"
-                    class="block w-full mt-2 p-2 border border-gray-300 rounded-lg shadow-sm text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-300"
-                    />
-            </div>
-            <div class="flex justify-end gap-2">
-                <Button type="button" label="Download" severity="secondary" :href="downloadMovLink" target="_blank" :disabled="downloadMovLink == ''"></Button>
-                <Button type="button" label="Cancel" severity="secondary" @click="movFileDialogClose()"></Button>
-                <Button type="submit" label="Save"></Button>
-            </div>
-        </form>
-    </Dialog> -->
-
-    <Drawer v-model:visible="movDialogVisible" position="right"  class="!w-full md:!w-80 lg:!w-[40rem]">
-       asd
-    </Drawer>
 </template>
 
 
@@ -149,7 +127,7 @@ import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Drawer from 'primevue/drawer';
-import TieredMenu from 'primevue/tieredmenu';
+import ActivitityDetailReports from './ActivityDetailReports.vue';
 
 const { gadactivity, getGadActivity, updateGadActivity, destroyGadActivity } = useGadActivities();
 const { activitydetails, getActivityDetails, destroyActivityDetail } = useActivityDetails();
