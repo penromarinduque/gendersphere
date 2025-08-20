@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\EncoderPermission;
+use App\Models\PersonInfo;
 use Illuminate\Auth\Access\Response;
 use App\Models\Training;
 use App\Models\User;
