@@ -46,6 +46,8 @@ use App\Models\Activity;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::middleware('auth:sanctum')->group(function () {
+    });
 
 
 Route::middleware('auth:sanctum')->group( function () {
@@ -70,9 +72,12 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::post('{id}/attendees', [TrainingController::class, 'addAttendees']);
         Route::delete('{training}/attendees/{user}', [TrainingController::class, 'removeAttendee']);
         Route::delete('{training}/attendees', [TrainingController::class, 'removeAllAttendees']);
-        Route::get('{training}/certificate/{attendee}', [TrainingController::class, 'getCertificate']);
-        Route::post('{training}/certificate/{attendee}', [TrainingController::class, 'uploadCertificate']);
-        Route::delete('{training}/certificate/{attendee}', [TrainingController::class, 'deleteCertificate']);
+        Route::get('{trainingId}/certificate/{attendeeId}', [TrainingController::class, 'getCertificate']);
+        Route::post('{trainingId}/certificate/{attendeeId}', [TrainingController::class, 'uploadCertificate']);
+        Route::delete('{trainingId}/certificate/{attendeeId}', [TrainingController::class, 'deleteCertificate']);
+
+
+
         
         // Specific training title by ID
         Route::get('{id}/training_title', function ($id) {

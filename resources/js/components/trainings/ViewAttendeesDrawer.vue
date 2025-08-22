@@ -2,8 +2,8 @@
   <Drawer
     v-model:visible="isVisible"
     position="right"
-    @close="certDialogVisible = false"
     :showCloseIcon="false"
+    :closeOnEscape="true"
     class="!w-full md:!w-80 lg:!w-[30rem]"
     @hide="emit('close')"
   >
@@ -94,9 +94,13 @@
         </li>
       </ul>
     </div>
-    <div v-if="!filteredAttendees.length && searchQuery">
+    <div v-else-if="attendees.length === 0">
+      <span class="text-left text-sm font-semibold text-gray-800 text-gray-500 border rounded flex justify-between  items-center pl-3 !bg-violet-100 hover:bg-gray-100 p-3"><strong>No attendees.</strong></span>
+    </div>
+    <div v-if="searchQuery">
       <span class="text-left text-sm font-semibold text-gray-800 text-gray-500 border rounded flex justify-between  items-center pl-3 !bg-violet-100 hover:bg-gray-100 p-3"><strong>No matching attendees found.</strong></span>
     </div>
+
 
     <AddAttendeesDialog
       :visible="addDialogVisible"
@@ -282,7 +286,7 @@ watch(() => props.visible, async (val) => {
 watch(isVisible, (val) => {
   if (!val) emit('close');
   selectedAttendee.value = null;
-  searchQuery.value = null
+  searchQuery.value = ''
 });
 
 function onKeyDown(e) {
@@ -290,11 +294,14 @@ function onKeyDown(e) {
     if (certDialogVisible.value) {
       // Close the certificate dialog only
       certDialogVisible.value = false;
+      isVisible.value = true;
 
       // Prevent drawer from detecting Escape
       e.preventDefault();
       e.stopImmediatePropagation();
-    } else {
+    } 
+    
+    else {
       // No dialog open — let the drawer close normally
       isVisible.value = false;
     }
@@ -308,6 +315,16 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKeyDown, true);
 });
+
+/* function onDrawerHide() {
+  if (certDialogVisible.value) {
+    // Re-open the drawer because a nested dialog is open
+    
+  } else {
+    // Close normally
+    emit('close');
+  }
+} */
 
 /* // Compute gender counts dynamically
 const genderSummary = computed(() => {

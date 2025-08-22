@@ -7,12 +7,10 @@
     header="View Certificate"
     :style="{ width: '450px' }"
   >
-    <!-- Outer Card Container -->
     <div class="border border-gray-200 rounded-2xl shadow-md bg-white overflow-hidden">
-
       <!-- Header -->
       <div class="bg-gray-100 border-b border-gray-200 px-6 py-4">
-        <h2 class="text-lg font-semibold text-gray-700"> Certificate</h2>
+        <h2 class="text-lg font-semibold text-gray-700">Certificate</h2>
       </div>
 
       <!-- Main Content Area -->
@@ -28,7 +26,7 @@
           </div>
         </template>
 
-        <!-- Certificate Exists -->
+        <!-- Certificate Found -->
         <template v-else-if="certUrl">
           <div class="border border-gray-200 rounded-2xl p-4 bg-white shadow-sm hover:shadow-md transition">
             <img
@@ -48,17 +46,14 @@
           </div>
         </template>
 
-        <!-- No Certificate, Upload UI -->
-        <template v-else-if="certificateChecked">
+        <!-- Upload UI -->
+        <template v-else-if="certificateChecked && !uploading">
           <p class="text-gray-600 text-sm font-medium text-center">No certificate found.</p>
           <div
             class="rounded-2xl border-2 border-dashed border-gray-300 p-6 bg-white hover:border-primary-500 hover:bg-gray-50 transition cursor-pointer shadow-sm"
-          > 
+          >
             <div class="flex flex-col items-center justify-center space-y-4 text-center">
-              <label
-                for="certificate-upload"
-                class="w-full flex flex-col items-center justify-center"
-              >
+              <label for="certificate-upload" class="w-full flex flex-col items-center justify-center cursor-pointer">
                 <svg
                   class="w-12 h-12 mb-2 text-gray-400"
                   fill="none"
@@ -87,8 +82,8 @@
             </div>
           </div>
         </template>
-        
-                <!-- Uploading -->
+
+        <!-- Uploading State -->
         <template v-else-if="uploading">
           <div class="flex flex-col items-center justify-center h-48 border border-yellow-200 rounded-xl bg-yellow-50 shadow-inner">
             <svg class="animate-spin h-6 w-6 text-yellow-500 mb-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -104,7 +99,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, watch } from 'vue';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import axios from 'axios';
@@ -115,30 +110,35 @@ const props = defineProps({
   attendeeId: Number,
 });
 const emit = defineEmits(['update:visible', 'refresh']);
+
 const certUrl = ref(null);
 const loading = ref(false);
-const certificateChecked = ref(false); 
 const uploading = ref(false);
+const certificateChecked = ref(false);
 
-// Fetch certificate URL when dialog opens
+// Watch dialog open/close
 watch(() => props.visible, async (isOpen) => {
   if (isOpen && props.attendeeId) {
     loading.value = true;
-    certUrl.value = null;
     certificateChecked.value = false;
     try {
-      const res = await axios.get(`/api/trainings/${props.trainingId}/certificate/${props.attendeeId}`);
-      certUrl.value = res.data?.url ?? null;
+      const res = await axios.get(`/api/trainings/${props.trainingId}/certificate/${props.attendeeId}`, {
+        responseType: 'blob',
+      });
+      const blobUrl = URL.createObjectURL(res.data);
+      certUrl.value = blobUrl;
     } catch {
       certUrl.value = null;
     } finally {
       loading.value = false;
       certificateChecked.value = true;
     }
-  }
-  
-  if (!isOpen) {
-    certUrl.value = null; //Clear content when dialog is closed
+  } else {
+    // Dialog closed - cleanup
+    if (certUrl.value) {
+      URL.revokeObjectURL(certUrl.value);
+    }
+    certUrl.value = null;
     certificateChecked.value = false;
   }
 });
@@ -146,16 +146,32 @@ watch(() => props.visible, async (isOpen) => {
 const uploadCertificate = async (e) => {
   const file = e.target.files[0];
   if (!file || !props.attendeeId) return;
+
+  // Validate file type and size
+  if (!file.type.startsWith("image/")) {
+    alert("Invalid file type. Please upload an image.");
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    alert("File is too large. Max size is 5MB.");
+    return;
+  }
+
   const fd = new FormData();
   fd.append('certificate', file);
-
-  const uploading = ref(true);
+  uploading.value = true;
 
   try {
     await axios.post(`/api/trainings/${props.trainingId}/certificate/${props.attendeeId}`, fd);
-    emit('refresh'); // Tell parent to refresh state
-    const res = await axios.get(`/api/trainings/${props.trainingId}/certificate/${props.attendeeId}`);
-    certUrl.value = res.data?.url ?? null;
+
+    emit('refresh');
+
+    const res = await axios.get(`/api/trainings/${props.trainingId}/certificate/${props.attendeeId}`, {
+      responseType: 'blob',
+    });
+    const blobUrl = URL.createObjectURL(res.data);
+    certUrl.value = blobUrl;
+    certificateChecked.value = true;
   } catch (err) {
     console.error('Upload failed:', err);
   } finally {
@@ -166,11 +182,18 @@ const uploadCertificate = async (e) => {
 const deleteCertificate = async () => {
   try {
     await axios.delete(`/api/trainings/${props.trainingId}/certificate/${props.attendeeId}`);
+    if (certUrl.value) URL.revokeObjectURL(certUrl.value);
     certUrl.value = null;
     emit('refresh');
   } catch (err) {
     console.error('Delete failed:', err);
   }
 };
-
 </script>
+
+<style scoped>
+img {
+  max-height: 400px;
+  object-fit: contain;
+}
+</style>

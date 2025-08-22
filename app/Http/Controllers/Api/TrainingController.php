@@ -203,21 +203,39 @@ class TrainingController extends Controller
 
     public function removeAttendee($trainingId, $userId){
         $training = Training::findOrFail($trainingId);
+
+        // Fetch the pivot record
+        $pivot = $training->attendees()->where('person_info_id', $userId)->first();
+
+        if ($pivot && $pivot->pivot->certificate_path) {
+            // Delete certificate file from storage
+            Storage::disk('private')->delete($pivot->pivot->certificate_path);
+        }
+
+        // Detach the attendee from the training
         $training->attendees()->detach($userId);
 
         return response()->json(['message' => 'Attendee removed']);
     }
 
-    public function removeAllAttendees($trainingId){
+    public function removeAllAttendees($trainingId) {
         $training = Training::findOrFail($trainingId);
 
-        // Assumes many-to-many relationship
+        // Get only certificate paths from the pivot table
+        $paths = $training->attendees()->pluck('certificate_path');
+
+        // Filter out nulls and delete all files in a batch
+        if ($paths->isNotEmpty()) {
+            Storage::disk('private')->delete($paths->filter()->all());
+        }
+
+        // Now safely detach all attendees
         $training->attendees()->detach();
+
         return response()->json(['message' => 'All attendees removed successfully.']);
     }
 
-    public function getTrainingList()
-    {   
+    public function getTrainingList() {   
         $user = auth()->user();
         $office_id = $user->office_id; 
         $titles = Training::select('training_title')
@@ -228,47 +246,56 @@ class TrainingController extends Controller
         return response()->json(['data' => $titles]);
     }
 
-    public function getCertificate($trainingId, $attendeeId){
+    public function getCertificate($trainingId, $attendeeId) {
         $training = Training::findOrFail($trainingId);
         $attendee = $training->attendees()->findOrFail($attendeeId);
-        $path = $attendee->pivot->certificate_path ?? null;
+        $path = $attendee->pivot->certificate_path;
 
-        // Ensure we return a public URL only if the file exists
-        $url = $path && Storage::disk('public')->exists($path)
-            ? Storage::url($path)
-            : null;
+        if (!$path || !Storage::disk('private')->exists($path)) {
+            return response()->json(['message' => 'Certificate not found'], 404);
+        }
 
-        return response()->json(['url' => $url]);
+        // Ensure user has access
+        if ($training->office_id !== auth()->user()->office_id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $file = Storage::disk('private')->get($path);
+        $mime = Storage::disk('private')->mimeType($path);
+
+        return response($file, 200)->header('Content-Type', $mime);
     }
 
-
     public function uploadCertificate(Request $req, $trainingId, $attendeeId) {
-        $req->validate(['certificate' => 'required|image']);
+        $req->validate(['certificate' => 'required|image|max:2048']);
+        $user = auth()->user();
         $training = Training::findOrFail($trainingId);
-        $path = $req->file('certificate')->store('certificates', 'public');
+        $name = $user->firstname . $user->lastname .  "_cert_" . time() . "." . $req->file('certificate')->getClientOriginalExtension();
+
+        $path = $req->file('certificate')->storeAs('certificates', $name, 'private');
+
         $training->attendees()->updateExistingPivot($attendeeId, [
-        'certificate_path' => $path
-    ]);
-        return response()->json(['message' => 'Uploaded']);
+            'certificate_path' => $path,
+        ]);
+
+        return response()->json(['message' => 'Certificate uploaded successfully']);
     }
 
     public function deleteCertificate($trainingId, $attendeeId) {
         $training = Training::findOrFail($trainingId);
-        $pivot = $training->attendees()->findOrFail($attendeeId)->pivot;
+        $attendee = $training->attendees()->findOrFail($attendeeId);
+        $path = $attendee->pivot->certificate_path;
 
-        $path = $pivot->certificate_path;
-
-        if (!$path) {
+        if (!$path || !Storage::disk('private')->exists($path)) {
             return response()->json(['message' => 'No certificate found'], 404);
         }
 
-        // Use the correct disk (public)
-        if (Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
-        }
+        Storage::disk('private')->delete($path);
+        $training->attendees()->updateExistingPivot($attendeeId, [
+            'certificate_path' => null,
+        ]);
 
-        $pivot->update(['certificate_path' => null]);
-
-        return response()->json(['message' => 'Deleted']);
+        return response()->json(['message' => 'Certificate deleted successfully']);
     }
+
 }
