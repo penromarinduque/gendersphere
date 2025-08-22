@@ -266,20 +266,37 @@ class TrainingController extends Controller
         return response($file, 200)->header('Content-Type', $mime);
     }
 
-    public function uploadCertificate(Request $req, $trainingId, $attendeeId) {
-        $req->validate(['certificate' => 'required|image|max:2048']);
-        $user = auth()->user();
-        $training = Training::findOrFail($trainingId);
-        $name = $user->firstname . $user->lastname .  "_cert_" . time() . "." . $req->file('certificate')->getClientOriginalExtension();
+public function uploadCertificate(Request $req, $trainingId, $attendeeId) {
+    $req->validate(['certificate' => 'required|image|max:2048']);
 
-        $path = $req->file('certificate')->storeAs('certificates', $name, 'private');
+    $training = Training::findOrFail($trainingId);
 
-        $training->attendees()->updateExistingPivot($attendeeId, [
-            'certificate_path' => $path,
-        ]);
+    // Get attendee from pivot relationship
+    $attendee = $training->attendees()->where('person_info_id', $attendeeId)->first();
 
-        return response()->json(['message' => 'Certificate uploaded successfully']);
+    if (!$attendee) {
+        return response()->json(['message' => 'Attendee not found'], 404);
     }
+
+    // Combine and sanitize name
+    $fullName = $attendee->firstname . '_' . ($attendee->middlename ?? '') . '_' . $attendee->lastname;
+    $cleanName = preg_replace('/[^A-Za-z0-9]/', '_', $fullName);
+    $cleanName = preg_replace('/_+/', '_', $cleanName);
+    $cleanName = trim($cleanName, '_');
+
+    // Create filename
+    $fileName = $cleanName . "_Cert_" . time() . "." . $req->file('certificate')->getClientOriginalExtension();
+
+    // Store the file
+    $path = $req->file('certificate')->storeAs('certificates', $fileName, 'private');
+
+    // Update pivot table
+    $training->attendees()->updateExistingPivot($attendeeId, [
+        'certificate_path' => $path,
+    ]);
+
+    return response()->json(['message' => 'Certificate uploaded successfully']);
+}
 
     public function deleteCertificate($trainingId, $attendeeId) {
         $training = Training::findOrFail($trainingId);
