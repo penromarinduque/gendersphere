@@ -25,14 +25,13 @@ export default function usePlanBudgets(){
             year: year,
             ...query
         }})
-        // console.log(response)
         planbudgets.value = response.data.data
     }
  
     const getPlanBudget = async (id) => {
         let response = await axios.get(`/api/planbudgets/${id}`)
-        planbudget.value = response.data.data
-        // console.log(response.data);
+        planbudget.value = response.data.data;
+        console.log("planbudget :", response);
     }
 
     const storePlanBudget = async (data) => {
@@ -49,7 +48,6 @@ export default function usePlanBudgets(){
             })
             loading.value = false;
         } catch (e) {
-            console.log(e);
             toast.add({
                 severity: 'error',
                 summary: 'Error',
@@ -66,7 +64,6 @@ export default function usePlanBudgets(){
     }
  
     const updatePlanBudget = async (id) => {
-        // console.log(planbudget);
         loading.value = true;
         errors.value = ''
         try {
@@ -80,7 +77,6 @@ export default function usePlanBudgets(){
             })
             loading.value = false;
         } catch (e) {
-            console.log(e);
             toast.add({
                 severity: 'error',
                 summary: 'Error',
@@ -108,7 +104,6 @@ export default function usePlanBudgets(){
             })
             loading.value = false;
         } catch (e) {
-            // console.log(e);
             toast.add({
                 severity: 'error',
                 summary: 'Error',
@@ -120,9 +115,63 @@ export default function usePlanBudgets(){
     }
 
     const getYearlist = async () => {
-        let response = await axios.get('/api/yearlist')
-        console.log(response.data)
+        let response = await axios.get('/api/yearlist');
         yearlist.value = response.data
+    }
+
+    const storeAttributedProgram = async (params = {}) => {
+        loading.value = true;
+        try {
+            const response = await axios.post('/api/planbudgets/add-attributed-program', params);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: "Attributed Program successfully saved",
+                life: 3000
+            });
+        } catch (error) {
+            if(error.response.status === 422) {
+                for (const key in error.response.data.errors) {
+                    errors.value = error.response.data.errors
+                }
+            }
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.response.data.message,
+                life: 3000
+            });
+        } finally {
+            loading.value = false;
+        }
+    }
+
+    const updateAttributedProgram = async (params = {}) => {
+        loading.value = true;
+        errors.value = ''
+        try {
+            const response = await axios.put(`/api/planbudgets/update-attributed-program/${planbudget.value.id}`, planbudget.value);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: "Attributed Program successfully updated",
+                life: 3000
+            });
+        } catch (error) {
+            if(error.response.status === 422) {
+                for (const key in error.response.data.errors) {
+                    errors.value = error.response.data.errors
+                }
+            }
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.response.data.message,
+                life: 3000
+            });
+        } finally {
+            loading.value = false;
+        }
     }
 
     return {
@@ -136,6 +185,8 @@ export default function usePlanBudgets(){
         storePlanBudget,
         updatePlanBudget,
         destroyPlanBudget,
-        getYearlist
+        getYearlist,
+        storeAttributedProgram,
+        updateAttributedProgram
     }
 }

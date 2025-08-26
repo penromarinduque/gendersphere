@@ -130,6 +130,11 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('view/{year}', [CommitteeRsoAttachmentController::class, 'show']);
     });
 
+    Route::prefix("planbudgets")->group(function () {
+        Route::post('add-attributed-program', [PlanBudgetController::class, 'storeAttributedProgram']);
+        Route::put('update-attributed-program/{id}', [PlanBudgetController::class, 'updateAttributedProgram']);
+    });
+
     // Route::prefix('activitydetailreports')->group(function () {
     //     Route::get('/{id}', [ActivityDetailReportController::class, 'show']);
     // });
