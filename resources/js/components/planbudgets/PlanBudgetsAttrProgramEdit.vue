@@ -36,19 +36,27 @@
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="program_name" class="block text-md font-medium text-gray-700">Program Name <span class="text-red-500">*</span></label>
+                    <label for="attr_program_name" class="block text-md font-medium text-gray-700">Program Name <span class="text-red-500">*</span></label>
                     <div class="mt-1">
-                        <input type="text" name="program_name" id="program_name" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        <input type="text" name="attr_program_name" id="attr_program_name" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 v-model="planbudget.attr_program_name">
-                        <span class="text-sm text-red-600" v-if="errors?.program_name">{{ errors.program_name[0] }}</span>
+                        <span class="text-sm text-red-600" v-if="errors?.attr_program_name">{{ errors.attr_program_name[0] }}</span>
                     </div>
                 </div>
                 <div class="pb-1">
-                    <label for="budget" class="block text-md font-medium text-gray-700">Budget <span class="text-red-500">*</span></label>
+                    <label for="attr_program_budget" class="block text-md font-medium text-gray-700">Budget <span class="text-red-500">*</span></label>
                     <div class="mt-1">
-                        <input type="text" name="budget" id="budget" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        <input type="text" name="attr_program_budget" id="attr_program_budget" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                 v-model="planbudget.attr_program_budget">
-                        <span class="text-sm text-red-600" v-if="errors?.relevant_org">{{ errors.budget[0] }}</span>
+                        <span class="text-sm text-red-600" v-if="errors?.attr_program_budget">{{ errors.attr_program_budget[0] }}</span>
+                    </div>
+                </div>
+                <div class="pb-1">
+                    <label for="percentage" class="block text-md font-medium text-gray-700">Percentage <span class="text-red-500">*</span></label>
+                    <div class="mt-1">
+                        <input type="number" step="0.01" name="percentage" id="percentage" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                v-model="planbudget.percentage">
+                        <span class="text-sm text-red-600" v-if="errors?.percentage">{{ errors.percentage[0] }}</span>
                     </div>
                 </div>
                 <div class="pb-1">
@@ -99,6 +107,7 @@ onMounted(async()=>{
 });
 
 const editPlanBudget = async () => {
+    console.log("okie")
     await updateAttributedProgram()
 }
 

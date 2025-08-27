@@ -129,6 +129,7 @@ export default function usePlanBudgets(){
                 detail: "Attributed Program successfully saved",
                 life: 3000
             });
+            await router.push({ name: 'planbudgets.index' })
         } catch (error) {
             if(error.response.status === 422) {
                 for (const key in error.response.data.errors) {
@@ -157,6 +158,8 @@ export default function usePlanBudgets(){
                 detail: "Attributed Program successfully updated",
                 life: 3000
             });
+            console.log("response : ", response);
+            await router.push({ name: 'planbudgets.index' });
         } catch (error) {
             if(error.response.status === 422) {
                 for (const key in error.response.data.errors) {

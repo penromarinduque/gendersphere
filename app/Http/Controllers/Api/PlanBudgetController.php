@@ -135,6 +135,7 @@ class PlanBudgetController extends Controller
             'focus' => ['required'],
             'program_name' => ['required', 'max:300'],
             'budget' => ['required'],
+            'percentage' => ['required', "numeric", "max:100", "min:1"],
             'relevant_org' => ['required'],
         ], [
             'relevant_org.required' => 'The Relevant Organization field is required.',
@@ -148,6 +149,7 @@ class PlanBudgetController extends Controller
             'attr_program_name' => $request->program_name,
             'attr_program_budget' => $request->budget,
             'relevant_org' => $request->relevant_org,
+            'percentage' => $request->percentage,
             'office_id'=> auth()->user()->office_id
         ]);
 
@@ -160,17 +162,20 @@ class PlanBudgetController extends Controller
             'focus' => ['required'],
             'attr_program_name' => ['required', 'max:300'],
             'attr_program_budget' => ['required'],
+            'percentage' => ['required', "numeric", "max:100"],
             'relevant_org' => ['required'],
         ], [
             'relevant_org.required' => 'The Relevant Organization field is required.',
         ]);
+        
         $planbudget = PlanBudget::find($id);
         Gate::authorize('update', $planbudget);
         $planbudget->update([
             'year' => $request->year,
             'focus' => $request->focus,
-            'attr_program_name' => $request->program_name,
-            'attr_program_budget' => $request->budget,
+            'attr_program_name' => $request->attr_program_name,
+            'attr_program_budget' => $request->attr_program_budget,
+            'percentage' => $request->percentage,
             'relevant_org' => $request->relevant_org,
         ]);
 

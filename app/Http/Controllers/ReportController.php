@@ -257,6 +257,237 @@ class ReportController extends Controller
         ]);
     }
 
+    public function printGadPlanBudgets(Request $request)
+    {
+        $_planbudget = new PlanBudget;
+        Gate::authorize('viewAccomplishmentReport', PlanBudget::class);
+        $user = auth()->user();
+        $office_id = $user->office_id; 
+        $year = ($request->year) ? $request->year : date('Y');
+        $goals = $_planbudget->getPlanBudgetGoals($year);
+        $planbudgets = $_planbudget->getPlanBudgetByYear($year);
+        
+        if(!$user->is_super_admin){
+            $goals = $_planbudget->getPlanBudgetGoals($year);
+            $planbudgets = $_planbudget->getPlanBudgetByYear($year);
+        }
+
+        $str = '';
+        $str = '<table border="1" style="border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Gender Issue/GAD Mandate</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Cause of Gender Issue</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Result Statement/ GAD Objective</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Relevant Organization MFO/PAP or PPA</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Activity</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Performance Indicators /Targets</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Actual Results/ Outputs and Outcomes </span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Budget</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Actual Cost / Cost Expenditure</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Remarks</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="10">
+                        CLIENT-FOCUSED ACTIVITIES
+                    </td>
+                </tr>';
+        foreach ($goals as $goal) {
+            if($goal->focus=='client') {
+            $str .= '<tr>
+                    <td colspan="10">GAD Goal '.$goal->goal_no.' : '.$goal->gad_goal.'</td>
+                </tr>';
+            }
+
+            if (!empty($planbudgets)) {
+                foreach ($planbudgets as $planbudget) {
+                    if($goal->focus=='client' && $goal->goal_id == $planbudget->goal_id && $planbudget->focus=='client'){
+                        $ga_countc = count($planbudget->gad_activities);
+                        // echo '<br>';
+                        $ad_countc = 0;
+                        $ad_colc = 1;
+                        if (!empty($planbudget->gad_activities)) {
+                            foreach ($planbudget->gad_activities as $gad_act) {
+                                $ads_countc = count($gad_act->activity_details);
+                                // echo '<br>';
+                                if (!empty($gad_act->activity_details)) {
+                                    foreach ($gad_act->activity_details as $activity_detail) {
+                                        // $ad_col = ($ad_count > 1) ? 6 : 1;
+                                        if ($ads_countc == 1 && $activity_detail->sub_activity==NULL) {
+                                            $ad_colc = 1;
+                                            $ad_countc = 0;
+                                        } elseif ( ($ads_countc == 1 && $activity_detail->sub_activity!=NULL) || $ads_countc > 1 ) {
+                                            $ad_colc = 6;
+                                            $ad_countc = $ads_countc + 1;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // echo $ad_countc;
+                        $rowspanc = $ga_countc + $ad_countc;
+                        $str .= '<tr valign="top">
+                                <td rowspan="'.$rowspanc.'">'.$planbudget->gender_issue_mandate.'</td>
+                                <td rowspan="'.$rowspanc.'">'.$planbudget->cause_gender_issue.'</td>
+                                <td rowspan="'.$rowspanc.'">'.$planbudget->gad_objective.'</td>
+                                <td rowspan="'.$rowspanc.'">'.$planbudget->relevant_org.'</td>';
+                                if (!empty($planbudget->gad_activities)) {
+                                    foreach ($planbudget->gad_activities as $gad_act) {
+                                        if($ga_countc > 1){ $str .= '</tr><tr>'; }
+                                        $str .= '<td colspan="'.$ad_colc.'">'.$gad_act->id.'>'.$gad_act->main_activity.'</td>';
+                                        if (!empty($gad_act->activity_details)) {
+                                            foreach ($gad_act->activity_details as $activity_detail) {
+                                                if (($ad_countc == 1 && $activity_detail->sub_activity!=NULL) || $ad_countc > 1) { $str .= '</tr><tr>'; }
+                                                if($ad_countc > 1){
+                                                $str .= '<td>'.$activity_detail->sub_activity.'</td>';    
+                                                }
+                                                $str .= '<td>'.$activity_detail->targets.'</td>';
+                                                $str .= '<td>'.$activity_detail->actual_result.'</td>';
+                                                $str .= '<td align="right">'.$activity_detail->gad_budget.'</td>';
+                                                $str .= '<td align="right">'.$activity_detail->gad_cost.'</td>';
+                                                $str .= '<td>'.$activity_detail->remarks.'</td>';
+                                                if (($ad_countc == 1 && $activity_detail->sub_activity!=NULL) || $ad_countc > 1) { $str .= '</tr>'; }
+                                            }
+                                        } else {
+                                            $str .= '
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            ';
+                                        }
+                                        if($ga_countc > 1){ $str .= '</tr>'; }
+                                    }
+                                    
+                                }
+                        $str .= '</tr>';
+                        
+                    }
+
+                }
+            }
+        }
+
+        $str .= '<tr>
+                    <td colspan="10">
+                        ORGANIZATIONAL FOCUSED
+                    </td>
+                </tr>';
+        foreach ($goals as $goal) {
+            if($goal->focus=='organizational') {
+            $str .= '<tr>
+                    <td colspan="10">GAD Goal '.$goal->goal_no.' : '.$goal->gad_goal.'</td>
+                </tr>';
+            }
+
+            if (!empty($planbudgets)) {
+                foreach ($planbudgets as $planbudget) {
+                    if($goal->focus=='organizational' && $goal->goal_id == $planbudget->goal_id && $planbudget->focus=='organizational'){
+                        $ga_count = count($planbudget->gad_activities);
+                        $ad_count = 0;
+                        $ad_col = 1;
+                        if (!empty($planbudget->gad_activities)) {
+                            foreach ($planbudget->gad_activities as $gad_act) {
+                                $ads_count = count($gad_act->activity_details);
+                                // echo '<br>';
+                                if (!empty($gad_act->activity_details)) {
+                                    foreach ($gad_act->activity_details as $activity_detail) {
+                                        // $ad_col = ($ad_count > 1) ? 6 : 1;
+                                        if ($ads_count == 1 && $activity_detail->sub_activity==NULL) {
+                                            $ad_col = 1;
+                                            $ad_count = 0;
+                                        } elseif ( ($ads_count == 1 && $activity_detail->sub_activity!=NULL) || $ads_count > 1 ) {
+                                            $ad_col = 6;
+                                            $ad_count = $ads_count + 1;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // echo $ad_count;
+                        $rowspan = $ga_count + $ad_count;
+                        $str .= '<tr valign="top">
+                                <td rowspan="'.$rowspan.'">'.$planbudget->gender_issue_mandate.'</td>
+                                <td rowspan="'.$rowspan.'">'.$planbudget->cause_gender_issue.'</td>
+                                <td rowspan="'.$rowspan.'">'.$planbudget->gad_objective.'</td>
+                                <td rowspan="'.$rowspan.'">'.$planbudget->relevant_org.'</td>';
+                                if (!empty($planbudget->gad_activities)) {
+                                    foreach ($planbudget->gad_activities as $gad_act) {
+                                        if($ga_count > 1){ $str .= '</tr><tr>'; }
+                                        $str .= '<td colspan="'.$ad_col.'">'.$gad_act->id.'>'.$gad_act->main_activity.'</td>';
+                                        if (!empty($gad_act->activity_details)) {
+                                            foreach ($gad_act->activity_details as $activity_detail) {
+                                                if (($ad_count == 1 && $activity_detail->sub_activity!=NULL) || $ad_count > 1) { $str .= '</tr><tr>'; }
+                                                if($ad_count > 1){
+                                                $str .= '<td>'.$activity_detail->sub_activity.'</td>';    
+                                                }
+                                                $str .= '<td>'.$activity_detail->targets.'</td>';
+                                                $str .= '<td>'.$activity_detail->actual_result.'</td>';
+                                                $str .= '<td align="right">'.$activity_detail->gad_budget.'</td>';
+                                                $str .= '<td align="right">'.$activity_detail->gad_cost.'</td>';
+                                                $str .= '<td>'.$activity_detail->remarks.'</td>';
+                                                if (($ad_count == 1 && $activity_detail->sub_activity!=NULL) || $ad_count > 1) { $str .= '</tr>'; }
+                                            }
+                                        } else {
+                                            $str .= '
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            ';
+                                        }
+                                        if($ga_count > 1){ $str .= '</tr>'; }
+                                    }
+                                    
+                                }
+                        $str .= '</tr>';
+                        
+                    }
+
+                }
+            }
+        }
+
+        $str .= '</tbody>
+        </table>';
+
+        // return $str;
+
+        return view('pages.reports.print.gadplanbudgets', [
+            'year' => $year,
+            'goals' => $goals,
+            'planbudgets' => $planbudgets,
+        ]);
+    }
+
     public function sexAggregated(Request $request)
     {
         return $this->generateSexAggregated($request);

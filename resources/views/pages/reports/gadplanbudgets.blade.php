@@ -13,62 +13,68 @@
             <div class="p-4 bg-white shadow sm:rounded-lg">
                 <section>
                     <header>
-                        <div class="flex w-32 mx-auto float-end">
+                        
+                        <h2 class="text-lg font-medium text-gray-900">
+                            {{ __('ANNUAL GENDER AND DEVELOPMENT (GAD) ACCOMPLISHMENT REPORT '.$year) }}
+                        </h2>
+                        <div class="flex mx-auto ">
                             <div class="flex items-center space-x-2">
                             <label class="text-sm font-medium text-gray-700">YEAR</label>
                             <select
-                                onchange="window.location.href='?year='+this.value"
-                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            >
+                                    onchange="window.location.href='?year='+this.value"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                >
                                 <option value="">-YEAR-</option>
                                 @for($i = date('Y'); $i >= 2018; $i--)
                                 <option value="{{ $i }}" {{ $i == $year ? 'selected' : '' }}>{{ $i }}</option>
                                 @endfor
                             </select>
+                            <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="{{ route('report.printgadplanbudgets', ['year' => $year]) }}" target="_blank">Print</a>
                             </div>
                         </div>
-                        <h2 class="text-lg font-medium text-gray-900">
-                            {{ __('ANNUAL GENDER AND DEVELOPMENT (GAD) ACCOMPLISHMENT REPORT '.$year) }}
-                        </h2>
                     </header>
                     <div class="min-w-full w-full py-6 overflow-x-scroll">
-                        <table class="table-auto min-w-full w-full border-collapse border border-slate-400 divide-y divide-gray-200">
+                        @php
+                            $subtotals = [];
+                        @endphp
+                        <table class="table-auto min-w-full w-full border-collapse border !border-slate-900!important divide-y divide-gray-200">
                             <thead>
                                 <tr>
-                                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                                    <th class="border border-slate-900 px-2 py-2 bg-gray-50">
                                         <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Gender Issue/GAD Mandate</span>
                                     </th>
-                                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                                    <th class="border border-slate-900 px-2 py-2 bg-gray-50">
                                         <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Cause of Gender Issue</span>
                                     </th>
-                                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                                    <th class="border border-slate-900 px-2 py-2 bg-gray-50">
                                         <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Result Statement/ GAD Objective</span>
                                     </th>
-                                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                                    <th class="border border-slate-900 px-2 py-2 bg-gray-50">
                                         <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Relevant Organization MFO/PAP or PPA</span>
                                     </th>
-                                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                                    <th class="border border-slate-900 px-2 py-2 bg-gray-50">
                                         <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Activity</span>
                                     </th>
-                                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                                    <th class="border border-slate-900 px-2 py-2 bg-gray-50">
                                         <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Performance Indicators /Targets</span>
                                     </th>
-                                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                                    <th class="border border-slate-900 px-2 py-2 bg-gray-50">
                                         <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Actual Results/ Outputs and Outcomes </span>
                                     </th>
-                                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                                    <th class="border border-slate-900 px-2 py-2 bg-gray-50">
                                         <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Budget</span>
                                     </th>
-                                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                                    <th class="border border-slate-900 px-2 py-2 bg-gray-50">
                                         <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Actual Cost / Cost Expenditure</span>
                                     </th>
-                                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                                    <th class="border border-slate-900 px-2 py-2 bg-gray-50">
                                         <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Remarks</span>
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                {{-- CLIENT-FOCUSED ACTIVITIES --}}
+                                <tr class="border border-slate-900">
                                     @php
                                         $goal = $goals->where('focus', 'client')->first();
                                         $total_budget = $planbudgets
@@ -79,6 +85,7 @@
                                                 });
                                             })
                                             ->sum('gad_budget');
+                                        
                                         $total_actual_cost = $planbudgets
                                             ->where("goal_id", optional($goal)->goal_id)
                                             ->flatMap(function ($planbudget) {
@@ -87,6 +94,12 @@
                                                 });
                                             })
                                             ->sum('actual_cost');
+                                        $subtotals[] = [
+                                            "label" => "Client Focused",
+                                            "budget" => $total_budget,
+                                            "actual_cost" => $total_actual_cost,
+                                            "is_attribution" => false
+                                        ];
                                     @endphp
                                     <td colspan="7" class="px-2 py-2 text-md bg-orange-100">
                                         CLIENT-FOCUSED ACTIVITIES
@@ -101,7 +114,7 @@
                                 </tr>
                                 @foreach($goals as $goal)
                                     @if($goal->focus=='client')
-                                        <tr>
+                                        <tr class="border border-slate-900">
                                             <td colspan="10" class="px-2 py-2 text-md bg-blue-100">
                                                 GAD Goal {{$goal->goal_no}}: {{$goal->gad_goal}}
                                             </td>
@@ -109,7 +122,6 @@
                                     @endif
 
                                     @forelse($planbudgets as $planbudget)
-                                    
                                         @if($goal->focus=='client' && $goal->goal_id == $planbudget->goal_id && $planbudget->focus=='client')
                                             @php
                                                 $ga_count_c = count($planbudget->gad_activities);
@@ -128,7 +140,7 @@
                                                             'border',
                                                             'border-b-0' => $key == 0,
                                                             'border-y-0' => $key != 0,
-                                                            'border-slate-300',
+                                                            'border-slate-900',
                                                             'px-2', 'py-2',
                                                             'text-sm', 'leading-5',
                                                             'text-gray-900',
@@ -142,7 +154,7 @@
                                                             'border',
                                                             'border-b-0' => $key == 0,
                                                             'border-y-0' => $key != 0,
-                                                            'border-slate-300',
+                                                            'border-slate-900',
                                                             'px-2', 'py-2',
                                                             'text-sm', 'leading-5',
                                                             'text-gray-900',
@@ -156,7 +168,7 @@
                                                             'border',
                                                             'border-b-0' => $key == 0,
                                                             'border-y-0' => $key != 0,
-                                                            'border-slate-300',
+                                                            'border-slate-900',
                                                             'px-2', 'py-2',
                                                             'text-sm', 'leading-5',
                                                             'text-gray-900',
@@ -170,7 +182,7 @@
                                                             'border',
                                                             'border-b-0' => $key == 0,
                                                             'border-y-0' => $key != 0,
-                                                            'border-slate-300',
+                                                            'border-slate-900',
                                                             'px-2', 'py-2',
                                                             'text-sm', 'leading-5',
                                                             'text-gray-900',
@@ -184,7 +196,7 @@
                                                             'border',
                                                             'border-b-0' => $key == 0,
                                                             'border-y-0' => $key != 0,
-                                                            'border-slate-300',
+                                                            'border-slate-900',
                                                             'px-2', 'py-2',
                                                             'text-sm', 'leading-5',
                                                             'text-gray-900',
@@ -194,7 +206,7 @@
                                                                 <div class="p-2">{!! $gad_act->main_activity !!}</div>
                                                             @endif
                                                         </td>  
-                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                        <td class="border border-slate-900 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                             {{-- @foreach ($activities as $act)
                                                                 @php
                                                                     $budget += $act->gad_budget;
@@ -203,19 +215,19 @@
                                                                 @endforeach --}}
                                                             <div class="p-2">{!! $act->targets !!}</div>
                                                         </td>                       
-                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                        <td class="border border-slate-900 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                             {{-- @foreach ($activities as $act)
                                                                 <div class="p-2">{!! $act->actual_result !!}</div>
                                                             @endforeach --}}
                                                             <div class="p-2">{!! $act->actual_result !!}</div>
                                                         </td>                       
-                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                        <td class="border border-slate-900 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                             <div class="p-2">{{ number_format($act->gad_budget, 2, '.', ',') }}</div>
                                                         </td>                        
-                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                        <td class="border border-slate-900 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                             <div class="p-2">{{ number_format($act->actual_cost, 2, '.', ',') }}</div>
                                                         </td>                        
-                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                        <td class="border border-slate-900 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                             <div class="p-2">{!! $act->remarks !!}</div>
                                                         </td>                   
                                                     </tr>
@@ -228,7 +240,8 @@
 
                                 @endforeach
 
-                                <tr>
+                                {{-- ORGANIZATIONAL FOCUSED --}}
+                                <tr class="border border-slate-900">
                                     @php
                                         $goal = $goals->where('focus', 'organizational')->first();
                                         $total_budget = $planbudgets
@@ -239,6 +252,7 @@
                                                 });
                                             })
                                             ->sum('gad_budget');
+                                        
                                         $total_actual_cost = $planbudgets
                                             ->where("goal_id", optional($goal)->goal_id)
                                             ->flatMap(function ($planbudget) {
@@ -247,6 +261,12 @@
                                                 });
                                             })
                                             ->sum('actual_cost');
+                                        $subtotals[] = [
+                                            "label" => "Organizational Focused",
+                                            "budget" => $total_budget,
+                                            "actual_cost" => $total_actual_cost,
+                                            "is_attribution" => false
+                                        ];
                                     @endphp
                                     <td colspan="7" class="px-2 py-2 text-md bg-orange-100">
                                         ORGANIZATIONAL FOCUSED
@@ -261,7 +281,7 @@
                                 </tr>
                                 @foreach($goals as $goal)
                                     @if($goal->focus=='organizational')
-                                        <tr>
+                                        <tr class="border border-slate-900">
                                             <td colspan="10" class="px-2 py-2 text-md bg-blue-100">
                                                 GAD Goal {{$goal->goal_no}}: {{$goal->gad_goal}}
                                             </td>
@@ -269,7 +289,6 @@
                                     @endif
 
                                     @forelse($planbudgets as $planbudget)
-                                    
                                         @if($goal->focus=='organizational' && $goal->goal_id == $planbudget->goal_id && $planbudget->focus=='organizational')
                                             @php
                                                 $ga_count_c = count($planbudget->gad_activities);
@@ -287,7 +306,7 @@
                                                             'border',
                                                             'border-b-0' => $key == 0,
                                                             'border-y-0' => $key != 0,
-                                                            'border-slate-300',
+                                                            'border-slate-900',
                                                             'px-2', 'py-2',
                                                             'text-sm', 'leading-5',
                                                             'text-gray-900',
@@ -301,7 +320,7 @@
                                                             'border',
                                                             'border-b-0' => $key == 0,
                                                             'border-y-0' => $key != 0,
-                                                            'border-slate-300',
+                                                            'border-slate-900',
                                                             'px-2', 'py-2',
                                                             'text-sm', 'leading-5',
                                                             'text-gray-900',
@@ -315,7 +334,7 @@
                                                             'border',
                                                             'border-b-0' => $key == 0,
                                                             'border-y-0' => $key != 0,
-                                                            'border-slate-300',
+                                                            'border-slate-900',
                                                             'px-2', 'py-2',
                                                             'text-sm', 'leading-5',
                                                             'text-gray-900',
@@ -329,7 +348,7 @@
                                                             'border',
                                                             'border-b-0' => $key == 0,
                                                             'border-y-0' => $key != 0,
-                                                            'border-slate-300',
+                                                            'border-slate-900',
                                                             'px-2', 'py-2',
                                                             'text-sm', 'leading-5',
                                                             'text-gray-900',
@@ -343,7 +362,7 @@
                                                             'border',
                                                             'border-b-0' => $key == 0,
                                                             'border-y-0' => $key != 0,
-                                                            'border-slate-300',
+                                                            'border-slate-900',
                                                             'px-2', 'py-2',
                                                             'text-sm', 'leading-5',
                                                             'text-gray-900',
@@ -353,7 +372,7 @@
                                                                 <div class="p-2">{!! $gad_act->main_activity !!}</div>
                                                             @endif
                                                         </td>  
-                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                        <td class="border border-slate-900 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                             {{-- @foreach ($activities as $act)
                                                                 @php
                                                                     $budget += $act->gad_budget;
@@ -362,19 +381,19 @@
                                                                 @endforeach --}}
                                                             <div class="p-2">{!! $act->targets !!}</div>
                                                         </td>                       
-                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                        <td class="border border-slate-900 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                             {{-- @foreach ($activities as $act)
                                                                 <div class="p-2">{!! $act->actual_result !!}</div>
                                                             @endforeach --}}
                                                             <div class="p-2">{!! $act->actual_result !!}</div>
                                                         </td>                       
-                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                        <td class="border border-slate-900 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                             <div class="p-2">{{ number_format($act->gad_budget, 2, '.', ',') }}</div>
                                                         </td>                        
-                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                        <td class="border border-slate-900 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                             <div class="p-2">{{ number_format($act->actual_cost, 2, '.', ',') }}</div>
                                                         </td>                        
-                                                        <td class="border border-slate-300 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
+                                                        <td class="border border-slate-900 p-0 text-sm leading-5 text-gray-900 whitespace-no-wrap">
                                                             <div class="p-2">{!! $act->remarks !!}</div>
                                                         </td>                   
                                                     </tr>
@@ -386,7 +405,313 @@
                                     @endforelse
                                 @endforeach
 
-                                
+                                {{-- ATTRIBUTED PROGRAMS --}}
+                                <tr class="border !border-slate-800">
+                                    @php
+                                        $goal = $goals->where('focus', 'organizational')->first();
+                                        $total_budget = $planbudgets
+                                            ->where("focus", "attributed program")
+                                            ->sum(function($planbudget) {
+                                                return $planbudget->attr_program_budget * ($planbudget->percentage / 100);
+                                            });
+                                    @endphp
+                                    <td colspan="7" class="px-2 py-2 text-md ">
+                                        ATTRIBUTED PROGRAMS
+                                    </td>
+                                    <td  class="px-2 py-2 text-md ">
+                                        {{ number_format($total_budget, 2, '.', ',') }}
+                                    </td>
+                                    <td  class="px-2 py-2 text-md "></td>
+                                    <td  class="px-2 py-2 text-md "></td>
+                                </tr>
+                                @forelse($planbudgets->where('focus', 'attributed program') as $planbudget)
+                                    @php
+                                        $subtotals[] = [
+                                            "label" => $planbudget->attr_program_name."(".$planbudget->percentage."%)",
+                                            "budget" => $planbudget->attr_program_budget * ($planbudget->percentage / 100),
+                                            "actual_cost" => $planbudget->attr_program_budget * ($planbudget->percentage / 100),
+                                            "is_attribution" => true
+                                        ];
+                                    @endphp
+                                   <tr class="align-text-top bg-orange-500">
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ])>
+                                            {{ $planbudget->attr_program_name }}
+                                        </td>
+                                        @for ($i = 0; $i < 6; $i++)
+                                            <td @class([
+                                                'border',
+                                                'border-slate-900',
+                                                'px-2', 'py-2',
+                                                'text-sm', 'leading-5',
+                                                'text-gray-900',
+                                                'whitespace-no-wrap'
+                                            ]) ></td>
+                                        @endfor
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ])>
+                                            {{ number_format($planbudget->attr_program_budget, 2, '.', ',') }}
+                                        </td>
+                                        @for ($i = 0; $i < 2; $i++)
+                                            <td @class([
+                                                'border',
+                                                'border-slate-900',
+                                                'px-2', 'py-2',
+                                                'text-sm', 'leading-5',
+                                                'text-gray-900',
+                                                'whitespace-no-wrap'
+                                            ]) ></td>
+                                        @endfor
+                                   </tr>
+                                @empty
+                                @endforelse
+
+                                <tr>
+                                    @for ($i = 0; $i < 10; $i++)
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ]) ></td>
+                                    @endfor
+                                </tr>
+                                <tr>
+                                    @for ($i = 0; $i < 5; $i++)
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ]) ></td>
+                                    @endfor
+                                    <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap',
+                                            "text-right",
+                                            "font-semibold"
+                                    ]) >SUB TOTAL</td>
+                                    @for ($i = 0; $i < 4; $i++)
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ]) ></td>
+                                    @endfor
+                                </tr>
+                                <tr>
+                                    @for ($i = 0; $i < 10; $i++)
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ]) ></td>
+                                    @endfor
+                                </tr>
+                                <tr>
+                                    @for ($i = 0; $i < 5; $i++)
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ]) ></td>
+                                    @endfor
+                                    <td @class([
+                                        'border',
+                                        'border-slate-900',
+                                        'px-2', 'py-2',
+                                        'text-sm', 'leading-5',
+                                        'text-gray-900',
+                                        'whitespace-no-wrap',
+                                        "font-semibold",
+                                    ]) >Attribution (%)</td>
+                                    @for ($i = 0; $i < 4; $i++)
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ]) ></td>
+                                    @endfor
+                                </tr>
+
+                                @foreach (collect($subtotals)->where("is_attribution", true) as $subtotal)
+                                    <tr>
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <td @class([
+                                                'border',
+                                                'border-slate-900',
+                                                'px-2', 'py-2',
+                                                'text-sm', 'leading-5',
+                                                'text-gray-900',
+                                                'whitespace-no-wrap'
+                                            ]) ></td>
+                                        @endfor
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap',
+                                            "font-semibold"
+                                        ])>{{ $subtotal["label"] }}</td>
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ])>{{ number_format($subtotal["budget"], 2, '.', ',') }}</td>
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ])>{{ number_format($subtotal["actual_cost"], 2, '.', ',') }}</td>
+                                        @for ($i = 0; $i < 2; $i++)
+                                            <td @class([
+                                                'border',
+                                                'border-slate-900',
+                                                'px-2', 'py-2',
+                                                'text-sm', 'leading-5',
+                                                'text-gray-900',
+                                                'whitespace-no-wrap'
+                                            ]) ></td>
+                                        @endfor
+                                    </tr>
+                                @endforeach
+                                @foreach (collect($subtotals)->where("is_attribution", false) as $subtotal)
+                                    <tr>
+                                        @for ($i = 0; $i < 5; $i++)
+                                            <td @class([
+                                                'border',
+                                                'border-slate-900',
+                                                'px-2', 'py-2',
+                                                'text-sm', 'leading-5',
+                                                'text-gray-900',
+                                                'whitespace-no-wrap'
+                                            ]) ></td>
+                                        @endfor
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap',
+                                            "font-semibold"
+                                        ])>{{ $subtotal["label"] }}</td>
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ])>{{ number_format($subtotal["budget"], 2, '.', ',') }}</td>
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ])>{{ number_format($subtotal["actual_cost"], 2, '.', ',') }}</td>
+                                        @for ($i = 0; $i < 2; $i++)
+                                            <td @class([
+                                                'border',
+                                                'border-slate-900',
+                                                'px-2', 'py-2',
+                                                'text-sm', 'leading-5',
+                                                'text-gray-900',
+                                                'whitespace-no-wrap'
+                                            ]) ></td>
+                                        @endfor
+                                    </tr>
+                                @endforeach
+                                <tr>
+                                    @for ($i = 0; $i < 5; $i++)
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ]) ></td>
+                                    @endfor
+                                    <td @class([
+                                        'border',
+                                        'border-slate-900',
+                                        'px-2', 'py-2',
+                                        'text-sm', 'leading-5',
+                                        'text-gray-900',
+                                        'whitespace-no-wrap',
+                                        "font-semibold",
+                                        "text-right"
+                                    ])>TOTAL GAD BUDGET</td>
+                                    <td @class([
+                                        'border',
+                                        'border-slate-900',
+                                        'px-2', 'py-2',
+                                        'text-sm', 'leading-5',
+                                        'text-gray-900',
+                                        'whitespace-no-wrap'
+                                    ])>{{ number_format(collect($subtotals)->sum("budget"), 2, '.', ',') }}</td>
+                                    <td @class([
+                                        'border',
+                                        'border-slate-900',
+                                        'px-2', 'py-2',
+                                        'text-sm', 'leading-5',
+                                        'text-gray-900',
+                                        'whitespace-no-wrap'
+                                    ])>{{ number_format(collect($subtotals)->sum("actual_cost"), 2, '.', ',') }}</td>
+                                    @for ($i = 0; $i < 2; $i++)
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ]) ></td>
+                                    @endfor
+                                </tr>
                             </tbody>
                         </table>
                     </div>
