@@ -24,4 +24,10 @@ class PersonInfo extends Model implements Auditable
             'graduate_studies' => 'Graduate Studies',
         ];
     }
+
+    public function getFullNameAttribute()
+    {
+       return $this->firstname . ' ' . substr($this->middlename, 0, 1) . '. ' . ' ' . $this->lastname  . $this->extname;
+
+    }
 }

@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\CommitteeRsoAttachmentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RegionController;
+use App\Http\Controllers\SignatoryController;
 use App\Models\Activity;
 
 /*
@@ -135,9 +136,9 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::put('update-attributed-program/{id}', [PlanBudgetController::class, 'updateAttributedProgram']);
     });
 
-    // Route::prefix('activitydetailreports')->group(function () {
-    //     Route::get('/{id}', [ActivityDetailReportController::class, 'show']);
-    // });
+    Route::prefix("signatories")->group(function () {
+        Route::post('store-gpb-signatory', [SignatoryController::class, 'storeGpbSignatory']);        
+    });
 
     Route::apiResources([
         'personinfos' => PersonInfoController::class,
@@ -166,6 +167,7 @@ Route::middleware('auth:sanctum')->group( function () {
         'offices' => OfficeController::class,
         'roles' => RoleController::class,
         'committee_rso_attachments' => CommitteeRsoAttachmentController::class,
+        'signatories' => SignatoryController::class
     ]);
 
     Route::get('yearlist', [CommitteeController::class, 'yearlist']);

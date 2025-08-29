@@ -13,5 +13,9 @@ class Committee extends Model implements Auditable
 
     protected $fillable = ['person_info_id', 'year_covered', 'committee_position_id', 'office_id'];
 
+    public function personInfo() {
+        return $this->belongsTo(PersonInfo::class, 'person_info_id', 'id');
+    }
+
     
 }

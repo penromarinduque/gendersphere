@@ -594,6 +594,14 @@
                                             'text-sm', 'leading-5',
                                             'text-gray-900',
                                             'whitespace-no-wrap'
+                                        ]) ></td>
+                                        <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
                                         ])>{{ number_format($subtotal["budget"], 2, '.', ',') }}</td>
                                         <td @class([
                                             'border',
@@ -603,7 +611,7 @@
                                             'text-gray-900',
                                             'whitespace-no-wrap'
                                         ])>{{ number_format($subtotal["actual_cost"], 2, '.', ',') }}</td>
-                                        @for ($i = 0; $i < 2; $i++)
+                                        @for ($i = 0; $i < 1; $i++)
                                             <td @class([
                                                 'border',
                                                 'border-slate-900',
@@ -637,6 +645,14 @@
                                             "font-semibold"
                                         ])>{{ $subtotal["label"] }}</td>
                                         <td @class([
+                                                'border',
+                                                'border-slate-900',
+                                                'px-2', 'py-2',
+                                                'text-sm', 'leading-5',
+                                                'text-gray-900',
+                                                'whitespace-no-wrap'
+                                            ]) ></td>
+                                        <td @class([
                                             'border',
                                             'border-slate-900',
                                             'px-2', 'py-2',
@@ -652,7 +668,7 @@
                                             'text-gray-900',
                                             'whitespace-no-wrap'
                                         ])>{{ number_format($subtotal["actual_cost"], 2, '.', ',') }}</td>
-                                        @for ($i = 0; $i < 2; $i++)
+                                        @for ($i = 0; $i < 1; $i++)
                                             <td @class([
                                                 'border',
                                                 'border-slate-900',
@@ -686,6 +702,14 @@
                                         "text-right"
                                     ])>TOTAL GAD BUDGET</td>
                                     <td @class([
+                                            'border',
+                                            'border-slate-900',
+                                            'px-2', 'py-2',
+                                            'text-sm', 'leading-5',
+                                            'text-gray-900',
+                                            'whitespace-no-wrap'
+                                        ]) ></td>
+                                    <td @class([
                                         'border',
                                         'border-slate-900',
                                         'px-2', 'py-2',
@@ -701,7 +725,7 @@
                                         'text-gray-900',
                                         'whitespace-no-wrap'
                                     ])>{{ number_format(collect($subtotals)->sum("actual_cost"), 2, '.', ',') }}</td>
-                                    @for ($i = 0; $i < 2; $i++)
+                                    @for ($i = 0; $i < 1; $i++)
                                         <td @class([
                                             'border',
                                             'border-slate-900',
@@ -711,6 +735,34 @@
                                             'whitespace-no-wrap'
                                         ]) ></td>
                                     @endfor
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><small>Prepared By</small></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td><small>Approved By</small></td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" class="text-center">
+                                        <small>
+                                            <p style="text-decoration: underline;">{{ $signatories->firstWhere('label', 'Prepared By')->committeePosition->committees->firstWhere('year_covered', request('year') ? request('year') : date('Y'))->personInfo->full_name }}</p>
+                                            <p class="font-bold">{{ $signatories->firstWhere('label', 'Prepared By')->committeePosition->position_title }}</p>
+                                            <p>{{ $signatories->firstWhere('label', 'Prepared By')->committeePosition->committees->firstWhere('year_covered', request('year') ? request('year') : date('Y'))->personInfo->position }}</p>
+                                        </small>
+                                    </td>
+                                    <td></td>
+                                    <td colspan="2" class="text-center">
+                                        <small >
+                                            <p style="text-decoration: underline;">{{ $signatories->firstWhere('label', 'Approved By')->committeePosition->committees->firstWhere('year_covered', request('year') ? request('year') : date('Y'))->personInfo->full_name }}
+                                            <p class="font-bold">{{ $signatories->firstWhere('label', 'Approved By')->committeePosition->position_title }}</p>
+                                            <p>{{ $signatories->firstWhere('label', 'Approved By')->committeePosition->committees->firstWhere('year_covered', request('year') ? request('year') : date('Y'))->personInfo->position }}</p>
+                                        </small>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

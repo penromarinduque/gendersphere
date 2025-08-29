@@ -18,6 +18,7 @@ use App\Models\Office;
 use App\Models\PermitType;
 use App\Models\PersonInfo;
 use App\Models\PlanBudget;
+use App\Models\Signatory;
 use App\Models\Training;
 use Illuminate\Support\Facades\Route;
 
@@ -153,6 +154,12 @@ Route::middleware('auth')->group(function () {
         return view('maintenance.offices');
         Route::view('/maintenance/offices/{any}', 'maintenance.offices')->where('any', '.*');
     })->where('any', '.*')->name('maintenance.offices')->can('viewAny', Office::class);
+
+    // Maintenance - Signatories
+    Route::get('/maintenance/signatories/{any?}', function () {
+        return view('maintenance.signatories');
+        Route::view('/maintenance/signatories/{any}', 'maintenance.signatories')->where('any', '.*');
+    })->where('any', '.*')->name('maintenance.signatories')->can('viewAny', Signatory::class);
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

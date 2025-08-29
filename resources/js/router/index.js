@@ -65,6 +65,7 @@ import TrainingsEdit from "../components/trainings/TrainingsEdit.vue";
 import useAuth from "../composables/auth";
 import PlanBudgetsAttrProgramCreate from "../components/planbudgets/PlanBudgetsAttrProgramCreate.vue";
 import PlanBudgetsAttrProgramEdit from "../components/planbudgets/PlanBudgetsAttrProgramEdit.vue";
+import SignatoryIndex from "../components/signatories/SignatoryIndex.vue";
 
 const routes = [
     // Dashboard
@@ -657,7 +658,17 @@ const routes = [
         meta: {
             title: 'Unauthorized'
         }
-     }
+     },
+
+    //  Signatories
+    {
+        path: '/maintenance/signatories',
+        name: 'signatories.index',
+        component: SignatoryIndex,
+        meta: {
+            title: 'Signatories'
+        }
+    },
 
 ];
 

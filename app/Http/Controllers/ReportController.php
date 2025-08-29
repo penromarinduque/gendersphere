@@ -8,6 +8,7 @@ use App\Models\PlanBudget;
 use App\Models\FrontlineServiceType;
 use App\Models\PermitType;
 use App\Models\FrontlineService;
+use App\Models\Signatory;
 use Illuminate\Support\Facades\Gate;
 
 class ReportController extends Controller
@@ -249,11 +250,13 @@ class ReportController extends Controller
         </table>';
 
         // return $str;
+        $signatories = Signatory::with('committeePosition.committees.personInfo')->where('report', 'gpb')->get();
 
         return view('pages.reports.gadplanbudgets', [
             'year' => $year,
             'goals' => $goals,
             'planbudgets' => $planbudgets,
+            'signatories' => $signatories,
         ]);
     }
 
@@ -480,11 +483,13 @@ class ReportController extends Controller
         </table>';
 
         // return $str;
+        $signatories = Signatory::with('committeePosition.committees.personInfo')->where('report', 'gpb')->get();
 
         return view('pages.reports.print.gadplanbudgets', [
             'year' => $year,
             'goals' => $goals,
             'planbudgets' => $planbudgets,
+            'signatories' => $signatories
         ]);
     }
 
