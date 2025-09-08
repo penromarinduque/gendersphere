@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityDetail;
+use App\Models\Committee;
 use Illuminate\Http\Request;
 use App\Models\PersonInfo;
 use App\Models\PlanBudget;
@@ -592,5 +594,34 @@ class ReportController extends Controller
 
         $permittypes = $_permittype->getPermitTypes($frontlineservicetype_id);
         return $permittypes;
+    }
+
+    public function gadBudgetBudgetExpenses(Request $request){
+        $start_year = ($request->start_year) ? $request->start_year : date('Y');
+        $end_year = ($request->end_year) ? $request->end_year : date('Y');
+        if($start_year > $end_year){
+            return redirect()->back()->with('error', 'Start Year must be less than or equal to End Year.');
+        }
+
+        $clientFocus = ActivityDetail::query()->with(['gad_activity.plan_budget'])->whereHas('gad_activity', function($q) use($start_year, $end_year){
+            $q->whereHas('plan_budget', function($q) use($start_year, $end_year){
+                $q->whereBetween('year', [$start_year, $end_year])
+                ->where(['focus' => 'organizational', 'office_id' => auth()->user()->office_id]);
+            });
+        })->get();
+        $organizationalFocus = ActivityDetail::query()->with(['gad_activity.plan_budget'])->whereHas('gad_activity', function($q) use($start_year, $end_year){
+            $q->whereHas('plan_budget', function($q) use($start_year, $end_year){
+                $q->whereBetween('year', [$start_year, $end_year])
+                ->where(['focus' => 'organizational', 'office_id' => auth()->user()->office_id]);
+            });
+        })->get();
+        $attributedProgramFocus = PlanBudget::where(['focus' => 'attributed program', 'office_id' => auth()->user()->office_id])->whereBetween('year', [$start_year, $end_year])->get();
+
+        return view('pages.reports.gadbudgetexpense', [
+            'clientFocus' => $clientFocus,
+            'organizationalFocus' => $organizationalFocus,
+            'attributedProgramFocus' => $attributedProgramFocus,
+            'years' => Committee::yearList()
+        ]);
     }
 }

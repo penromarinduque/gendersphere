@@ -169,6 +169,7 @@ Route::middleware('auth')->group(function () {
     // Reports
     Route::group(['prefix'=>'report', 'as' => 'report.'], function(){
         Route::get('/employees/{employment_type?}', [ReportController::class, 'employees'])->name('employees');
+        Route::get('/gadbudgetbudgetexpenses', [ReportController::class, 'gadBudgetBudgetExpenses'])->name('gadbudgetbudgetexpenses');
         Route::get('/gadplanbudgets', [ReportController::class, 'gadPlanBudgets'])->name('gadplanbudgets');
         Route::get('/gadplanbudgets/print', [ReportController::class, 'printGadPlanBudgets'])->name('printgadplanbudgets');
         Route::get('/sexaggregated', [ReportController::class, 'sexAggregated'])->name('sexaggregated');

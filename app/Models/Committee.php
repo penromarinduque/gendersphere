@@ -17,5 +17,14 @@ class Committee extends Model implements Auditable
         return $this->belongsTo(PersonInfo::class, 'person_info_id', 'id');
     }
 
+    public static function yearlist()
+    {
+        $years = [];
+        for ($i=date('Y') + 3; $i >= 2016 ; $i--) { 
+            $years[] = ['year'=>$i];
+        }
+        return $years;
+    }
+
     
 }
