@@ -14,106 +14,99 @@
     <div class="mb-2">
         <div class="mb-2">
   <!-- Year Filter -->
-            <Select 
-                v-model="filters.year" 
-                :options="yearOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                placeholder="Filter by Year"
-                size="small" 
-                class="w-full md:w-56 me-2" 
-                showClear
-                filter
-                @change="applyFilters"
-            />
+  <Select 
+    v-model="filters.year" 
+    :options="yearOptions" 
+    optionLabel="label" 
+    optionValue="value"
+    placeholder="Filter by Year"
+    size="small" 
+    class="w-full md:w-56 me-2" 
+    showClear
+    filter
+    @change="applyFilters"
+  />
+  <!-- Training Title Filter -->
+  <Select 
+    v-model="filters.trainingTitle" 
+    :options="trainingTitleOptions" 
+    optionLabel="label" 
+    optionValue="value"
+    placeholder="Filter by Title"
+    size="small" 
+    class="w-full md:w-56 me-2" 
+    showClear 
+    filter 
+    @change="applyFilters"
+  />
 
-        <!-- Training Title Filter -->
-            <Select 
-                v-model="filters.trainingTitle" 
-                :options="trainingTitleOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                placeholder="Filter by Title"
-                size="small" 
-                class="w-full md:w-56 me-2" 
-                showClear 
-                filter 
-                @change="applyFilters"
-            />
+  <!-- Employee Filter -->
+  <Select 
+    v-model="filters.employee" 
+    :options="employeeOptions" 
+    optionLabel="label" 
+    optionValue="value"
+    placeholder="Filter by Employee"
+    size="small" 
+    class="w-full md:w-56 me-2"
+    showClear 
+    filter 
+    @change="applyFilters"
+  />
 
-        <!-- Employee Filter -->
-            <Select 
-                v-model="filters.employee" 
-                :options="employeeOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                placeholder="Filter by Employee"
-                size="small" 
-                class="w-full md:w-56 me-2"
-                showClear 
-                filter 
-                @change="applyFilters"
-            />
+  <!-- Training Type Filter -->
+  <Select 
+    v-model="filters.trainingType" 
+    :options="trainingTypeOptions" 
+    optionLabel="label" 
+    optionValue="value"
+    placeholder="Filter by Type"
+    size="small" 
+    class="w-full md:w-56 me-2" 
+    showClear 
+    filter 
+    @change="applyFilters"
+  />
 
-        <!-- Training Type Filter -->
-            <Select 
-                v-model="filters.trainingType" 
-                :options="trainingTypes" 
-                optionLabel="label" 
-                optionValue="value"
-                placeholder="Filter by Type"
-                size="small" 
-                class="w-full md:w-56 me-2" 
-                showClear 
-                filter 
-                @change="applyFilters"
-            />
+    <Select 
+        v-model="filters.trainingNature" 
+        :options="trainingNatureOptions" 
+        optionLabel="label" 
+        optionValue="value"
+        placeholder="Filter by Nature"
+        size="small" 
+        class="w-full md:w-56 me-2"
+        showClear 
+        filter 
+        @change="applyFilters"
+    />
+        <Button 
+            label="Clear Filters" 
+            size="small"
+            class="p-button-outlined p-button-secondary w-full md:w-56 me-2" 
+            :disabled="!Object.values(filters).some(val => val)" 
+            @click="clearFilters"
+        />
+</div>
+   </div>
 
-            <Select 
-                v-model="filters.trainingNature" 
-                :options="trainingNatureOptions" 
-                optionLabel="label" 
-                optionValue="value"
-                placeholder="Filter by Nature"
-                size="small" 
-                class="w-full md:w-56 me-2"
-                showClear 
-                filter 
-                @change="applyFilters"
-            />
-            <Button 
-                label="Clear Filters" 
-                size="small"
-                class="p-button-outlined p-button-secondary w-full md:w-56 me-2" 
-                :disabled="!Object.values(filters).some(val => val)" 
-                @click="clearFilters"
-            />
-        </div>
-    </div>
     <div class="mb-2">
-    <Panel header="Summary">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <div class="col-span-full">
-            <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">
-            Training Type Summary
-            </h6>
-        </div>
-
-        <div v-for="type in summary.by_training" :key="type.learning_description_type">
-            <p class="text-sm">
-            {{ capitalizeFirstLetter(type.learning_description_type) }}: 
-            <b>{{ type.instance_count }}</b>
-            </p>
-        </div>
-
-        <div class="col-span-full mt-2">
-            <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">
-            Total Trainings: {{ summary.total_instances }}
-            </h6>
-        </div>
-        </div>
-    </Panel>
+        <Panel header="Summary">
+            <div class="grid grid-cols-3">
+                <div >
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Training Type</h6>
+                    <p >Managerial: {{ summary.total_managerial }}</p>
+                    <p >Supervisory : {{ summary.total_supervisory }}</p>
+                    <p >Technical : {{ summary.total_technical }}</p>
+                    <p >Foundation : {{ summary.total_foundation }}</p>
+                </div>
+                <div>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Total Trainings : {{ summary.total_trainings }}</h6>
+                </div>
+            </div>
+        </Panel>
     </div>
+
     <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-md">
         <table class="min-w-full w-full border-collapse border border-slate-400 divide-y divide-gray-200">
             <thead>
@@ -150,11 +143,7 @@
                 </th>
             </tr>
             </thead>
-            <ViewAttendeesDrawer
-                :visible="attendeesDrawerVisible"
-                :trainingId="selectedTraining"
-                @close="attendeesDrawerVisible = false"
-            />            
+ 
             <tbody class="bg-white divide-y divide-gray-200 divide-solid">
             <template v-if="trainings.data && trainings.data.length">
                 <template v-for="training in trainings.data" :key="training.id">
@@ -172,7 +161,7 @@
                             <span>{{ training.duration_hours }}</span>
                         </td>
                         <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">
-                            <span>{{ training.learning_description_type.charAt(0).toUpperCase() + training.learning_description_type.slice(1) }}</span>
+                            <span>{{ training.learning_description_type }}</span>
                         </td>
                         <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">
                             <span>{{ training.sponsor_facilitator }}</span>
@@ -185,15 +174,20 @@
                         </td>
                         <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">                              
                             <Button class="me-2" icon="pi pi-users" label="View Attendees" @click="openDrawer(training.id)" size="small" variant="outlined" severity="info"/>
+                                <ViewAttendeesDrawer
+                                :visible="attendeesDrawerVisible"
+                                :trainingId="selectedTraining"
+                                @close="attendeesDrawerVisible = false"
+                                />
                             <Button class="me-2" icon="pi pi-pencil" label ="Edit" @click="$router.push({ name: 'trainings.edit', params: { id: training.id } })" size="small" variant="outlined" severity="primary"></Button>
-                            <Button class="me-2" icon="pi pi-trash" label ="Delete" @click="handleDelete($event, training.id)" size="small" variant="outlined" severity="danger"></Button> <ConfirmPopup/>
+                            <Button class="me-2" icon="pi pi-trash" label ="Delete" @click="handleDelete($event, training.id)" size="small" variant="outlined" severity="danger"></Button> <ConfirmPopup />
                         </td>
                     </tr>
                 </template>
             </template>
             <template v-else>
                 <tr>
-                    <td colspan="9" class="text-center text-gray-500 py-4">
+                    <td colspan="7" class="text-center text-gray-500 py-4">
                         No records found.
                     </td>
                 </tr>
@@ -223,7 +217,7 @@ import 'primeicons/primeicons.css';
 import useTrainings from '@/composables/trainings'
 import { useCommonUtils } from '@/composables/commonutils';
 
-const { capitalizeFirstLetter, confirmDelete } = useCommonUtils();
+const { useConfirmDelete } = useCommonUtils();
 const attendeesDrawerVisible = ref(false);
 const selectedTraining = ref(null);
 
@@ -232,8 +226,7 @@ function openDrawer(training) {
   attendeesDrawerVisible.value = true;
 }
 // We need only two things from the useCompanies() composable
-const { trainings, getTrainings, destroyTraining, getTrainingSummary, summary, yearOptions, 
-        trainingTitleOptions, trainingNatureOptions, employeeOptions, trainingTypes, loadTrainingTypeOptions } = useTrainings();
+const { trainings, getTrainings, destroyTraining, loading, trainingTypeFilter, getTrainingSummary, summary } = useTrainings();
 
 const deleteTraining = async (id) => {
     await destroyTraining(id);
@@ -242,6 +235,13 @@ const deleteTraining = async (id) => {
     await fetchFilters();
     // console.log(1);
 }
+
+/* const searchkey = ref('');
+const searchKey = async (event) => {
+    let search_key = event.target.value;
+    await getTrainings(1, search_key);
+} */
+
 
 // Reactive filter object
 const filters = reactive({
@@ -252,22 +252,42 @@ const filters = reactive({
   trainingNature: null,
 });
 
+
+
+// Select options
+const yearOptions = ref([]);
+const trainingTitleOptions = ref([]);
+const employeeOptions = ref([]);
+const trainingTypeOptions = ref([
+  { label: 'Managerial', value: 'managerial' },
+  { label: 'Supervisory', value: 'supervisory' },
+  { label: 'Technical', value: 'technical' },
+  { label: 'Foundation', value: 'foundation' },
+]);
+const trainingNatureOptions = ref([
+  { label: 'Attended', value: 'attended' },
+  { label: 'Conducted', value: 'conducted' }
+]);
+
 // Fetch dynamic options
 const fetchFilters = async () => {
   try {
     // Training Titles
     const trainingTitleRes = await axios.get('/api/traininglist');
+    console.log(trainingTitleRes.data)
     trainingTitleOptions.value = trainingTitleRes.data.data.map(t => ({
       label: t,
       value: t
     }));
+    console.log('Training list response:', trainingTitleRes.data); 
 
     // Employees
-    const employeeRes = await axios.get('/api/officeemployees');
+    const employeeRes = await axios.get('/api/employeedropdown');
     employeeOptions.value = employeeRes.data.data.map(emp => ({
       label: emp.name,
       value: emp.id
     }));
+    console.log('Employee list response:', employeeRes.data); 
     // Years (e.g., from 2020 to current year)
     const currentYear = new Date().getFullYear();
     yearOptions.value = Array.from({ length: 6 }, (_, i) => {
@@ -306,8 +326,10 @@ onMounted(() => {
     getTrainings();
     getTrainingSummary();
     fetchFilters();
-    loadTrainingTypeOptions();
+    
 });
+
+const { confirmDelete } = useConfirmDelete();
 
 const handleDelete = (event, id) => {
   confirmDelete(event, id, deleteTraining, {
@@ -317,4 +339,9 @@ const handleDelete = (event, id) => {
   });
 };
 
+/* const filterTrainings = async () => {
+    console.log('Selected Type:', trainingTypeFilter.value);
+    await getTrainings(1, trainingTypeFilter.value);
+} */
+    // We get the companies immediately
 </script>

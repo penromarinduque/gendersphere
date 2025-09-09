@@ -10,7 +10,7 @@
                     <div class="mt-1">
                         <input type="text" name="trainingtitle" id="trainingtitle" 
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="form.training_title">
+                                v-model="training.training_title">
                         <span class="text-sm text-red-600" v-if="errors?.training_title">{{ errors.training_title[0] }}</span>
                     </div>
                 </div>
@@ -44,29 +44,26 @@
                 <div class="pb-1">
                     <label for="trainingtype" class="block text-md font-medium text-gray-700">Learning Description Type</label>
                     <div class="mt-1">
-                        <select
-                          name="trainingtype"
-                          id="trainingtype"
-                          class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                          v-model="form.learning_description_type">
-                          <option v-for="type in trainingTypes" :key="type.value" :value="type.value">
-                              {{ type.label }}
-                          </option>
-                      </select>
+                        <select name="trainingtype" id="trainingtype" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        v-model="training.learning_description_type">
+                            <option value="managerial">Managerial</option>
+                            <option value="supervisory">Supervisory</option>
+                            <option value="technical">Technical</option>
+                        </select>
                         <span class="text-sm text-red-600" v-if="errors?.learning_description_type">{{ errors.learning_description_type[0] }}</span>
                     </div>
                 </div>           
                 <div class="pb-1">
                     <label for="sponsor" class="block text-md font-medium text-gray-700">Sponsor/Facilitator</label>
                     <input type="text" name="sponsor" id="sponsor" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="form.sponsor_facilitator">
+                                v-model="training.sponsor_facilitator">
                     <span class="text-sm text-red-600" v-if="errors?.sponsor_facilitator">{{ errors.sponsor_facilitator[0] }}</span>
                 </div>
             <div class="pb-1">
                 <label for="trainingnature" class="block text-md font-medium text-gray-700">Training Nature</label>
                   <select id="trainingnature" name="trainingnature"
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    v-model="form.training_nature">
+                    v-model="training.training_nature">
                     <option value="attended">Attended</option>
                     <option value="conducted">Conducted</option>
                   </select>
@@ -76,7 +73,7 @@
               <label for="isgadrelated" class="block text-md font-medium text-gray-700">GAD Related</label>
               <select id="isgadrelated" name="isgadrelated"
                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                v-model="form.is_gad_related"> 
+                v-model="training.is_gad_related"> 
                 <option :value="true">Yes</option>      
                 <option :value="false">No</option>  
               </select>
@@ -113,7 +110,7 @@ import Button from "primevue/button"
 import useTrainings from '@/composables/trainings'
 import { onMounted, reactive, watch} from 'vue';
 
-const { errors, training, trainingTypes, updateTraining, getTraining, loading, calculateHours, msToHours, formatDateToYYYYMMDD } = useTrainings();
+const { errors, training, updateTraining, getTraining, loading, calculateHours, msToHours, formatDateToYYYYMMDD } = useTrainings();
 
 const props = defineProps({
     id: {
@@ -122,16 +119,11 @@ const props = defineProps({
     }
 });
 
+
 const form = reactive({
-  training_title: '',
-  training_nature: '',
-  learning_description_type: '',
-  is_gad_related: false,
-  training_start: '',
-  training_end: '',
-  duration_hours: '',
-  sponsor_facilitator: '',
-  office_id: null,
+    training_start: formatDateToYYYYMMDD(new Date()),
+    training_end: formatDateToYYYYMMDD(new Date()),
+    duration_hours: '',
 })
 
 watch(() => [form.training_start, form.training_end],
@@ -152,56 +144,24 @@ watch(() => [form.training_start, form.training_end],
     }
   }
 )
-
 onMounted(async () => {
-  const response = await getTraining(props.id)  // Make sure this returns data!
-  const data = response?.data || response       // Handle both formats
+  await getTraining(props.id)
 
-  if (!data) {
-    console.error("No data returned from getTraining()")
-    return
-  }
-
-  form.training_title = data.training_title
-  form.training_nature = data.training_nature
-  form.learning_description_type = data.learning_description_type
-  form.is_gad_related = Boolean(data.is_gad_related)
-  form.sponsor_facilitator = data.sponsor_facilitator
-  form.office_id = data.office_id
-  form.training_start = data.training_start
-  form.training_end = data.training_end
-  form.duration_hours = data.duration_hours
+  // Initialize form fields from fetched training
+  form.training_start = training.value.training_start
+  form.training_end = training.value.training_end
+  form.duration_hours = training.value.duration_hours
 })
-
-onMounted(async () => {
-    try {
-        const res = await axios.get('/api/trainings/trainingtypes');
-        trainingTypes.value = res.data;
-    } catch (err) {
-        console.error("Failed to load training types", err);
-    }
-});
-
 /* onMounted() */
 /* watch(training, () => {
     // console.log(personinfo.value.municipality_id)
 })
   */
 const editTraining = async () => {
-  const payload = {
-      training_title: form.training_title.trim(),
-      learning_description_type: form.learning_description_type,
-      training_nature: form.training_nature,
-      is_gad_related: form.is_gad_related ? 1 : 0,
-      training_instance: {
-        training_start: form.training_start,
-        training_end: form.training_end,
-        duration_hours: Number(form.duration_hours),
-        sponsor_facilitator: form.sponsor_facilitator,
-        office_id: form.office_id
-      }
-  };
-
-  await updateTraining(props.id, payload)
+    training.value.duration_hours = form.duration_hours
+    training.value.training_start = form.training_start
+    training.value.training_end = form.training_end
+    await updateTraining(props.id)
 }
+
 </script>

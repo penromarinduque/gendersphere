@@ -72,7 +72,7 @@ watch(isVisible, (val) => {
 // Fetch all users and filter out those already added
 const fetchAttendees = async () => {
   try {
-    const res = await axios.get('/api/employeedropdown');
+    const res = await axios.get('/api/officeemployees');
     const rawList = res.data?.data ?? res.data;
 
     const attendeeList = rawList.map(person => ({
@@ -104,7 +104,6 @@ const addAttendees = async () => {
 
   try {
     loading.value = true;
-    console.log("Selected person_info_ids:", selectedUsers.value);
     await axios.post(`/api/trainings/${props.trainingId}/attendees`, {
       person_info_ids: selectedUsers.value
     });   

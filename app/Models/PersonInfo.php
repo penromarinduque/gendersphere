@@ -24,4 +24,10 @@ class PersonInfo extends Model implements Auditable
             'graduate_studies' => 'Graduate Studies',
         ];
     }
+
+    public function trainingInstances() {
+        return $this->belongsToMany(TrainingInstance::class, 'training_instance_attendee', 'person_info_id', 'training_instance_id')
+            ->withPivot('certificate_path')
+            ->withTimestamps();
+    }
 }

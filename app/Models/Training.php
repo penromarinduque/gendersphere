@@ -12,16 +12,24 @@ class Training extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['training_title', 'training_start', 'training_end', 'duration_hours', 'learning_description_type', 'sponsor_facilitator', 'created_at', 'updated_at', 'office_id', 'is_gad_related', 'training_nature', ];
+    protected $fillable = [
+        'training_title',
+        'learning_description_type',
+        'training_nature',
+        'is_gad_related',
+    ];
 
-    public function learningDescription($type = null)
+    public function instances() {
+        return $this->hasMany(TrainingInstance::class);
+    }
+/*     public function learningDescription($type = null)
     {
         $arr_ld = [
             'managerial' => 'Managerial',
             'supervisory' => 'Supervisory',
             'technical' => 'Technical',
         ];
-    }
+    } */
  /*    public function getDurationInHours()
 {
     if (!$this->training_start || !$this->training_end) {
@@ -30,11 +38,6 @@ class Training extends Model implements Auditable
 
     return Carbon::parse($this->training_start)->floatDiffInHours(Carbon::parse($this->training_end));
 } */
-    public function attendees()
-    {
-        return $this->belongsToMany(PersonInfo::class, 'training_users')
-        ->withPivot('certificate_path')
-        ->withTimestamps();
-    }
+
 }
 

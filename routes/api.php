@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\CommitteeRsoAttachmentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RegionController;
+use App\Http\Controllers\Api\TrainingInstanceController;
 use App\Models\Activity;
 
 /*
@@ -66,7 +67,8 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::prefix('trainings')->group(function () {
         Route::get('summary', [TrainingController::class, 'summary']);
-        
+        Route::get('suggestions', [TrainingController::class, 'suggestTitles']);
+
         // Attendees routes
         Route::get('{id}/attendees', [TrainingController::class, 'attendees']);
         Route::post('{id}/attendees', [TrainingController::class, 'addAttendees']);
@@ -75,17 +77,23 @@ Route::middleware('auth:sanctum')->group( function () {
         Route::get('{trainingId}/certificate/{attendeeId}', [TrainingController::class, 'getCertificate']);
         Route::post('{trainingId}/certificate/{attendeeId}', [TrainingController::class, 'uploadCertificate']);
         Route::delete('{trainingId}/certificate/{attendeeId}', [TrainingController::class, 'deleteCertificate']);
-
-
-
-        
         // Specific training title by ID
+        Route::post('{id}/update', [TrainingController::class, 'updateFromInstance']);
+        Route::get('instance/{id}', [TrainingController::class, 'showByInstance']);
         Route::get('{id}/training_title', function ($id) {
             $training = \App\Models\Training::findOrFail($id);
             return response()->json(['training_title' => $training->training_title]);
         });
+        Route::get('/trainingtypes', [TrainingController::class, 'getTrainingTypes']);
     });
 
+    Route::prefix('traininginstances')->group(function () {
+        Route::get('/{id}/trainingtitle', [TrainingInstanceController::class, 'getTrainingTitle']);
+      /*  Route::get('/{id}', [TrainingInstanceController::class, 'show']);
+        Route::post('/', [TrainingInstanceController::class, 'store']);
+        Route::put('/{id}', [TrainingInstanceController::class, 'update']); */
+        Route::delete('/{id}', [TrainingInstanceController::class, 'destroy']); // 👈 this one
+    });
     Route::prefix('personinfos')->group(function () {
         Route::get('summary', [PersonInfoController::class, 'summary']);
         Route::get('get-employees', [PersonInfoController::class, 'getEmployees']);
@@ -158,6 +166,7 @@ Route::middleware('auth:sanctum')->group( function () {
         'permittypes' => PermitTypeController::class,
         'employeesalaries' => EmployeeSalaryController::class,
         'trainings' => TrainingController::class,
+        'traininginstances' => TrainingInstanceController::class,
         'offices' => OfficeController::class,
         'roles' => RoleController::class,
         'committee_rso_attachments' => CommitteeRsoAttachmentController::class,
@@ -167,7 +176,7 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::get('genderissuebyyear/{year}', [GenderIssueController::class, 'genderIssueByYear']);
     Route::get('permittypebystatus/{status}', [PermitTypeController::class, 'getPermitTypeByStatus']);
     Route::post('updateaccom/{id}', [ActivityDetailController::class, 'updateAccom']);
-    Route::get('employeedropdown', [PersonInfoController::class, 'getEmployeeList']);
+    Route::get('officeemployees', [PersonInfoController::class, 'getEmployeeList']);
        // Training title list for filter
     Route::get('traininglist', [TrainingController::class, 'getTrainingList']);
     

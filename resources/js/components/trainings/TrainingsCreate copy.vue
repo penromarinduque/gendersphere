@@ -7,25 +7,11 @@
           <div class="pb-1">
             <label for="trainingtitle" class="block text-md font-medium text-gray-700">Training Title <span class="text-red-500">*</span></label>
             <div class="mt-1">
-              <input
-                autocomplete="off"
-                type="text"
-                name="trainingtitle"
-                id="trainingtitle"
-                list="training-titles"
-                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                v-model="form.training_title"
-                @input="fetchSuggestions"
-              />
-
-                <datalist id="training-titles">
-                  <option v-for="title in suggestions" :key="title" :value="title" />
-                </datalist>
-
-                <span class="text-sm text-red-600" v-if="localErrors.training_title">
-                  {{ localErrors.training_title }}
-                </span>
-            </div>
+                <input type="text" name="trainingtitle" id="trainingtitle" 
+                            class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                v-model="form.training_title">
+                        <span class="text-sm text-red-600" v-if="localErrors.training_title">{{ localErrors.training_title }}</span>
+                    </div>
                 </div>
                 <div class="pb-1">
                     <label for="trainingstart" class="block text-md font-medium text-gray-700">Training Start <span class="text-red-500">*</span></label>
@@ -57,16 +43,15 @@
                 <div class="pb-1">
                     <label for="trainingtype" class="block text-md font-medium text-gray-700">Learning Description Type <span class="text-red-500">*</span></label>
                     <div class="mt-1">
-                      <select
-                        name="trainingtype"
-                        id="trainingtype"
-                        class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        <select name="trainingtype" id="trainingtype" placeholder="-Select Training Type-" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="form.learning_description_type">
-                        <option v-for="type in trainingTypes" :key="type.value" :value="type.value">
-                          {{ type.label }}
-                        </option>
-                      </select>
-                      <span class="text-sm text-red-600" v-if="localErrors.learning_description_type">{{ localErrors.learning_description_type }}</span>
+                            <option value="" disabled selected>-Select Learning Description Type-</option>
+                            <option value="managerial">Managerial</option>
+                            <option value="supervisory">Supervisory</option>
+                            <option value="technical">Technical</option>
+                            <option value="foundation">Foundation</option>
+                        </select>
+                        <span class="text-sm text-red-600" v-if="localErrors.learning_description_type">{{ localErrors.learning_description_type }}</span>
                     </div>
                 </div>           
                 <div class="pb-1">
@@ -113,7 +98,7 @@
         <Button
           icon="pi pi-save"
           type="submit"
-          label="Save Training"
+          label="Save"
           :loading="loading"
           size="small"
           class="h-10"
@@ -126,13 +111,12 @@
 
 <script setup>
 import Button from "primevue/button";
-import { reactive, onMounted, watch, ref} from 'vue'
+import { reactive, onMounted, watch, computed } from 'vue'
 import axios from 'axios'
-import useTrainings from "../../composables/trainings"
+import useTrainings from "../../composables/trainings";
 
 // 2. Composable with storeTraining method
-const { errors, storeTraining, loading, trainingTypes, loadTrainingTypeOptions, calculateHours, msToHours, formatDateToYYYYMMDD } = useTrainings();
-const suggestions = ref([]);
+const { errors, storeTraining, loading, calculateHours, msToHours, formatDateToYYYYMMDD } = useTrainings();
 
 // 1. Reactive form object
 const form = reactive({
@@ -163,73 +147,73 @@ const localErrors = reactive({
 const manilaOffsetMinutes = 8 * 60 // +8 hours
 
 const validateForm = () => {
-  let valid = true;
+  let valid = true
 
   // Clear previous errors
-  Object.keys(localErrors).forEach(key => {
-    localErrors[key] = '';
-  });
+  //Object.keys(localErrors).forEach(key => (localErrors[key] = ''))
 
-  // Define validation rules for each field
-  const rules = {
-    training_title: {
-      required: true,
-      message: 'Training title is required.'
-    },
-    training_start: {
-      required: true,
-      message: 'Training start date is required.'
-    },
-    training_end: {
-      required: true,
-      message: 'Training end date is required.'
-    },
-    learning_description_type: {
-      required: true,
-      message: 'Learning description type is required.'
-    },
-    sponsor_facilitator: {
-      required: true,
-      message: 'Sponsor/Facilitator is required.'
-    },
-    training_nature: {
-      required: true,
-      message: 'Training nature is required.'
-    },
-    is_gad_related: {
-      required: true,
-      message: 'Please indicate if this training is GAD-related.'
-    }
+  // Helper function to check if a value is empty
+  const isEmptyString = (val) => {
+    return val === undefined || val === null || (typeof val === 'string' && val.trim() === '');
   };
 
-  // Loop through each rule and apply validation
-  for (const field in rules) {
-    const rule = rules[field];
-    const value = form[field];
-
-    if (rule.required && (value === undefined || value === null || value === '' || (typeof value === 'string' && value.trim() === ''))) {
-      localErrors[field] = rule.message;
-      valid = false;
-    }
-  }
-
-  // Validate date order (training_start must be before or equal to training_end)
-  const start = new Date(form.training_start);
-  const end = new Date(form.training_end);
-
-  if (form.training_start && form.training_end && !isNaN(start) && !isNaN(end) && start > end) {
-    localErrors.training_start = 'Start date cannot be after end date.';
-    localErrors.training_end = 'End date cannot be before start date.';
+  // training_title
+  if (isEmptyString(form.training_title)) {
+    localErrors.training_title = 'Required';
     valid = false;
   }
 
-  return valid;
-};
+  // training_start
+  if (isEmptyString(form.training_start)) {
+    localErrors.training_start = 'Required';
+    valid = false;
+  }
 
+  // training_end
+  if (isEmptyString(form.training_end)) {
+    localErrors.training_end = 'Required';
+    valid = false;
+
+  } else if (!isEmptyString(form.training_start) && new Date(form.training_end) < new Date(form.training_start)) {
+    localErrors.training_start = 'Start date cannot be after end date';
+    localErrors.training_end = 'End date cannot be before start date';
+    valid = false;
+  }
+
+  // learning_description_type
+  if (isEmptyString(form.learning_description_type)) {
+    localErrors.learning_description_type = 'Required';
+    valid = false;
+  }
+
+  // sponsor_facilitator
+  if (isEmptyString(form.sponsor_facilitator)) {
+    localErrors.sponsor_facilitator = 'Required';
+    valid = false;
+  }
+
+  // training_nature
+  if (isEmptyString(form.training_nature)) {
+    localErrors.training_nature = 'Required';
+    valid = false;
+  }
+
+  // is_gad_related
+  if (isEmptyString(form.is_gad_related)) {
+    localErrors.is_gad_related = 'Required';
+    valid = false;
+  }
+  return valid
+}
 
 // 3. On component mount, get the authenticated user
 onMounted(async () => {
-    loadTrainingTypeOptions();
+    try {
+        const { data: user } = await axios.get('/api/user') // Assumes Sanctum or Passport auth
+        form.office_id = user.office_id //Set office_id from logged-in user
+    } catch (error) {
+        console.error('Error fetching auth user:', error)
+    }
 })
 
 watch(() => [form.training_start, form.training_end],
@@ -276,62 +260,53 @@ watch(() => [form.training_start, form.training_end],
   return valid
 } */
 // 4. Save the form
-
 const saveTraining = async () => {
-
-  // Clear previous frontend errors
-  Object.keys(localErrors).forEach(key => {
-    localErrors[key] = '';
-  });
-
-  // Run client-side validation
+  // Clear only once here
+    Object.keys(localErrors).forEach(key => {
+    localErrors[key] = '';});
+  // Frontend validation
   if (!validateForm()) return;
 
-  
-  // Build the payload with a nested training_instance object
-  const payload = {
-      training_title: form.training_title.trim(),
+  try {
+    console.log('Payload to be submitted:', {
+    training_title: form.training_title,
+    learning_description_type: form.learning_description_type,
+    is_gad_related: form.is_gad_related ? 1 : 0,
+    training_nature: form.training_nature,
+
+    training_instance: {
+      training_start: form.training_start,
+      training_end: form.training_end,
+      duration_hours: form.duration_hours,
+      sponsor_facilitator: form.sponsor_facilitator,
+      office_id: form.office_id
+    }});
+
+    await storeTraining({
+      training_title: form.training_title,
       learning_description_type: form.learning_description_type,
-      training_nature: form.training_nature,
       is_gad_related: Boolean(form.is_gad_related),
+      training_nature: form.training_nature,
+
       training_instance: {
         training_start: form.training_start,
         training_end: form.training_end,
-        duration_hours: Number(form.duration_hours),
+        duration_hours: form.duration_hours,
         sponsor_facilitator: form.sponsor_facilitator,
-        office_id: form.office_id
-      }
-  };
+        office_id: form.office_id,
+    }
+  });
 
-  try {
-    await storeTraining(payload);
   } catch (error) {
     if (error.response?.status === 422) {
       const serverErrors = error.response.data.errors;
 
-      // Laravel-style error mapping from nested keys like training_instance.duration_hours
-      Object.entries(serverErrors).forEach(([key, messages]) => {
-        const flatKey = key.includes('training_instance.') ? key.replace('training_instance.', '') : key;
-        localErrors[flatKey] = messages[0];  // show only the first error per field
-      });
+      // Assign server-side validation errors to localErrors
+    Object.assign(localErrors, Object.fromEntries(
+    Object.entries(serverErrors).map(([key, value]) => [key, value[0]])));
     }
   }
 };
 
-const fetchSuggestions = async () => {
-  if (form.training_title.length < 2) {
-    suggestions.value = []; // don't query if input is too short
-    return;
-  }
-
-  try {
-    const res = await axios.get('/api/trainings/suggestions', {
-      params: { q: form.training_title }
-    });
-    suggestions.value = res.data; // assume backend returns array of titles
-  } catch (error) {
-    console.error('Error fetching training title suggestions:', error);
-  }
-};
 
 </script>

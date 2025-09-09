@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\TrainingRequest;
 use App\Http\Resources\TrainingResource;
 use App\Models\Training;
+use App\Models\TrainingInstance;
 use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,130 +14,206 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 
-
 class TrainingController extends Controller
 {
     //Display a listing of the resource.
-    public function index(Request $request)
-    {
-        $user = auth()->user();
-        $office_id = $user->office_id; 
-        $query = Training::select('trainings.*');
+public function index(Request $request) {
+    $user = auth()->user();
+    $office_id = $user->office_id;
 
-        if(!$user?->is_super_admin) {
-            $query->where('trainings.office_id', $office_id);
-        }
+    $query = TrainingInstance::with(['training', 'attendees']);
 
-        if ($request->has('year')) {
-            $query->whereYear('training_start', $request->year);
-        }
-
-        if ($request->has('title')) {
-            $query->where('training_title', 'like', '%' . $request->title . '%');
-        }
-
-        if ($request->has('employee_id')) {
-            $query->whereHas('attendees', function ($q) use ($request) {
-                $q->where('person_info_id', $request->employee_id);
-            });
-        }
-
-        if ($request->has('type')) {
-            $query->where('learning_description_type', $request->type);
-        }
-        
-        if ($request->has('training_nature')) {
-            $query->where('training_nature', $request->training_nature);
-        }
-        return $query->paginate(10);
+    if (!$user?->is_super_admin) {
+        $query->where('office_id', $office_id);
     }
+
+    if ($request->filled('year')) {
+        $query->whereYear('training_start', $request->year);
+    }
+
+    if ($request->filled('title')) {
+        $query->whereHas('training', function ($q) use ($request) {
+            $q->where('training_title', 'like', '%' . $request->title . '%');
+        });
+    }
+
+    if ($request->filled('employee_id')) {
+        $query->whereHas('attendees', function ($q) use ($request) {
+            $q->where('person_info_id', $request->employee_id);
+        });
+    }
+
+    if ($request->filled('training_nature')) {
+        $query->whereHas('training', function ($q) use ($request) {
+            $q->where('training_nature', $request->training_nature);
+        });
+    }
+
+    // ✅ Add this block for training type filtering
+    if ($request->filled('type')) {
+        $query->whereHas('training', function ($q) use ($request) {
+            $q->where('learning_description_type', $request->type);
+        });
+    }
+
+    return $query->paginate(10)->through(function ($instance) {
+        return [
+            'id' => $instance->id,
+            'training_start' => $instance->training_start,
+            'training_end' => $instance->training_end,
+            'duration_hours' => $instance->duration_hours,
+            'training_title' => $instance->training->training_title ?? '',
+            'training_nature' => $instance->training->training_nature ?? '',
+            'learning_description_type' => $instance->training->learning_description_type ?? '',
+            'is_gad_related' => $instance->training->is_gad_related ?? false,
+            'sponsor_facilitator' => $instance->sponsor_facilitator,
+            'attendees' => $instance->attendees,
+        ];
+    });
+}
+
+
+
 
     //Display the specified resource.
-    public function show($id)
+/*     public function show($id)
     {
-        $training = Training::find($id);
-        return new TrainingResource($training);
-    }
-
-    public function store(TrainingRequest $request)
-    {
-
-        Gate::authorize('create', Training::class);
-        
-        $training = Training::create([
-            ...$request->validated(),
-            'office_id' => auth()->user()->office_id
-        ]);
-
-        $training = Training::find($training->id);
-        return new TrainingResource($training);
-    }
-    /**
-     * Update the specified resource in storage.
-     */
-/*     public function update(Request $request, $id)
-    {
-        $training_title = ($request->training_title) ? $request->training_title : NULL;
-        $training_start = ($request->training_start) ? $request->training_start : NULL;
-        $training_end = ($request->training_end) ? $request->training_end : NULL;
-        $duration_hours = ($request->duration_hours) ? $request->duration_hours : NULL;
-        $learning_description_type = ($request->learning_description_type) ? $request->learning_description_type : NULL;
-        $sponsor_facilitator = ($request->sponsor_facilitator) ? $request->sponsor_facilitator : NULL;
-        $is_gad_related = ($request->is_gad_related) ? $request->is_gad_related : FALSE;
-        $training_nature = ($request->training_nature) ? $request->training_nature : NULL;
-
-        $request->validate([
-            'training_title' => [
-            'required',
-            'string',
-            Rule::unique('trainings', 'training_title')
-                ->ignore($id) // Ignore this training's own ID
-                ->where(function ($query) {
-                    $query->where('office_id', auth()->user()->office_id);
-                })
-            ],
-            'training_start' => ['required', 'date'],
-            'training_end' => ['required', 'date'],
-            'duration_hours' => ['required', 'numeric'],
-            'learning_description_type' => ['required', 'string'],
-            'sponsor_facilitator' => ['required', 'string'],
-            'is_gad_related' => ['boolean'],
-            'training_nature' => ['required', 'in:attended,conducted'],
-        ]);
-        
-        Training::findOrFail($id)->update([
-            'training_title' => $training_title,
-            'training_start' => $training_start,
-            'training_end' => $training_end,
-            'duration_hours' => $duration_hours,
-            'learning_description_type' => $learning_description_type,
-            'sponsor_facilitator' => $sponsor_facilitator,
-            'is_gad_related' => $is_gad_related,
-            'training_nature' => $training_nature,
-        ]);
-
-
         $training = Training::find($id);
         return new TrainingResource($training);
     } */
-    public function update(TrainingRequest $request, $id)
-        {
-            $training = Training::findOrFail($id);
-            $training->update($request->validated());
 
-            return new TrainingResource($training);
+    public function showByInstance($id) {
+        $instance = TrainingInstance::with('training')->find($id);
+
+        if (!$instance || !$instance->training) {
+            return response()->json(['message' => 'Training instance or parent training not found.'], 404);
         }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id)
-    {
-        $training = Training::find($id)->delete();
+        $merged = [
+            // From parent Training model
+            'id' => $instance->training->id,
+            'training_title' => $instance->training->training_title,
+            'learning_description_type' => $instance->training->learning_description_type,
+            'training_nature' => $instance->training->training_nature,
+            'is_gad_related' => (bool) $instance->training->is_gad_related,
 
-        return response()->noContent();
+            // From this TrainingInstance
+            'training_start' => $instance->training_start,
+            'training_end' => $instance->training_end,
+            'duration_hours' => $instance->duration_hours,
+            'sponsor_facilitator' => $instance->sponsor_facilitator,
+            'office_id' => $instance->office_id,
+        ];
+
+        return response()->json(['data' => $merged]);
     }
 
+
+    public function store(TrainingRequest $request) {
+        $validated = $request->validated();
+
+        // Extract instance data
+        $instanceData = $validated['training_instance'];
+
+        // Check for duplicate
+        $duplicate = Training::where('training_title', $validated['training_title'])
+            ->whereHas('instances', function ($query) use ($instanceData) {
+                $query->where('training_start', $instanceData['training_start'])
+                    ->where('training_end', $instanceData['training_end'])
+                    ->where('office_id', $instanceData['office_id']);
+            })
+            ->exists();
+
+        if ($duplicate) {
+            return response()->json([
+                'message' => 'Duplicate training found.',
+                'errors' => [
+                    'training_title' => ['Duplicate.']
+                ]
+            ], 422);
+        }
+
+        // Create or find the training record
+        $training = Training::firstOrCreate(
+            ['training_title' => $validated['training_title']],
+            [
+                'learning_description_type' => $validated['learning_description_type'],
+                'is_gad_related' => $validated['is_gad_related'],
+                'training_nature' => $validated['training_nature'],
+            ]
+        );
+
+        // Create training instance
+        $training->instances()->create([
+            'training_start' => $instanceData['training_start'],
+            'training_end' => $instanceData['training_end'],
+            'duration_hours' => $instanceData['duration_hours'],
+            'sponsor_facilitator' => $instanceData['sponsor_facilitator'],
+            'office_id' => $instanceData['office_id'],
+        ]);
+
+        return new TrainingResource($training->load('instances'));
+    }
+
+    public function updateFromInstance(TrainingRequest $request, $instanceId)
+    {
+        $validated = $request->validated();
+        $instanceData = $validated['training_instance'];
+
+        DB::beginTransaction();
+
+        try {
+            // Find instance and related training
+            $instance = TrainingInstance::with('training')->findOrFail($instanceId);
+            $training = $instance->training;
+
+            //Duplicate check (excluding current instance)
+            $duplicate = Training::where('training_title', $validated['training_title'])
+                ->whereHas('instances', function ($query) use ($instanceData, $instanceId) {
+                    $query->where('training_start', $instanceData['training_start'])
+                        ->where('training_end', $instanceData['training_end'])
+                        ->where('office_id', $instanceData['office_id'])
+                        ->where('id', '!=', $instanceId); // exclude current
+                })
+                ->exists();
+
+            if ($duplicate) {
+                return redirect()->back()->withErrors([
+                    'training_title' => 'Duplicate training with the same schedule and office already exists.',
+                ])->withInput();
+            }
+
+            //Update parent training
+            $training->update([
+                'training_title' => $validated['training_title'],
+                'training_nature' => $validated['training_nature'],
+                'learning_description_type' => $validated['learning_description_type'],
+                'is_gad_related' => $validated['is_gad_related'],
+            ]);
+
+            //Update instance
+            $instance->update([
+                'training_start' => $instanceData['training_start'],
+                'training_end' => $instanceData['training_end'],
+                'duration_hours' => $instanceData['duration_hours'],
+                'sponsor_facilitator' => $instanceData['sponsor_facilitator'],
+                'office_id' => $instanceData['office_id'],
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('trainings.index')->with('success', 'Training updated successfully.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return redirect()->back()->withErrors([
+                'error' => 'Update failed: ' . $e->getMessage(),
+            ])->withInput();
+        }
+    }
+
+/* 
     public function all(Request $request) {
         $user = auth()->user();
         $office_id = $user->office_id; 
@@ -153,59 +230,88 @@ class TrainingController extends Controller
             ->get();
         // $personinfos->appends(['searchkey' => $searchkey]);
         return TrainingResource::collection($trainings);
-    }
+    } */
 
-    public function summary(Request $request){
+    public function summary(Request $request)
+    {
         $user = auth()->user();
-        $office_id = $user->office_id; 
 
-        if($user?->is_super_admin) {
-            $total_trainings = Training::query()->count();
-            $total_managerial = Training::query()->where('learning_description_type', 'managerial')->count();
-            $total_supervisory = Training::query()->where('learning_description_type', 'supervisory')->count();
-            $total_technical = Training::query()->where('learning_description_type', 'technical')->count();
-            $total_foundation = Training::query()->where('learning_description_type', 'foundation')->count();
+        // Get all enum values from the `trainings` table
+        $enumValues = DB::selectOne("
+            SELECT COLUMN_TYPE 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_NAME = 'trainings' 
+            AND COLUMN_NAME = 'learning_description_type'
+            AND TABLE_SCHEMA = DATABASE()
+        ");
 
+        preg_match("/^enum\((.*)\)$/", $enumValues->COLUMN_TYPE, $matches);
+        $types = collect(str_getcsv($matches[1], ',', "'"))->toArray(); // clean enum values
+
+        // Base query
+        $query = DB::table('training_instances')
+            ->join('trainings', 'training_instances.training_id', '=', 'trainings.id');
+
+        if (!$user->is_super_admin) {
+            $query->where('training_instances.office_id', $user->office_id);
         }
-        else {
-            $total_trainings = Training::query()->where('office_id', $office_id)->count();
-            $total_managerial = Training::query()->where('learning_description_type', 'managerial')->where('office_id', $office_id)->count();
-            $total_supervisory = Training::query()->where('learning_description_type', 'supervisory')->where('office_id', $office_id)->count();
-            $total_technical = Training::query()->where('learning_description_type', 'technical')->where('office_id', $office_id)->count();
-            $total_foundation = Training::query()->where('learning_description_type', 'foundation')->where('office_id', $office_id)->count();
+
+        // Get actual counts
+        $counts = $query
+            ->select('trainings.learning_description_type', DB::raw('COUNT(*) as instance_count'))
+            ->groupBy('trainings.learning_description_type')
+            ->pluck('instance_count', 'trainings.learning_description_type')
+            ->toArray();
+
+        // Format result with 0 fallback
+        $byTraining = [];
+        foreach ($types as $type) {
+            $byTraining[] = [
+                'learning_description_type' => $type,
+                'instance_count' => $counts[$type] ?? 0,
+            ];
         }
+
         return response()->json([
-            "total_trainings" => $total_trainings,
-            "total_managerial" => $total_managerial,
-            "total_supervisory" => $total_supervisory,
-            "total_foundation" => $total_foundation,
-            "total_technical" => $total_technical,
+            'total_instances' => array_sum($counts),
+            'by_training' => $byTraining,
         ]);
     }
-    public function attendees($id)
-    {
-        $training = Training::with('attendees')->findOrFail($id);
-        return response()->json($training->attendees);
+
+
+    public function attendees($id)  {
+        $trainingInstance = TrainingInstance::with('attendees')->findOrFail($id);
+
+        return $trainingInstance->attendees->map(function ($attendee) {
+            return [
+                'id' => $attendee->id,
+                'firstname' => $attendee->firstname,
+                'middlename' => $attendee->middlename,
+                'lastname' => $attendee->lastname,
+                'gender' => $attendee->gender,
+                'certificate' => $attendee->pivot->certificate_path ?? null,
+            ];
+        });
     }
 
-    public function addAttendees(Request $request, $id)
-    {
+
+    public function addAttendees(Request $request, $id) {
         $request->validate([
             'person_info_ids' => 'required|array',
             'person_info_ids.*' => 'exists:person_infos,id',
         ]);
 
-        $training = Training::findOrFail($id);
-        $training->attendees()->syncWithoutDetaching($request->person_info_ids);
+        $trainingInstance = TrainingInstance::findOrFail($id);
+        $trainingInstance->attendees()->syncWithoutDetaching($request->person_info_ids);
 
         return response()->json(['message' => 'Attendees added successfully.']);
     }
 
     public function removeAttendee($trainingId, $userId){
-        $training = Training::findOrFail($trainingId);
+        $trainingInstance = TrainingInstance::findOrFail($trainingId);
 
         // Fetch the pivot record
-        $pivot = $training->attendees()->where('person_info_id', $userId)->first();
+        $pivot = $trainingInstance->attendees()->where('person_info_id', $userId)->first();
 
         if ($pivot && $pivot->pivot->certificate_path) {
             // Delete certificate file from storage
@@ -213,16 +319,16 @@ class TrainingController extends Controller
         }
 
         // Detach the attendee from the training
-        $training->attendees()->detach($userId);
+        $trainingInstance->attendees()->detach($userId);
 
         return response()->json(['message' => 'Attendee removed']);
     }
 
     public function removeAllAttendees($trainingId) {
-        $training = Training::findOrFail($trainingId);
+        $trainingInstance = TrainingInstance::findOrFail($trainingId);
 
         // Get only certificate paths from the pivot table
-        $paths = $training->attendees()->pluck('certificate_path');
+        $paths = $trainingInstance->attendees()->pluck('certificate_path');
 
         // Filter out nulls and delete all files in a batch
         if ($paths->isNotEmpty()) {
@@ -230,25 +336,27 @@ class TrainingController extends Controller
         }
 
         // Now safely detach all attendees
-        $training->attendees()->detach();
+        $trainingInstance->attendees()->detach();
 
         return response()->json(['message' => 'All attendees removed successfully.']);
     }
 
     public function getTrainingList() {   
         $user = auth()->user();
-        $office_id = $user->office_id; 
-        $titles = Training::select('training_title')
-            ->where('office_id', $office_id)
+        $office_id = $user->office_id;
+
+        $titles = TrainingInstance::select('trainings.training_title')
+            ->join('trainings', 'training_instances.training_id', '=', 'trainings.id')
+            ->where('training_instances.office_id', $office_id)
             ->distinct()
-            ->pluck('training_title');
+            ->pluck('trainings.training_title');
 
         return response()->json(['data' => $titles]);
     }
 
     public function getCertificate($trainingId, $attendeeId) {
-        $training = Training::findOrFail($trainingId);
-        $attendee = $training->attendees()->findOrFail($attendeeId);
+        $trainingInstance = TrainingInstance::findOrFail($trainingId);
+        $attendee = $trainingInstance->attendees()->findOrFail($attendeeId);
         $path = $attendee->pivot->certificate_path;
 
         if (!$path || !Storage::disk('private')->exists($path)) {
@@ -256,7 +364,7 @@ class TrainingController extends Controller
         }
 
         // Ensure user has access
-        if ($training->office_id !== auth()->user()->office_id) {
+        if ($trainingInstance->office_id !== auth()->user()->office_id) {
             abort(403, 'Unauthorized');
         }
 
@@ -269,10 +377,10 @@ class TrainingController extends Controller
 public function uploadCertificate(Request $req, $trainingId, $attendeeId) {
     $req->validate(['certificate' => 'required|image|max:2048']);
 
-    $training = Training::findOrFail($trainingId);
+    $trainingInstance = TrainingInstance::findOrFail($trainingId);
 
     // Get attendee from pivot relationship
-    $attendee = $training->attendees()->where('person_info_id', $attendeeId)->first();
+    $attendee = $trainingInstance->attendees()->where('person_info_id', $attendeeId)->first();
 
     if (!$attendee) {
         return response()->json(['message' => 'Attendee not found'], 404);
@@ -291,7 +399,7 @@ public function uploadCertificate(Request $req, $trainingId, $attendeeId) {
     $path = $req->file('certificate')->storeAs('certificates', $fileName, 'private');
 
     // Update pivot table
-    $training->attendees()->updateExistingPivot($attendeeId, [
+    $trainingInstance->attendees()->updateExistingPivot($attendeeId, [
         'certificate_path' => $path,
     ]);
 
@@ -299,8 +407,8 @@ public function uploadCertificate(Request $req, $trainingId, $attendeeId) {
 }
 
     public function deleteCertificate($trainingId, $attendeeId) {
-        $training = Training::findOrFail($trainingId);
-        $attendee = $training->attendees()->findOrFail($attendeeId);
+        $trainingInstance = TrainingInstance::findOrFail($trainingId);
+        $attendee = $trainingInstance->attendees()->findOrFail($attendeeId);
         $path = $attendee->pivot->certificate_path;
 
         if (!$path || !Storage::disk('private')->exists($path)) {
@@ -308,11 +416,38 @@ public function uploadCertificate(Request $req, $trainingId, $attendeeId) {
         }
 
         Storage::disk('private')->delete($path);
-        $training->attendees()->updateExistingPivot($attendeeId, [
+        $trainingInstance->attendees()->updateExistingPivot($attendeeId, [
             'certificate_path' => null,
         ]);
 
         return response()->json(['message' => 'Certificate deleted successfully']);
     }
 
+    public function suggestTitles(Request $request) {
+        $query = $request->query('q');
+
+        $titles = Training::where('training_title', 'like', "%{$query}%")
+            ->pluck('training_title')
+            ->take(10); // limit to top 10 suggestions
+
+        return response()->json($titles);
+    }
+
+    public function getTrainingTypes()
+    {
+        // Get enum values from the `learning_description_type` column
+        $typeValues = DB::select("SHOW COLUMNS FROM trainings WHERE Field = 'learning_description_type'");
+        preg_match("/^enum\((.*)\)$/", $typeValues[0]->Type, $matches);
+
+        $types = [];
+        foreach (explode(',', $matches[1]) as $value) {
+            $v = trim($value, "'");
+            $types[] = [
+                'label' => ucfirst($v),
+                'value' => $v
+            ];
+        }
+
+        return response()->json($types);
+    }
 }

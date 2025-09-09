@@ -7,15 +7,19 @@
     class="!w-full md:!w-80 lg:!w-[30rem]"
     @hide="emit('close')"
   >
-    <template #header>
-      <div class = "flex items-start mb-1">
-        <div class="border border-gray-300 px-4 py-1 mr-2 bg-white rounded-t-md shadow-sm flex items-center justify-between">
-          <span class="text-xl font-semibold text-center">{{ trainingName }}</span>   
-        </div>
-        <Button icon="pi pi-times" @click="isVisible = false" text />
+  <template #header>
+    <div class="flex justify-between items-center w-full mb-1">
+      <div class="text-xl font-semibold text-gray-800">
+        {{ trainingName }}
       </div>
-    </template>
-
+      <Button 
+        icon="pi pi-times" 
+        @click="isVisible = false" 
+        text 
+        class="ml-auto" 
+      />
+    </div>
+  </template>
     <div class="flex justify-between items-start mb-1 border p-4">
       <div class="text-2xl font-bold text-gray-800">
         Attendees     
@@ -23,7 +27,7 @@
           <h3 class="text-lg font-bold mt-4">Gender Summary</h3>
           <ul class="grid grid-cols-3 md:grid-cols-2  lg:grid-cols-3 gap-y-1 ml-2 text-sm text-gray-700 text-left">
             <li v-for="gender in allGenders" :key="gender">
-              {{ capitalize(gender) }}: {{ genderSummary[gender] ?? 0 }}
+              {{ capitalizeFirstLetter(gender) }}: {{ genderSummary[gender] ?? 0 }}
             </li>
             <li>
               Total: {{ totalAttendees }}
@@ -45,7 +49,7 @@
         icon="pi pi-trash"
         label="Remove All" 
         severity="danger"
-        @click="removeAllAttendees"
+        @click="handleDeleteAllAttendees($event)"
         class="max-h-[50px] h-full max-w-[150px] w-full"
       />
     </div>
@@ -85,7 +89,7 @@
                 <Button
                   icon="pi pi-trash"
                   severity="danger"
-                  @click="removeAttendee(attendee.id)"
+                  @click="handleAttendeeDelete($event, attendee.id)"
                   size="small"
                   label="Remove"
                   class="max-h-[30px] text-xs"
@@ -95,14 +99,19 @@
       </ul>
     </div>
     <div v-else-if="attendees.length === 0">
-      <span class="text-left text-sm font-semibold text-gray-800 text-gray-500 border rounded flex justify-between  items-center pl-3 !bg-violet-100 hover:bg-gray-100 p-3"><strong>No attendees.</strong></span>
+      <span class="text-center text-sm font-semibold text-gray-600 border rounded bg-violet-100 hover:bg-gray-100 p-3 w-full block">
+        <strong>No attendees found.</strong>
+      </span>
     </div>
-    <div v-if="searchQuery">
-      <span class="text-left text-sm font-semibold text-gray-800 text-gray-500 border rounded flex justify-between  items-center pl-3 !bg-violet-100 hover:bg-gray-100 p-3"><strong>No matching attendees found.</strong></span>
-    </div>
+    <div v-if="searchQuery && filteredAttendees.length === 0">
+      <span class="text-center text-sm font-semibold text-gray-600 border rounded bg-violet-100 hover:bg-gray-100 p-3 w-full block">
+        <strong>No matching attendees found.</strong>
+      </span>
+  </div>
 
 
     <AddAttendeesDialog
+      :closeOnEscape="true"
       :visible="addDialogVisible"
       :training-id="trainingId"
       :already-added-ids="attendees.map(a => a.id)"
@@ -130,6 +139,7 @@ import Button from 'primevue/button';
 import AddAttendeesDialog from './AddAttendeesDialog.vue';
 import InputText from 'primevue/inputtext';
 import ViewAddCertificateDialog from './ViewAddCertificateDialog.vue';
+import { useCommonUtils } from '@/composables/commonutils';
 
 const searchQuery = ref('');
 const props = defineProps({
@@ -146,13 +156,13 @@ const allPersonInfos = ref([])           // All persons (from API)
 const totalAttendees = computed(() => attendees.value.length);
 const certDialogVisible = ref(false);
 const selectedAttendee = ref(null);
+const { confirmDelete, capitalizeFirstLetter } = useCommonUtils();
 
 // Fetch personInfos once (you can also move this to a shared composable)
 const fetchPersonInfos = async () => {
   try {
     const res = await axios.get('/api/personinfos');
     allPersonInfos.value = Array.isArray(res.data) ? res.data : res.data.data;
-    console.log("All Person Infos:", allPersonInfos.value);
   } catch (err) {
     console.error('Error fetching person infos', err);
   }
@@ -162,7 +172,6 @@ const fetchAttendees = async () => {
   try {
     const res = await axios.get(`/api/trainings/${props.trainingId}/attendees`);
     attendees.value = Array.isArray(res.data) ? res.data : res.data.data;
-    console.log("Attendees:", attendees.value);
   } catch (err) {
     console.error('Error fetching attendees', err);
   }
@@ -199,15 +208,11 @@ const genderSummary = computed(() => {
   return summary;
 });
 
-// Capitalize helper
-const capitalize = str =>
-  str.charAt(0).toUpperCase() + str.slice(1)
-
 // Call it when component loads
 
 const fetchTrainingName = async () => {
   try {
-  const res = await axios.get(`/api/trainings/${props.trainingId}/training_title`);
+  const res = await axios.get(`/api/traininginstances/${props.trainingId}/trainingtitle`);
   trainingName.value = res.data.training_title;
   } catch (err) {
     console.error('Failed to fetch training name', err);
@@ -216,9 +221,9 @@ const fetchTrainingName = async () => {
 };
 
 const removeAttendee = async (personInfoId) => {
-  const confirmed = window.confirm('Are you sure you want to remove this attendee?');
+  /* const confirmed = window.confirm('Are you sure you want to remove this attendee?');
   if (!confirmed) return;
-
+ */
   try {
     await axios.delete(`/api/trainings/${props.trainingId}/attendees/${personInfoId}`);
     attendees.value = attendees.value.filter(a => a.id !== personInfoId);
@@ -230,9 +235,7 @@ const removeAttendee = async (personInfoId) => {
 
 const removeAllAttendees = async () => {
   if (!attendees.value.length) return;
-
-  const confirmRemove = window.confirm('Are you sure you want to remove all attendees?');
-  if (!confirmRemove) return;
+  if (!confirmDelete) return;
 
   try {
     // Backend must support bulk delete
@@ -243,6 +246,21 @@ const removeAllAttendees = async () => {
   }
 };
 
+const handleDeleteAllAttendees = (event) => {
+  confirmDelete(event, removeAllAttendees, {
+    message: 'Remove all attendees?',
+    acceptLabel: 'Delete',
+    rejectLabel: 'Cancel'
+  });
+};
+
+const handleAttendeeDelete = (event, id) => {
+  confirmDelete(event, id, removeAttendee, {
+    message: 'Delete this attendee?',
+    acceptLabel: 'Delete',
+    rejectLabel: 'Cancel'
+  });
+};
 const filteredAttendees = computed(() => {
   if (!searchQuery.value) return attendees.value;
 
@@ -264,10 +282,7 @@ onMounted(() => {
     fetchAttendees();
     fetchPersonInfos();
   }
-  console.log("All person infos:", allPersonInfos.value);
-  console.log("Attendees list:", attendees.value);
-  console.log("All Genders:", allGenders.value);
-  console.log("Gender Summary:", genderSummary.value);
+
 })
 
 watch(() => props.visible, async (val) => {
@@ -291,9 +306,10 @@ watch(isVisible, (val) => {
 
 function onKeyDown(e) {
   if (e.key === 'Escape') {
-    if (certDialogVisible.value) {
+    if (certDialogVisible.value || addDialogVisible.value) {
       // Close the certificate dialog only
       certDialogVisible.value = false;
+      addDialogVisible.value = false;
       isVisible.value = true;
 
       // Prevent drawer from detecting Escape
@@ -316,26 +332,4 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKeyDown, true);
 });
 
-/* function onDrawerHide() {
-  if (certDialogVisible.value) {
-    // Re-open the drawer because a nested dialog is open
-    
-  } else {
-    // Close normally
-    emit('close');
-  }
-} */
-
-/* // Compute gender counts dynamically
-const genderSummary = computed(() => {
-  const summary = {};
-
-  attendees.value.forEach(att => {
-    const gender = att.gender?.toLowerCase() || 'unknown';
-
-    summary[gender] = (summary[gender] || 0) + 1;
-  });
-
-  return summary;
-}); */
 </script>

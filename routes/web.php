@@ -93,7 +93,6 @@ Route::middleware('auth')->group(function () {
     //Training
     Route::get('/trainings/{any?}', function () {
         return view('trainings');
-        Route::view('/trainings/{any}', 'trainings')->where('any', '.*');
     })->where('any', '.*')->name('trainings')->can('viewAny', Training::class);
 
     // Users
@@ -153,7 +152,7 @@ Route::middleware('auth')->group(function () {
         return view('maintenance.offices');
         Route::view('/maintenance/offices/{any}', 'maintenance.offices')->where('any', '.*');
     })->where('any', '.*')->name('maintenance.offices')->can('viewAny', Office::class);
-
+    
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

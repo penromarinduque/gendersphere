@@ -712,6 +712,7 @@ app.use(router)
 .use(ToastService)
 .use(ConfirmationService)
 
+app.component('ConfirmPopup', ConfirmPopup);
 app.component('App', App);
 app.mount('#app');
 

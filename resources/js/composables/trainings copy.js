@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+// import axios from 'axios'
 import axios from '../utils/axios'
 import { useRouter } from 'vue-router'
 import { createToaster } from '@meforma/vue-toaster'
@@ -9,16 +10,10 @@ export default function useTrainings() {
     const loading = ref(false);
     const trainingTypeFilter = ref('');
     const summary = ref({});
-    const trainingTypes = ref([]);
+
     const errors = ref('');
     const router = useRouter();
-    const yearOptions = ref([]);
-    const trainingTitleOptions = ref([]);
-    const employeeOptions = ref([]);
-    const trainingNatureOptions = ref([
-    { label: 'Attended', value: 'attended' },
-    { label: 'Conducted', value: 'conducted' }
-    ]);
+
     const toaster = createToaster({ 
         position: "top"
         // max:
@@ -40,81 +35,76 @@ export default function useTrainings() {
     }
     };
 
-        
-    const getTraining = async (id) => {
-        try {
-            const response = await axios.get(`/api/trainings/instance/${id}`);
+ const getTraining = async (id) => {
+    let response = await axios.get(`/api/trainings/${id}`);
+    const data = response.data.data;
+
+    // Force is_gad_related to be a real boolean
+    data.is_gad_related = Boolean(data.is_gad_related);
+
+    console.log(data);
+    training.value = data;
+}
+
+const storeTraining = async (data) => {
+  loading.value = true
+  errors.value = ''
+
+  try {
+    const payload = {
+        training_title: form.training_title.trim(),
+        learning_description_type: form.learning_description_type,
+        training_nature: form.training_nature,
+        gad_related: form.is_gad_related ? 'Yes' : 'No',  // Convert Boolean to Laravel expected format
+        training_start: form.training_start,
+        training_end: form.training_end,
+        duration_hours: Number(form.duration_hours),
+        sponsor_facilitator: form.sponsor_facilitator.trim(),
+        office_id: form.office_id
+};
 
 
-            const data = response.data.data || response.data.training || response.data;
+    await axios.post('/api/trainings', payload)
+    await router.push({ name: 'trainings.index' })
+    toaster.success(`Successfully Saved!`)
+  } catch (e) {
+    if (e.response?.status === 422) {
+      errors.value = e.response.data.errors
+    }
+    throw e
+  } finally {
+    loading.value = false
+  }
+}
 
-            if (!data) {
-                console.warn('[getTraining] No usable data found in response');
-                return null;
-            }
 
-            // Merge `training_instance` if present
-            const merged = {
-                ...data,
-                ...(data.training_instance || {})
-            };
-
-            training.value = merged;
-            return merged;
-
-        } catch (error) {
-            console.error('[getTraining] Error:', error);
-            training.value = null;
-            return null;
-        }
-    };
-
-    const storeTraining = async (data) => {
+const updateTraining = async (id) => {
     loading.value = true
     errors.value = ''
 
     try {
-        await axios.post('/api/trainings', data, {
-        headers: {
-            'Content-Type': 'application/json'
+        const payload = {
+            ...training.value,
+            is_gad_related: training.value.is_gad_related ? 1 : 0 // Ensure it's 1 or 0
         }
-        })
 
+        await axios.patch(`/api/trainings/${id}`, payload)
         await router.push({ name: 'trainings.index' })
-        toaster.success(`Successfully Saved!`)
+        toaster.success(`Successfully Updated!`)
     } catch (e) {
+        console.log(e)
         if (e.response?.status === 422) {
-        errors.value = e.response.data.errors
+            errors.value = e.response.data.errors
         }
-        throw e
     } finally {
         loading.value = false
     }
-    }
-
-    const updateTraining = async (id, payload) => {
-        loading.value = true
-        errors.value = {}
-
-        try {
-            await axios.post(`/api/trainings/${id}/update`, payload)
-            //await router.push({ name: 'trainings.index' })
-            toaster.success(`Successfully Saved!`)
-            // or POST if using POST route
-        } catch (error) {
-            if (error.response?.status === 422) {
-                errors.value = error.response.data.errors
-            }
-        } finally {
-            loading.value = false
-        }
-    }
-
+}
 
     const destroyTraining = async (id) => {
         loading.value = true;
         try {
-            await axios.delete(`/api/traininginstances/${id}`)
+            await axios.delete(`/api/trainings/${id}`)
             toaster.info(`Deleted!`);
             loading.value = false;
         } catch (e) {
@@ -154,31 +144,20 @@ export default function useTrainings() {
     function formatDateToYYYYMMDD(date) {
         const d = new Date(date)
         const formatted = d.toISOString().split('T')[0];
+        console.log('Formatted:', formatted);       // "2025-08-18"
+        console.log('Type:', typeof d);       // "object"
+        console.log('Still a Date?', d instanceof Date); 
         return formatted
     }
-
-    const loadTrainingTypeOptions = async () => {
-        try {
-            const res = await axios.get('/api/trainings/trainingtypes');
-            trainingTypes.value = res.data;
-        } catch (err) {
-            console.error("Failed to load training types", err);
-        }
-    };
 
     return {
         errors,
         training,
         trainings,
-        trainingTypes,
         trainingTypeFilter,
         loading,
         summary,
-        trainingNatureOptions,
-        trainingTypes,
-        trainingTitleOptions,
-        yearOptions,
-        employeeOptions,
+//      employees,
         getTrainings,
         getTraining,
         storeTraining,
@@ -188,6 +167,5 @@ export default function useTrainings() {
         calculateHours,
         msToHours,
         formatDateToYYYYMMDD,
-        loadTrainingTypeOptions,
     }
 }

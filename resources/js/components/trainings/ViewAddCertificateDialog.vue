@@ -41,7 +41,7 @@
               label="Delete Certificate"
               severity="danger"
               class="w-full md:w-auto"
-              @click="deleteCertificate"
+              @click="handleCertificateDelete($event, attendeeId)"
             />
           </div>
         </template>
@@ -103,7 +103,9 @@ import { ref, watch } from 'vue';
 import Dialog from 'primevue/dialog';
 import Button from 'primevue/button';
 import axios from 'axios';
+import { useCommonUtils } from '@/composables/commonutils';
 
+const { confirmDelete } = useCommonUtils();
 const props = defineProps({
   visible: Boolean,
   trainingId: Number,
@@ -189,7 +191,16 @@ const deleteCertificate = async () => {
     console.error('Delete failed:', err);
   }
 };
+
+const handleCertificateDelete = (event, id) => {
+  confirmDelete(event, id, deleteCertificate, {
+    message: 'Delete this certificate?',
+    acceptLabel: 'Delete',
+    rejectLabel: 'Cancel'
+  });
+};
 </script>
+
 
 <style scoped>
 img {
