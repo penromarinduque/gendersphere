@@ -18,6 +18,7 @@ use App\Models\Office;
 use App\Models\PermitType;
 use App\Models\PersonInfo;
 use App\Models\PlanBudget;
+use App\Models\Signatory;
 use App\Models\Training;
 use Illuminate\Support\Facades\Route;
 
@@ -152,7 +153,13 @@ Route::middleware('auth')->group(function () {
         return view('maintenance.offices');
         Route::view('/maintenance/offices/{any}', 'maintenance.offices')->where('any', '.*');
     })->where('any', '.*')->name('maintenance.offices')->can('viewAny', Office::class);
-    
+
+    // Maintenance - Signatories
+    Route::get('/maintenance/signatories/{any?}', function () {
+        return view('maintenance.signatories');
+        Route::view('/maintenance/signatories/{any}', 'maintenance.signatories')->where('any', '.*');
+    })->where('any', '.*')->name('maintenance.signatories')->can('viewAny', Signatory::class);
+
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -161,7 +168,9 @@ Route::middleware('auth')->group(function () {
     // Reports
     Route::group(['prefix'=>'report', 'as' => 'report.'], function(){
         Route::get('/employees/{employment_type?}', [ReportController::class, 'employees'])->name('employees');
+        Route::get('/gadbudgetbudgetexpenses', [ReportController::class, 'gadBudgetBudgetExpenses'])->name('gadbudgetbudgetexpenses');
         Route::get('/gadplanbudgets', [ReportController::class, 'gadPlanBudgets'])->name('gadplanbudgets');
+        Route::get('/gadplanbudgets/print', [ReportController::class, 'printGadPlanBudgets'])->name('printgadplanbudgets');
         Route::get('/sexaggregated', [ReportController::class, 'sexAggregated'])->name('sexaggregated');
         Route::get('/sexaggregated-print', [ReportController::class, 'sexAggregatedPrint'])->name('sexaggregated-print');
         Route::get('/getpermittypes/{frontlineservicetype_id?}', [ReportController::class, 'getPermitTypes'])->name('getpermittypes');

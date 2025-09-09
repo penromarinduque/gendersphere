@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('goal_id');
             $table->integer('gender_issue_id');
             $table->integer('cause_gender_issue_id')->default(0);
+            $table->integer('objective_id')->nullable();
             $table->text('relevant_org');
             $table->timestamps();
         });

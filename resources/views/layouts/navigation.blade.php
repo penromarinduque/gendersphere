@@ -180,6 +180,11 @@
                                             {{ __('Permit Types') }}
                                         </x-dropdown-link>
                                     @endcan
+                                    {{-- @can('viewAny', App\Models\PermitType::class) --}}
+                                        <x-dropdown-link :href="route('maintenance.signatories')">
+                                            {{ __('Signatories') }}
+                                        </x-dropdown-link>
+                                    {{-- @endcan --}}
                                 </x-slot>
                             </x-dropdown>
                         </div>

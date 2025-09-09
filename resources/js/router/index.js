@@ -63,6 +63,9 @@ import TrainingsIndex from "../components/trainings/TrainingsIndex.vue";
 import TrainingsCreate from "../components/trainings/TrainingsCreate.vue";
 import TrainingsEdit from "../components/trainings/TrainingsEdit.vue";
 import useAuth from "../composables/auth";
+import PlanBudgetsAttrProgramCreate from "../components/planbudgets/PlanBudgetsAttrProgramCreate.vue";
+import PlanBudgetsAttrProgramEdit from "../components/planbudgets/PlanBudgetsAttrProgramEdit.vue";
+import SignatoryIndex from "../components/signatories/SignatoryIndex.vue";
 
 const routes = [
     // Dashboard
@@ -172,6 +175,23 @@ const routes = [
         component: PlanBudgetsCreate,
         meta: {
             title: 'Add GAD Plan and Budget'
+        }
+    },
+    {
+        path: '/planbudgets/create-attr-program',
+        name: 'planbudgets.createAttrProgram',
+        component: PlanBudgetsAttrProgramCreate,
+        meta: {
+            title: 'Add GAD Plan and Budget Attributed Program'
+        }
+    },
+    {
+        path: '/planbudgets/:id/update-attr-program',
+        name: 'planbudgets.updateAttrProgram',
+        component: PlanBudgetsAttrProgramEdit,
+        props: true,
+        meta: {
+            title: 'Update GAD Plan and Budget Attributed Program'
         }
     },
     {
@@ -638,7 +658,17 @@ const routes = [
         meta: {
             title: 'Unauthorized'
         }
-     }
+     },
+
+    //  Signatories
+    {
+        path: '/maintenance/signatories',
+        name: 'signatories.index',
+        component: SignatoryIndex,
+        meta: {
+            title: 'Signatories'
+        }
+    },
 
 ];
 

@@ -1,7 +1,7 @@
 <template>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-4">
         <div>
-            <h3 class="text-lg"><b>Add New Plan and Budget</b></h3>
+            <h3 class="text-lg"><b>Add New Attributed Program</b></h3>
         </div>
         <div class="flex mb-4 place-content-end">
             <button class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
@@ -12,8 +12,8 @@
     </div>
     <hr>
     <div class="py-4 px-4 mb-5 rounded-md shadow-md">
-        <form class="space-y-6" @submit.prevent="savePlanBudget" autocomplete="off">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-5 gap-4">
+        <form class="space-y-6" @submit.prevent="saveAttributedProgram" autocomplete="off">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div class="pb-1">
                     <label for="year" class="block text-md font-medium text-gray-700">Year Covered <span class="text-red-500">*</span></label>
                     <div class="mt-1">
@@ -30,64 +30,35 @@
                         <select name="focus" id="focus" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="form.focus">
                             <option value="">-Select Focus-</option>
-                            <option value="client">Client Focus</option>
-                            <option value="organizational">Organizational Focus</option>
+                            <option value="attributed program" selected>Attributed Program</option>
                         </select>
                         <span class="text-sm text-red-600" v-if="errors?.focus">{{ errors.focus[0] }}</span>
                     </div>
                 </div>
-                <div class="pb-1 col-span-3" >
-                    <label for="goal_id" class="block text-md font-medium text-gray-700">Goal <span class="text-red-500">*</span></label>
-                    <div class="mt-1">
-                        <select name="goal_id" id="goal_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        v-model="form.goal_id">
-                            <option value="">-Select Goal-</option>
-                            <option v-for="item in goals" :key="item.id" :value="item.id">{{ item.goal_no+') '+item.gad_goal }}</option>
-                        </select>
-                        <span class="text-sm text-red-600" v-if="errors?.goal_id">{{ errors.goal_id[0] }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
-                <div class="pb-1 col-span-3">
-                    <label for="gender_issue_id" class="block text-md font-medium text-gray-700">Gender Issue/GAD Mandate <span class="text-red-500">*</span></label>
-                    <div class="mt-1">
-                        <select name="gender_issue_id" id="gender_issue_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        v-model="form.gender_issue_id">
-                            <option value="">-Select Gender Issue/GAD Mandate-</option>
-                            <option v-for="item in genderissuesbyyear" :key="item.id" :value="item.id">{{ item.gender_issue_mandate }}</option>
-                        </select>
-                        <span class="text-sm text-red-600" v-if="errors?.gender_issue_id">{{ errors.gender_issue_id[0] }}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
                 <div class="pb-1">
-                    <label for="cause_gender_issue_id" class="block text-md font-medium text-gray-700">Cause of Gender Issue</label>
+                    <label for="program_name" class="block text-md font-medium text-gray-700">Program Name <span class="text-red-500">*</span></label>
                     <div class="mt-1">
-                        <select name="cause_gender_issue_id" id="cause_gender_issue_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        v-model="form.cause_gender_issue_id">
-                            <option value="">-Select Cause of Gender Issue-</option>
-                            <option v-for="item in causegenderissues" :key="item.id" :value="item.id">{{ item.cause }}</option>
-                        </select>
-                        <span class="text-sm text-red-600" v-if="errors?.cause_gender_issue_id">{{ errors.cause_gender_issue_id[0] }}</span>
+                        <input type="text" name="program_name" id="program_name" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                v-model="form.program_name">
+                        <span class="text-sm text-red-600" v-if="errors?.program_name">{{ errors.program_name[0] }}</span>
                     </div>
                 </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
                 <div class="pb-1">
-                    <label for="objective_id" class="block text-md font-medium text-gray-700">GAD Result Statement/ GAD Objective <span class="text-red-500">*</span></label>
+                    <label for="budget" class="block text-md font-medium text-gray-700">Budget <span class="text-red-500">*</span></label>
                     <div class="mt-1">
-                        <select name="objective_id" id="objective_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        v-model="form.objective_id">
-                            <option value="">-Select GAD Result Statement/ GAD Objective-</option>
-                            <option v-for="item in objectives" :key="item.id" :value="item.id">{{ item.gad_objective }}</option>
-                        </select>
-                        <span class="text-sm text-red-600" v-if="errors?.objective_id">{{ errors.objective_id[0] }}</span>
+                        <input type="text" name="budget" id="budget" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                v-model="form.budget">
+                        <span class="text-sm text-red-600" v-if="errors?.budget">{{ errors.budget[0] }}</span>
                     </div>
                 </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
+                <div class="pb-1">
+                    <label for="percentage" class="block text-md font-medium text-gray-700">Percentage <span class="text-red-500">*</span></label>
+                    <div class="mt-1">
+                        <input type="number" step="0.01" name="percentage" id="percentage" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                v-model="form.percentage">
+                        <span class="text-sm text-red-600" v-if="errors?.percentage">{{ errors.percentage[0] }}</span>
+                    </div>
+                </div>
                 <div class="pb-1">
                     <label for="relevant_org" class="block text-md font-medium text-gray-700">Relevant Organization MFO/PAP or PPA <span class="text-red-500">*</span></label>
                     <div class="mt-1">
@@ -96,6 +67,10 @@
                         <span class="text-sm text-red-600" v-if="errors?.relevant_org">{{ errors.relevant_org[0] }}</span>
                     </div>
                 </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-4">
+                
+                
             </div>
             <div class="float-right py-4">
                 <div class="pb-1">
@@ -129,7 +104,7 @@ const form = reactive({
     relevant_org: '',
 })
 
-const { errors, yearlist, loading, getYearlist, storePlanBudget } = usePlanBudgets()
+const { errors, yearlist, loading, getYearlist, storePlanBudget, storeAttributedProgram } = usePlanBudgets()
 const { goals, getGoals } = useGoals()
 const { genderissuesbyyear, getGenderIssuesByYear } = useGenderIssues()
 const { causegenderissues, getCauseGenderIssues } = useCauseGenderIssues()
@@ -151,8 +126,8 @@ onMounted(async()=>{
     })
 })
 
-const savePlanBudget  = async () => {
-    await storePlanBudget({ ...form })
+const saveAttributedProgram = async () => {
+    await storeAttributedProgram({ ...form })
 }
 
 const getGenderIssues = async (event) => {

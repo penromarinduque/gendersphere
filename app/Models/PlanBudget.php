@@ -11,7 +11,7 @@ class PlanBudget extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['year', 'focus', 'goal_id', 'gender_issue_id', 'cause_gender_issue_id', 'objective_id', 'relevant_org'];
+    protected $guarded = [];
 
     public function gad_activities()
     {

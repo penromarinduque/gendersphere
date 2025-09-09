@@ -30,4 +30,10 @@ class PersonInfo extends Model implements Auditable
             ->withPivot('certificate_path')
             ->withTimestamps();
     }
+    
+    public function getFullNameAttribute()
+    {
+       return $this->firstname . ' ' . substr($this->middlename, 0, 1) . '. ' . ' ' . $this->lastname  . $this->extname;
+
+    }
 }
