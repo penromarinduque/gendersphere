@@ -32,7 +32,8 @@
                     <div class="mt-1">
                         <input type="date" name="trainingstart" id="trainingstart" 
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="form.training_start">
+                                v-model="form.training_start"
+                                @input="lastModifiedField = 'training_start'">
                         <span class="text-sm text-red-600" v-if="localErrors.training_start">{{ localErrors.training_start }}</span>
                     </div>
                 </div>
@@ -41,7 +42,8 @@
                     <div class="mt-1">
                         <input type="date" name="trainingend" id="trainingend" 
                                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="form.training_end">
+                                v-model="form.training_end"
+                                @input="lastModifiedField = 'training_end'">
                         <span class="text-sm text-red-600" v-if="localErrors.training_end">{{ localErrors.training_end }}</span>
                     </div>
                 </div>
@@ -62,6 +64,7 @@
                         id="trainingtype"
                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                         v-model="form.learning_description_type">
+                        <option value="" disabled selected>-Select Training Type-</option> 
                         <option v-for="type in trainingTypes" :key="type.value" :value="type.value">
                           {{ type.label }}
                         </option>
@@ -87,7 +90,7 @@
                    <span class="text-sm text-red-600" v-if="localErrors.training_nature">{{ localErrors.training_nature }}</span>
             </div>
             <div class="pb-1">
-              <label for="isgadrelated" class="block text-md font-medium text-gray-700">GAD Related</label>
+              <label for="isgadrelated" class="block text-md font-medium text-gray-700">GAD Related<span class="text-red-500">*</span></label>
               <select id="isgadrelated" name="isgadrelated"
                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 v-model="form.is_gad_related">
@@ -132,6 +135,7 @@ import useTrainings from "../../composables/trainings"
 import useUsers from "../../composables/users";
 
 // 2. Composable with storeTraining method
+
 const { errors, toaster, suggestions, storeTraining, loading, trainingTypes, loadTrainingTypeOptions, calculateHours, msToHours, formatDateToYYYYMMDD } = useTrainings();
 const { authUser, getAuthenticatedUser } = useUsers();
 // 1. Reactive form object
@@ -141,7 +145,7 @@ const form = reactive({
   training_end: formatDateToYYYYMMDD(new Date()),
   learning_description_type: '',
   training_nature: '',
-  is_gad_related: false,
+  is_gad_related: '',
   sponsor_facilitator: '',
   office_id: '',
   duration_hours: ''
@@ -158,7 +162,8 @@ const localErrors = reactive({
   is_gad_related: '',
 })
 
-const manilaOffsetMinutes = 8 * 60 // +8 hours
+const lastModifiedField = ref('');
+const fieldsToWatch = Object.keys(localErrors);
 
 const validateForm = () => {
   let valid = true;
@@ -234,50 +239,58 @@ onMounted(async () => {
     }
 });
 
-watch(() => [form.training_start, form.training_end],
-  ([start, end]) => {
-    if (start && end) {
-      const startDate = new Date(start)
-      const endDate = new Date(end)
+fieldsToWatch.forEach((field) => {
+  watch(() => form[field], (val) => {
+    if (val !== '' && localErrors[field]) {
+      localErrors[field] = '';
+    }
+  });
+});
 
-      if (!isNaN(startDate) && !isNaN(endDate) && endDate >= startDate) {
-        const msDifference = endDate - startDate
-        const hours = calculateHours(msToHours(msDifference)); 
-        
-        // Set duration_hours to 2 decimal places
-        form.duration_hours = hours // Format to 2 decimal places
-      } 
-      
-      else {
-        form.duration_hours = ''
+// Detect which field was last modified
+watch(() => form.training_start, () => {
+  lastModifiedField.value = 'training_start';
+}, { flush: 'sync' });
+
+watch(() => form.training_end, () => {
+  lastModifiedField.value = 'training_end';
+}, { flush: 'sync' });
+
+// Core logic: validate and compute duration
+watch(
+  () => [form.training_start, form.training_end],
+  ([start, end]) => {
+    const startDate = new Date(start);
+    const endDate = new Date(end);
+    const isValid = (date) => date instanceof Date && !isNaN(date);
+
+    // Reset duration
+    form.duration_hours = '';
+
+    // Skip logic if either date is invalid
+    if (!isValid(startDate) || !isValid(endDate)) return;
+
+    // Clear previous errors
+    localErrors.training_start = '';
+    localErrors.training_end = '';
+
+    if (startDate <= endDate) {
+      // Valid date range, calculate hours
+      const msDifference = endDate - startDate;
+      const hours = calculateHours(msToHours(msDifference));
+      form.duration_hours = parseFloat(hours.toFixed(2));
+    } else {
+      // Invalid date range, show error only on the last changed field
+      if (lastModifiedField.value === 'training_start') {
+        localErrors.training_start = 'Start date cannot be after end date.';
+      } else {
+        localErrors.training_end = 'End date cannot be before start date.';
       }
-    } 
-    else {
-      form.duration_hours = ''
     }
   },
   { immediate: true }
-)
+);
 
-/* const validateForm = () => {
-  let valid = true
-
-  // Clear previous errors
-  Object.keys(localErrors).forEach(key => (localErrors[key] = ''))
-
- if (new Date(form.training_end) < new Date(form.training_start)) {
-    localErrors.training_end = 'End date cannot be before start date'
-    valid = false
-  }
-
-  if (!form.learning_description_type) {
-    localErrors.learning_description_type = 'Learning Description Type is required'
-    valid = false
-  }
-
-  return valid
-} */
-// 4. Save the form
 
 const saveTraining = async () => {
 
