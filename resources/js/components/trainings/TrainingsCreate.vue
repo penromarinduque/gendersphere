@@ -129,11 +129,11 @@ import Button from "primevue/button";
 import { reactive, onMounted, watch, ref} from 'vue'
 import axios from 'axios'
 import useTrainings from "../../composables/trainings"
+import useUsers from "../../composables/users";
 
 // 2. Composable with storeTraining method
-const { errors, storeTraining, loading, trainingTypes, loadTrainingTypeOptions, calculateHours, msToHours, formatDateToYYYYMMDD } = useTrainings();
-const suggestions = ref([]);
-
+const { errors, toaster, suggestions, storeTraining, loading, trainingTypes, loadTrainingTypeOptions, calculateHours, msToHours, formatDateToYYYYMMDD } = useTrainings();
+const { authUser, getAuthenticatedUser } = useUsers();
 // 1. Reactive form object
 const form = reactive({
   training_title: '',
@@ -142,12 +142,10 @@ const form = reactive({
   learning_description_type: '',
   training_nature: '',
   is_gad_related: false,
-  sponsor_facilitator: '',     // Move this here
+  sponsor_facilitator: '',
   office_id: '',
-  duration_hours: ''           // Move this here
+  duration_hours: ''
 })
-
-
 
 const localErrors = reactive({
   training_title: '',
@@ -229,8 +227,12 @@ const validateForm = () => {
 
 // 3. On component mount, get the authenticated user
 onMounted(async () => {
-    loadTrainingTypeOptions();
-})
+    await loadTrainingTypeOptions();
+    await getAuthenticatedUser();
+    if (authUser.value) {
+        form.office_id = authUser.value.office_id || '';
+    }
+});
 
 watch(() => [form.training_start, form.training_end],
   ([start, end]) => {
@@ -308,12 +310,24 @@ const saveTraining = async () => {
   } catch (error) {
     if (error.response?.status === 422) {
       const serverErrors = error.response.data.errors;
+      const serverMessage = error.response.data.message;
 
-      // Laravel-style error mapping from nested keys like training_instance.duration_hours
+      // Laravel-style error mapping
       Object.entries(serverErrors).forEach(([key, messages]) => {
-        const flatKey = key.includes('training_instance.') ? key.replace('training_instance.', '') : key;
-        localErrors[flatKey] = messages[0];  // show only the first error per field
+        const flatKey = key.includes('training_instance.')
+          ? key.replace('training_instance.', '')
+          : key;
+        localErrors[flatKey] = messages[0]; // show only the first error
       });
+
+      // Show server message as a toaster (e.g., "Duplicate training found.")
+      if (serverMessage) {
+        toaster.error(serverMessage);
+      } else {
+        toaster.error("Validation failed. Please check the fields.");
+      }
+    } else {
+      toaster.error("An unexpected error occurred. Please try again later.");
     }
   }
 };

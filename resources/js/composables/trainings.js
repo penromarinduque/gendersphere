@@ -15,6 +15,7 @@ export default function useTrainings() {
     const yearOptions = ref([]);
     const trainingTitleOptions = ref([]);
     const employeeOptions = ref([]);
+    const suggestions = ref([]);
     const trainingNatureOptions = ref([
     { label: 'Attended', value: 'attended' },
     { label: 'Conducted', value: 'conducted' }
@@ -179,6 +180,8 @@ export default function useTrainings() {
         trainingTitleOptions,
         yearOptions,
         employeeOptions,
+        toaster,
+        suggestions,
         getTrainings,
         getTraining,
         storeTraining,

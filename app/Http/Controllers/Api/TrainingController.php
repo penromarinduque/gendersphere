@@ -16,71 +16,60 @@ use Illuminate\Support\Facades\Storage;
 
 class TrainingController extends Controller
 {
-    //Display a listing of the resource.
-public function index(Request $request) {
-    $user = auth()->user();
-    $office_id = $user->office_id;
 
-    $query = TrainingInstance::with(['training', 'attendees']);
+    public function index(Request $request) {
+        $user = auth()->user();
+        $office_id = $user->office_id;  
+        $query = TrainingInstance::with(['training', 'attendees']);
 
-    if (!$user?->is_super_admin) {
-        $query->where('office_id', $office_id);
-    }
+        if (!$user?->is_super_admin) {
+            $query->where('office_id', $office_id);
+        }
 
-    if ($request->filled('year')) {
-        $query->whereYear('training_start', $request->year);
-    }
+        if ($request->filled('year')) {
+            $query->whereYear('training_start', $request->year);
+        }
 
-    if ($request->filled('title')) {
-        $query->whereHas('training', function ($q) use ($request) {
-            $q->where('training_title', 'like', '%' . $request->title . '%');
+        if ($request->filled('title')) {
+            $query->whereHas('training', function ($q) use ($request) {
+                $q->where('training_title', 'like', '%' . $request->title . '%');
+            });
+        }
+
+        if ($request->filled('employee_id')) {
+            $query->whereHas('attendees', function ($q) use ($request) {
+                $q->where('person_info_id', $request->employee_id);
+            });
+        }
+
+        if ($request->filled('training_nature')) {
+            $query->whereHas('training', function ($q) use ($request) {
+                $q->where('training_nature', $request->training_nature);
+            });
+        }
+
+        // ✅ Add this block for training type filtering
+        if ($request->filled('type')) {
+            $query->whereHas('training', function ($q) use ($request) {
+                $q->where('learning_description_type', $request->type);
+            });
+        }
+
+        return $query->paginate(10)->through(function ($instance) {
+            return [
+                'id' => $instance->id,
+                'training_start' => $instance->training_start,
+                'training_end' => $instance->training_end,
+                'duration_hours' => $instance->duration_hours,
+                'training_title' => $instance->training->training_title ?? '',
+                'training_nature' => $instance->training->training_nature ?? '',
+                'learning_description_type' => $instance->training->learning_description_type ?? '',
+                'is_gad_related' => $instance->training->is_gad_related ?? false,
+                'sponsor_facilitator' => $instance->sponsor_facilitator,
+                'attendees' => $instance->attendees,
+            ];
         });
     }
-
-    if ($request->filled('employee_id')) {
-        $query->whereHas('attendees', function ($q) use ($request) {
-            $q->where('person_info_id', $request->employee_id);
-        });
-    }
-
-    if ($request->filled('training_nature')) {
-        $query->whereHas('training', function ($q) use ($request) {
-            $q->where('training_nature', $request->training_nature);
-        });
-    }
-
-    // ✅ Add this block for training type filtering
-    if ($request->filled('type')) {
-        $query->whereHas('training', function ($q) use ($request) {
-            $q->where('learning_description_type', $request->type);
-        });
-    }
-
-    return $query->paginate(10)->through(function ($instance) {
-        return [
-            'id' => $instance->id,
-            'training_start' => $instance->training_start,
-            'training_end' => $instance->training_end,
-            'duration_hours' => $instance->duration_hours,
-            'training_title' => $instance->training->training_title ?? '',
-            'training_nature' => $instance->training->training_nature ?? '',
-            'learning_description_type' => $instance->training->learning_description_type ?? '',
-            'is_gad_related' => $instance->training->is_gad_related ?? false,
-            'sponsor_facilitator' => $instance->sponsor_facilitator,
-            'attendees' => $instance->attendees,
-        ];
-    });
-}
-
-
-
-
-    //Display the specified resource.
-/*     public function show($id)
-    {
-        $training = Training::find($id);
-        return new TrainingResource($training);
-    } */
 
     public function showByInstance($id) {
         $instance = TrainingInstance::with('training')->find($id);

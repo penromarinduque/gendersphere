@@ -6,7 +6,7 @@
         <div class="col-span-1">
             <div class="flex mb-4 place-content-end">                 
                 <router-link :to="{ name: 'trainings.create' }" class="inline-flex items-center mr-2 px-4 py-1 text-s font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
-                    <i class="pi pi-plus mr-2"></i> Create Training
+                    <i class="pi pi-plus mr-2"></i> Add Training
                 </router-link>
             </div>
         </div>
