@@ -22,5 +22,6 @@
             </main>
         </div>
     </body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/printThis/1.15.0/printThis.min.js"></script>
     @yield('script-extra')
 </html>

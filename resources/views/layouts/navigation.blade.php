@@ -104,6 +104,11 @@
                                             {{ __('Sex Dis-Aggregated Data') }}
                                         </x-dropdown-link>
                                     @endcan
+                                    @can('viewCommitteeReport', App\Models\Committee::class)
+                                    <x-dropdown-link :href="route('report.getCommittees', ['office_id' => Auth::user()->office_id])">
+                                        {{ __('Committee List') }}
+                                    </x-dropdown-link>
+                                    @endcan
                                 </x-slot>
                             </x-dropdown>
                         </div>

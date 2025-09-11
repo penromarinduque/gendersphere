@@ -17,6 +17,10 @@ class Committee extends Model implements Auditable
         return $this->belongsTo(PersonInfo::class, 'person_info_id', 'id');
     }
 
+    public function committeePosition() {
+        return $this->belongsTo(CommitteePosition::class, 'committee_position_id', 'id');
+    }
+
     public static function yearlist()
     {
         $years = [];

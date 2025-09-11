@@ -625,4 +625,18 @@ class ReportController extends Controller
             'years' => Committee::yearList()
         ]);
     }
+
+    public function committees(Request $request){
+        $year = $request->has('year') ? $request->year : date('Y');
+        $office_id = auth()->user()->office_id;
+
+        $query = Committee::query()->with(['personInfo', 'committeePosition']);
+        $query->where('office_id', $office_id);
+        $query->whereYear('created_at', $year);
+
+        return view('pages.reports.committee', [
+            'committees' => $query->get(),
+            'years' => Committee::yearList()
+        ]);
+    }
 }

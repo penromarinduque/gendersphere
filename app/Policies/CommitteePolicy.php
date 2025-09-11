@@ -89,4 +89,11 @@ class CommitteePolicy
             return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['Committee']);
         });
     }
+
+    public function viewCommitteeReport(User $user): bool
+    {
+        return $user->roles->contains(function($role) {
+            return $role->role_type == 'encoder' || $role->role_type == 'viewer';
+        });
+    }
 }

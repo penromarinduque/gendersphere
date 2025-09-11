@@ -174,6 +174,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/sexaggregated', [ReportController::class, 'sexAggregated'])->name('sexaggregated');
         Route::get('/sexaggregated-print', [ReportController::class, 'sexAggregatedPrint'])->name('sexaggregated-print');
         Route::get('/getpermittypes/{frontlineservicetype_id?}', [ReportController::class, 'getPermitTypes'])->name('getpermittypes');
+        Route::get('/committees', [ReportController::class, 'committees'])->name('getCommittees');
     });
     
     Route::group(['prefix'=>'error/{any?}', 'as' => 'error.'], function(){

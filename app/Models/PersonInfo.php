@@ -25,6 +25,10 @@ class PersonInfo extends Model implements Auditable
         ];
     }
 
+    public function barangay() {
+        return $this->belongsTo(Barangay::class);
+    }
+
     public function trainingInstances() {
         return $this->belongsToMany(TrainingInstance::class, 'training_instance_attendee', 'person_info_id', 'training_instance_id')
             ->withPivot('certificate_path')
@@ -35,5 +39,15 @@ class PersonInfo extends Model implements Auditable
     {
        return $this->firstname . ' ' . substr($this->middlename, 0, 1) . '. ' . ' ' . $this->lastname  . $this->extname;
 
+    }
+
+    public function getAddressAttribute()
+    {
+        return $this->barangay->barangay_name . ', ' . $this->barangay->municipality->municipality_name . ', ' . $this->barangay->municipality->province->province_name;
+    }
+
+    public function age()
+    {
+        return \Carbon\Carbon::parse($this->birthdate)->age;
     }
 }
