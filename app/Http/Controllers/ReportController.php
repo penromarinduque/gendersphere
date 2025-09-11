@@ -518,6 +518,7 @@ class ReportController extends Controller
         $permit_type_id = $request->permit_type_id ? $request->permit_type_id : 1;
 
         $office_query = $request->has('office_id') ? ['office_id' => $request->office_id] : [];
+        // $year_query = ;
 
         $counts = [
             "frontline_service_type" => [],
@@ -542,7 +543,7 @@ class ReportController extends Controller
         foreach($permit_types as $ptype){
             $counts["permit_type"][] = [
                 "name" => $ptype->permit_type,
-                "count" => FrontlineService::where(["permit_type_id" => $ptype->id, ...$office_query])->count()
+                "count" => FrontlineService::where(["permit_type_id" => $ptype->id, ...$office_query])->whereYear('date_released', $year)->count()
             ];
         }
 
@@ -553,7 +554,7 @@ class ReportController extends Controller
             ])->pluck("id");
             $counts["frontline_service_type"][] = [
                 "name" => $ftype->service,
-                "count" => FrontlineService::whereIn("permit_type_id", $ptype_ids)->where([...$office_query])->count()
+                "count" => FrontlineService::whereIn("permit_type_id", $ptype_ids)->where([...$office_query])->whereYear('date_released', $year)->count()
             ];
         }
 
