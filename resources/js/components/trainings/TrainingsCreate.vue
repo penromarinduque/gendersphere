@@ -17,14 +17,16 @@
                 v-model="form.training_title"
                 @input="fetchSuggestions"
               />
-
-                <datalist id="training-titles">
-                  <option v-for="title in suggestions" :key="title" :value="title" />
-                </datalist>
-
-                <span class="text-sm text-red-600" v-if="localErrors.training_title">
-                  {{ localErrors.training_title }}
-                </span>
+              <datalist id="training-titles">
+                <option
+                  v-for="training in suggestions"
+                  :key="training.id"
+                  :value="training.training_title"
+                />
+              </datalist>
+              <span class="text-sm text-red-600" v-if="localErrors.training_title">
+                {{ localErrors.training_title }}
+              </span>
             </div>
                 </div>
                 <div class="pb-1">
@@ -63,7 +65,8 @@
                         name="trainingtype"
                         id="trainingtype"
                         class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        v-model="form.learning_description_type">
+                        v-model="form.learning_description_type"
+                        :disabled="isExistingTraining">
                         <option value="" disabled selected>-Select Training Type-</option> 
                         <option v-for="type in trainingTypes" :key="type.value" :value="type.value">
                           {{ type.label }}
@@ -82,7 +85,8 @@
                 <label for="trainingnature" class="block text-md font-medium text-gray-700">Training Nature</label>
                   <select id="trainingnature" name="trainingnature"
                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                    v-model="form.training_nature">
+                    v-model="form.training_nature"
+                    :disabled="isExistingTraining">
                     <option value="" disabled selected>-Select Training Nature-</option>
                     <option value="attended">Attended</option>
                     <option value="conducted">Conducted</option>
@@ -93,7 +97,8 @@
               <label for="isgadrelated" class="block text-md font-medium text-gray-700">GAD Related<span class="text-red-500">*</span></label>
               <select id="isgadrelated" name="isgadrelated"
                 class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                v-model="form.is_gad_related">
+                v-model="form.is_gad_related"
+                :disabled="isExistingTraining">
                 <option value="" disabled selected>-Yes or No-</option> 
                 <option :value="true">Yes</option>      
                 <option :value="false">No</option>  
@@ -162,6 +167,7 @@ const localErrors = reactive({
   is_gad_related: '',
 })
 
+const isExistingTraining = ref(false);
 const lastModifiedField = ref('');
 const fieldsToWatch = Object.keys(localErrors);
 
@@ -229,6 +235,81 @@ const validateForm = () => {
   return valid;
 };
 
+const populateFieldsFromTraining = (training) => {
+  form.learning_description_type = training.learning_description_type || '';
+  form.training_nature = training.training_nature || '';
+  form.is_gad_related = training.is_gad_related === true || training.is_gad_related === 'true';
+};
+
+const saveTraining = async () => {
+
+  // Clear previous frontend errors
+  Object.keys(localErrors).forEach(key => {
+    localErrors[key] = '';
+  });
+
+  // Run client-side validation
+  if (!validateForm()) return;
+
+  
+  // Build the payload with a nested training_instance object
+  const payload = {
+      training_title: form.training_title.trim(),
+      learning_description_type: form.learning_description_type,
+      training_nature: form.training_nature,
+      is_gad_related: Boolean(form.is_gad_related),
+      training_instance: {
+        training_start: form.training_start,
+        training_end: form.training_end,
+        duration_hours: Number(form.duration_hours),
+        sponsor_facilitator: form.sponsor_facilitator,
+        office_id: form.office_id
+      }
+  };
+
+  try {
+    await storeTraining(payload);
+  } catch (error) {
+    if (error.response?.status === 422) {
+      const serverErrors = error.response.data.errors;
+      const serverMessage = error.response.data.message;
+
+      // Laravel-style error mapping
+      Object.entries(serverErrors).forEach(([key, messages]) => {
+        const flatKey = key.includes('training_instance.')
+          ? key.replace('training_instance.', '')
+          : key;
+        localErrors[flatKey] = messages[0]; // show only the first error
+      });
+
+      // Show server message as a toaster (e.g., "Duplicate training found.")
+      if (serverMessage) {
+        toaster.error(serverMessage);
+      } else {
+        toaster.error("Validation failed. Please check the fields.");
+      }
+    } else {
+      toaster.error("An unexpected error occurred. Please try again later.");
+    }
+  }
+};
+
+const fetchSuggestions = async () => {
+  if (form.training_title.length < 2) {
+    suggestions.value = [];
+    return;
+  }
+
+  try {
+    const res = await axios.get('/api/trainings/suggestions', {
+      params: { q: form.training_title }
+    });
+
+    suggestions.value = res.data; // full training objects
+  } catch (error) {
+    console.error('Error fetching suggestions:', error);
+  }
+};
 
 // 3. On component mount, get the authenticated user
 onMounted(async () => {
@@ -291,74 +372,20 @@ watch(
   { immediate: true }
 );
 
+watch(() => form.training_title, (newTitle) => {
+  const selected = suggestions.value.find(item => item.training_title === newTitle);
 
-const saveTraining = async () => {
+  if (selected) {
+    isExistingTraining.value = true;
+    populateFieldsFromTraining(selected);
+  } else {
+    isExistingTraining.value = false;
 
-  // Clear previous frontend errors
-  Object.keys(localErrors).forEach(key => {
-    localErrors[key] = '';
-  });
-
-  // Run client-side validation
-  if (!validateForm()) return;
-
-  
-  // Build the payload with a nested training_instance object
-  const payload = {
-      training_title: form.training_title.trim(),
-      learning_description_type: form.learning_description_type,
-      training_nature: form.training_nature,
-      is_gad_related: Boolean(form.is_gad_related),
-      training_instance: {
-        training_start: form.training_start,
-        training_end: form.training_end,
-        duration_hours: Number(form.duration_hours),
-        sponsor_facilitator: form.sponsor_facilitator,
-        office_id: form.office_id
-      }
-  };
-
-  try {
-    await storeTraining(payload);
-  } catch (error) {
-    if (error.response?.status === 422) {
-      const serverErrors = error.response.data.errors;
-      const serverMessage = error.response.data.message;
-
-      // Laravel-style error mapping
-      Object.entries(serverErrors).forEach(([key, messages]) => {
-        const flatKey = key.includes('training_instance.')
-          ? key.replace('training_instance.', '')
-          : key;
-        localErrors[flatKey] = messages[0]; // show only the first error
-      });
-
-      // Show server message as a toaster (e.g., "Duplicate training found.")
-      if (serverMessage) {
-        toaster.error(serverMessage);
-      } else {
-        toaster.error("Validation failed. Please check the fields.");
-      }
-    } else {
-      toaster.error("An unexpected error occurred. Please try again later.");
-    }
+    // Optionally reset populated fields if the title is changed to a custom one
+    form.learning_description_type = '';
+    form.training_nature = '';
+    form.is_gad_related = '';
   }
-};
-
-const fetchSuggestions = async () => {
-  if (form.training_title.length < 2) {
-    suggestions.value = []; // don't query if input is too short
-    return;
-  }
-
-  try {
-    const res = await axios.get('/api/trainings/suggestions', {
-      params: { q: form.training_title }
-    });
-    suggestions.value = res.data; // assume backend returns array of titles
-  } catch (error) {
-    console.error('Error fetching training title suggestions:', error);
-  }
-};
+});
 
 </script>

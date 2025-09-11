@@ -76,13 +76,12 @@ export default function useTrainings() {
 
     try {
         await axios.post('/api/trainings', data, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
+            headers: {
+                'Content-Type': 'application/json'
+    }
         })
-
         await router.push({ name: 'trainings.index' })
-        toaster.success(`Successfully Saved!`)
+        toaster.success(`Saved!`)
     } catch (e) {
         if (e.response?.status === 422) {
         errors.value = e.response.data.errors
@@ -99,8 +98,8 @@ export default function useTrainings() {
 
         try {
             await axios.post(`/api/trainings/${id}/update`, payload)
-            //await router.push({ name: 'trainings.index' })
-            toaster.success(`Successfully Saved!`)
+            await router.push({ name: 'trainings.index' })
+            toaster.success(`Updated!`)
             // or POST if using POST route
         } catch (error) {
             if (error.response?.status === 422) {
@@ -118,12 +117,13 @@ export default function useTrainings() {
             await axios.delete(`/api/traininginstances/${id}`)
             toaster.info(`Deleted!`);
             loading.value = false;
-        } catch (e) {
-            // console.log(e);
-            toaster.info(`Oops! Something went wrong please try again.`);
-            loading.value = false;
-        }
-        
+      } catch (error) {
+            if (error.response?.status === 422) {
+                errors.value = error.response.data.errors
+            }
+        } finally {
+            loading.value = false
+        }   
     }
 
     const getTrainingSummary = async () => {
@@ -131,15 +131,6 @@ export default function useTrainings() {
         summary.value = response.data
     }
     
-/*     const getEmployees  = async (employmentType = null) => {
-        let response = await axios.get('/api/personinfos/get-employees', {
-            params: {
-                employment_type: employmentType
-            }
-        });
-        employees.value = response.data
-    }
- */
     function msToHours(ms) {
         return ms / (1000 * 60 * 60);
     }

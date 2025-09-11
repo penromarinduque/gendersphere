@@ -107,17 +107,18 @@ class TrainingController extends Controller
         // Check for duplicate
         $duplicate = Training::where('training_title', $validated['training_title'])
             ->whereHas('instances', function ($query) use ($instanceData) {
-                $query->where('training_start', $instanceData['training_start'])
-                    ->where('training_end', $instanceData['training_end'])
-                    ->where('office_id', $instanceData['office_id']);
-            })
-            ->exists();
+                $query->where('office_id', $instanceData['office_id'])
+                    ->where(function ($q) use ($instanceData) {
+                        $q->whereDate('training_start', '<=', $instanceData['training_end'])
+                        ->whereDate('training_end', '>=', $instanceData['training_start']);
+                    });
+            })->exists();
 
         if ($duplicate) {
             return response()->json([
-                'message' => 'Duplicate training found.',
+                'message' => 'Overlapping Dates for an Existing Training!',
                 'errors' => [
-                    'training_title' => ['Duplicate.']
+                    'training_title' => ['Overlapping Dates for an Existing Training!']
                 ]
             ], 422);
         }
@@ -156,22 +157,6 @@ class TrainingController extends Controller
             $instance = TrainingInstance::with('training')->findOrFail($instanceId);
             $training = $instance->training;
 
-            //Duplicate check (excluding current instance)
-            $duplicate = Training::where('training_title', $validated['training_title'])
-                ->whereHas('instances', function ($query) use ($instanceData, $instanceId) {
-                    $query->where('training_start', $instanceData['training_start'])
-                        ->where('training_end', $instanceData['training_end'])
-                        ->where('office_id', $instanceData['office_id'])
-                        ->where('id', '!=', $instanceId); // exclude current
-                })
-                ->exists();
-
-            if ($duplicate) {
-                return redirect()->back()->withErrors([
-                    'training_title' => 'Duplicate training with the same schedule and office already exists.',
-                ])->withInput();
-            }
-
             //Update parent training
             $training->update([
                 'training_title' => $validated['training_title'],
@@ -191,7 +176,7 @@ class TrainingController extends Controller
 
             DB::commit();
 
-            return redirect()->route('trainings.index')->with('success', 'Training updated successfully.');
+            //return redirect()->route('trainings.index')->with('success', 'Training updated successfully.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -201,25 +186,6 @@ class TrainingController extends Controller
             ])->withInput();
         }
     }
-
-/* 
-    public function all(Request $request) {
-        $user = auth()->user();
-        $office_id = $user->office_id; 
-        
-        if($user?->is_super_admin) {
-            $training_qry = Training::select('*');
-        } 
-        else {
-            $training_qry = Training::select('trainings.*')
-                ->where('trainings.office_id', $office_id);
-        }
-
-        $trainings = $training_qry->orderBy('training_title', 'ASC')
-            ->get();
-        // $personinfos->appends(['searchkey' => $searchkey]);
-        return TrainingResource::collection($trainings);
-    } */
 
     public function summary(Request $request)
     {
@@ -363,37 +329,37 @@ class TrainingController extends Controller
         return response($file, 200)->header('Content-Type', $mime);
     }
 
-public function uploadCertificate(Request $req, $trainingId, $attendeeId) {
-    $req->validate(['certificate' => 'required|image|max:2048']);
+    public function uploadCertificate(Request $req, $trainingId, $attendeeId) {
+        $req->validate(['certificate' => 'required|image|max:2048']);
 
-    $trainingInstance = TrainingInstance::findOrFail($trainingId);
+        $trainingInstance = TrainingInstance::findOrFail($trainingId);
 
-    // Get attendee from pivot relationship
-    $attendee = $trainingInstance->attendees()->where('person_info_id', $attendeeId)->first();
+        // Get attendee from pivot relationship
+        $attendee = $trainingInstance->attendees()->where('person_info_id', $attendeeId)->first();
 
-    if (!$attendee) {
-        return response()->json(['message' => 'Attendee not found'], 404);
+        if (!$attendee) {
+            return response()->json(['message' => 'Attendee not found'], 404);
+        }
+
+        // Combine and sanitize name
+        $fullName = $attendee->firstname . '_' . ($attendee->middlename ?? '') . '_' . $attendee->lastname;
+        $cleanName = preg_replace('/[^A-Za-z0-9]/', '_', $fullName);
+        $cleanName = preg_replace('/_+/', '_', $cleanName);
+        $cleanName = trim($cleanName, '_');
+
+        // Create filename
+        $fileName = $cleanName . "_Cert_" . time() . "." . $req->file('certificate')->getClientOriginalExtension();
+
+        // Store the file
+        $path = $req->file('certificate')->storeAs('certificates', $fileName, 'private');
+
+        // Update pivot table
+        $trainingInstance->attendees()->updateExistingPivot($attendeeId, [
+            'certificate_path' => $path,
+        ]);
+
+        return response()->json(['message' => 'Certificate uploaded successfully']);
     }
-
-    // Combine and sanitize name
-    $fullName = $attendee->firstname . '_' . ($attendee->middlename ?? '') . '_' . $attendee->lastname;
-    $cleanName = preg_replace('/[^A-Za-z0-9]/', '_', $fullName);
-    $cleanName = preg_replace('/_+/', '_', $cleanName);
-    $cleanName = trim($cleanName, '_');
-
-    // Create filename
-    $fileName = $cleanName . "_Cert_" . time() . "." . $req->file('certificate')->getClientOriginalExtension();
-
-    // Store the file
-    $path = $req->file('certificate')->storeAs('certificates', $fileName, 'private');
-
-    // Update pivot table
-    $trainingInstance->attendees()->updateExistingPivot($attendeeId, [
-        'certificate_path' => $path,
-    ]);
-
-    return response()->json(['message' => 'Certificate uploaded successfully']);
-}
 
     public function deleteCertificate($trainingId, $attendeeId) {
         $trainingInstance = TrainingInstance::findOrFail($trainingId);
@@ -413,13 +379,24 @@ public function uploadCertificate(Request $req, $trainingId, $attendeeId) {
     }
 
     public function suggestTitles(Request $request) {
-        $query = $request->query('q');
+        $query = $request->input('q');
 
-        $titles = Training::where('training_title', 'like', "%{$query}%")
-            ->pluck('training_title')
-            ->take(10); // limit to top 10 suggestions
+        $results = Training::with('instances') // get related instance
+            ->where('training_title', 'like', "%{$query}%")
+            //->limit(10)
+            ->get()
+            ->map(function ($training) {
+                return [
+                    'id' => $training->id,
+                    'training_title' => $training->training_title,
+                    'learning_description_type' => $training->learning_description_type,
+                    'training_nature' => $training->training_nature,
+                    'is_gad_related' => $training->is_gad_related,
+                    // Add more fields if needed
+                ];
+            });
 
-        return response()->json($titles);
+        return response()->json($results);
     }
 
     public function getTrainingTypes()
