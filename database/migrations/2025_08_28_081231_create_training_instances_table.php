@@ -14,14 +14,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('training_id')->constrained('trainings')->onDelete('cascade');
             $table->foreignId('office_id')->constrained('offices')->onDelete('cascade');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->date('training_start');
+            $table->date('training_end');
             $table->decimal('duration_hours', 8, 2)->nullable();
             $table->string('sponsor_facilitator')->nullable();
                        
 
             // Optional: add foreign key if office_id relates to offices table
-            $table->foreign('office_id')->references('id')->on('offices')->onDelete('cascade');
+            // $table->foreign('office_id')->references('id')->on('offices')->onDelete('cascade');
             $table->timestamps();
         });
     }
