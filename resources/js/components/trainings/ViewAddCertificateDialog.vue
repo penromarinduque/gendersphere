@@ -194,9 +194,7 @@ const deleteCertificate = async () => {
 
 const handleCertificateDelete = (event, id) => {
   confirmDelete(event, id, deleteCertificate, {
-    message: 'Delete this certificate?',
-    acceptLabel: 'Delete',
-    rejectLabel: 'Cancel'
+    message: 'Delete this certificate?'
   });
 };
 </script>

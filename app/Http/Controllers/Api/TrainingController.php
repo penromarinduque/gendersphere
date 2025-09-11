@@ -416,4 +416,12 @@ class TrainingController extends Controller
 
         return response()->json($types);
     }
+
+    public function getTrainingTitle($id){
+        $training = Training::findOrFail($id);
+
+        return response()->json([
+            'training_title' => $training->training_title
+        ]);
+    }
 }

@@ -184,9 +184,9 @@
                             <span>{{ training.is_gad_related? 'Yes' : 'No' }}</span>
                         </td>
                         <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">                              
-                            <Button class="me-2" icon="pi pi-users" label="View Attendees" @click="openDrawer(training.id)" size="small" variant="outlined" severity="info"/>
-                            <Button class="me-2" icon="pi pi-pencil" label ="Edit" @click="$router.push({ name: 'trainings.edit', params: { id: training.id } })" size="small" variant="outlined" severity="primary"></Button>
-                            <Button class="me-2" icon="pi pi-trash" label ="Delete" @click="handleDelete($event, training.id)" size="small" variant="outlined" severity="danger"></Button> <ConfirmPopup/>
+                            <Button class="me-2" icon="pi pi-users" label="View Attendees" @click="openDrawer(training.id)" size="small" severity="info"/>
+                            <Button class="me-2" icon="pi pi-pencil" label ="Edit" @click="$router.push({ name: 'trainings.edit', params: { id: training.id } })" size="small" severity="primary"></Button>
+                            <Button class="me-2" icon="pi pi-trash" label ="Delete" @click="handleDelete($event, training.id)" size="small" severity="danger"></Button> <ConfirmPopup/>
                         </td>
                     </tr>
                 </template>
@@ -311,9 +311,7 @@ onMounted(() => {
 
 const handleDelete = (event, id) => {
   confirmDelete(event, id, deleteTraining, {
-    message: 'Delete this item?',
-    acceptLabel: 'Delete',
-    rejectLabel: 'Cancel'
+    message: 'Delete this item?'
   });
 };
 

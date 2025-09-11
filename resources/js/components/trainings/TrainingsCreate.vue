@@ -314,10 +314,13 @@ const fetchSuggestions = async () => {
 // 3. On component mount, get the authenticated user
 onMounted(async () => {
     await loadTrainingTypeOptions();
-    await getAuthenticatedUser();
-    if (authUser.value) {
-        form.office_id = authUser.value.office_id || '';
-    }
+      try {
+    const response = await axios.get('/api/authuser/officeid');
+    console.log('Fetched office_id:', response.data.office_id);
+    form.office_id = response.data.office_id || '';
+  } catch (error) {
+    console.error('Failed to fetch office_id:', error);
+  }
 });
 
 fieldsToWatch.forEach((field) => {

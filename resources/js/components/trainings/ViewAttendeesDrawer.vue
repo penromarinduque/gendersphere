@@ -248,17 +248,13 @@ const removeAllAttendees = async () => {
 
 const handleDeleteAllAttendees = (event) => {
   confirmDelete(event, removeAllAttendees, {
-    message: 'Remove all attendees?',
-    acceptLabel: 'Delete',
-    rejectLabel: 'Cancel'
+    message: 'Remove all attendees?'
   });
 };
 
 const handleAttendeeDelete = (event, id) => {
   confirmDelete(event, id, removeAttendee, {
     message: 'Delete this attendee?',
-    acceptLabel: 'Delete',
-    rejectLabel: 'Cancel'
   });
 };
 const filteredAttendees = computed(() => {
