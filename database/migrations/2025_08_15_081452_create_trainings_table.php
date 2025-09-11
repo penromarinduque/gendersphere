@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('is_gad_related')->default(false);
             $table->timestamps();
         });
+        
     }
 
     public function down(): void
