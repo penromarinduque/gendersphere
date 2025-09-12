@@ -142,30 +142,23 @@ class CommitteeController extends Controller
     public function summary(Request $request){
         $user = auth()->user();
         $office_id = $user->office_id; 
+        
+        $committees = $user?->is_super_admin ? Committee::query()->with(['personInfo', 'committeePosition'])->where('year_covered', $request->year)->get() : Committee::query()->with(['personInfo', 'committeePosition'])->where('year_covered', $request->year)->where('committees.office_id', $office_id)->get();
 
-        if($user?->is_super_admin){
-            $total_employees = Committee::query()->where('year_covered', $request->year)->count();
-            $total_cos = Committee::query()->where('year_covered', $request->year)->leftJoin('person_infos', 'person_infos.id', 'committees.person_info_id')->where('person_infos.employment_type', 'cos')->count();
-            $total_permanents = Committee::query()->where('year_covered', $request->year)->leftJoin('person_infos', 'person_infos.id', 'committees.person_info_id')->where('person_infos.employment_type', 'permanent')->count();
-            $total_males = Committee::query()->where('year_covered', $request->year)->leftJoin('person_infos', 'person_infos.id', 'committees.person_info_id')->where('person_infos.gender', 'male')->count();
-            $total_females = Committee::query()->where('year_covered', $request->year)->leftJoin('person_infos', 'person_infos.id', 'committees.person_info_id')->where('person_infos.gender', 'female')->count();
-            $total_lgbtqiaplus = Committee::query()->where('year_covered', $request->year)->leftJoin('person_infos', 'person_infos.id', 'committees.person_info_id')->where('person_infos.gender', 'lgbtqia+')->count();
-        }
-        else{
-            $total_employees = Committee::query()->where('year_covered', $request->year)->where('committees.office_id', $office_id)->count();
-            $total_cos = Committee::query()->where('year_covered', $request->year)->leftJoin('person_infos', 'person_infos.id', 'committees.person_info_id')->where('person_infos.employment_type', 'cos')->where('person_infos.office_id', $office_id)->count();
-            $total_permanents = Committee::query()->where('year_covered', $request->year)->leftJoin('person_infos', 'person_infos.id', 'committees.person_info_id')->where('person_infos.employment_type', 'permanent')->where('person_infos.office_id', $office_id)->count();
-            $total_males = Committee::query()->where('year_covered', $request->year)->leftJoin('person_infos', 'person_infos.id', 'committees.person_info_id')->where('person_infos.gender', 'male')->where('person_infos.office_id', $office_id)->count();
-            $total_females = Committee::query()->where('year_covered', $request->year)->leftJoin('person_infos', 'person_infos.id', 'committees.person_info_id')->where('person_infos.gender', 'female')->where('person_infos.office_id', $office_id)->count();
-            $total_lgbtqiaplus = Committee::query()->where('year_covered', $request->year)->leftJoin('person_infos', 'person_infos.id', 'committees.person_info_id')->where('person_infos.gender', 'lgbtqia+')->where('person_infos.office_id', $office_id)->count();
-        }
-        return (object)[
-            "total_employees" => $total_employees,
-            "total_cos" => $total_cos,
-            "total_permanents" => $total_permanents,
-            "total_males" => $total_males,
-            "total_females" => $total_females,
-            "total_lgbtqiaplus" => $total_lgbtqiaplus,
+        $summary = [
+            "total_employees" => $committees->count(),
+            "total_cos" => $committees->where('personInfo.employment_type', 'cos')->count(),
+            "total_permanents" => $committees->where('personInfo.employment_type', 'permanent')->count(),
+            "total_males" => $committees->where('personInfo.gender', 'male')->count(),
+            "total_females" => $committees->where('personInfo.gender', 'female')->count(),
+            "total_lgbtqiaplus" => $committees->where('personInfo.gender', 'lgbtqia+')->count(),
+            "total_cos_male" => $committees->where('personInfo.employment_type', 'cos')->where('personInfo.gender', 'male')->count(),
+            "total_cos_female" => $committees->where('personInfo.employment_type', 'cos')->where('personInfo.gender', 'female')->count(),
+            "total_cos_lgbtqiaplus" => $committees->where('personInfo.employment_type', 'cos')->where('personInfo.gender', 'lgbtqia+')->count(),
+            "total_permanents_male" => $committees->where('personInfo.employment_type', 'permanent')->where('personInfo.gender', 'male')->count(),
+            "total_permanents_female" => $committees->where('personInfo.employment_type', 'permanent')->where('personInfo.gender', 'female')->count(),
+            "total_permanents_lgbtqiaplus" => $committees->where('personInfo.employment_type', 'permanent')->where('personInfo.gender', 'lgbtqia+')->count(),
         ];
+        return (object)$summary;
     }
 }
