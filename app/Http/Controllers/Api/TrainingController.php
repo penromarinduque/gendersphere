@@ -21,39 +21,45 @@ class TrainingController extends Controller
         $user = auth()->user();
         $office_id = $user->office_id;  
         $query = TrainingInstance::with(['training', 'attendees']);
+        // Normalize request inputs in case they're arrays like ['value' => 'all'] or ['all']
+        $type = is_array($request->type) ? ($request->type['value'] ?? $request->type[0] ?? null) : $request->type;
+        $title = is_array($request->title) ? ($request->title['value'] ?? $request->title[0] ?? null) : $request->title;
+        $employeeId = is_array($request->employee_id) ? ($request->employee_id['value'] ?? $request->employee_id[0] ?? null) : $request->employee_id;
+        $trainingNature = is_array($request->training_nature) ? ($request->training_nature['value'] ?? $request->training_nature[0] ?? null) : $request->training_nature;
+        $year = is_array($request->year) ? ($request->year['value'] ?? $request->year[0] ?? null) : $request->year;
 
         if (!$user?->is_super_admin) {
             $query->where('office_id', $office_id);
         }
 
-        if ($request->filled('year')) {
-            $query->whereYear('training_start', $request->year);
+        if ($year && $year !== 'all') {
+            $query->whereYear('training_start', $year);
         }
 
-        if ($request->filled('title')) {
-            $query->whereHas('training', function ($q) use ($request) {
-                $q->where('training_title', 'like', '%' . $request->title . '%');
+        if ($title && $title !== 'all') {
+            $query->whereHas('training', function ($q) use ($title) {
+                $q->where('training_title', 'like', '%' . $title . '%');
             });
         }
 
-        if ($request->filled('employee_id')) {
-            $query->whereHas('attendees', function ($q) use ($request) {
-                $q->where('person_info_id', $request->employee_id);
+        if ($employeeId && $employeeId !== 'all') {
+            $query->whereHas('attendees', function ($q) use ($employeeId) {
+                $q->where('person_info_id', $employeeId);
             });
         }
 
-        if ($request->filled('training_nature')) {
-            $query->whereHas('training', function ($q) use ($request) {
-                $q->where('training_nature', $request->training_nature);
+        if ($trainingNature && $trainingNature !== 'all') {
+            $query->whereHas('training', function ($q) use ($trainingNature) {
+                $q->where('training_nature', $trainingNature);
             });
         }
 
-        // ✅ Add this block for training type filtering
-        if ($request->filled('type')) {
-            $query->whereHas('training', function ($q) use ($request) {
-                $q->where('learning_description_type', $request->type);
+        if ($type && $type !== 'all') {
+            $query->whereHas('training', function ($q) use ($type) {
+                $q->where('learning_description_type', $type);
             });
         }
+
 
         return $query->paginate(10)->through(function ($instance) {
             return [

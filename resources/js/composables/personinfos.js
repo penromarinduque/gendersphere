@@ -159,20 +159,46 @@ export default function usePersonInfos() {
         summary.value = response.data
     }
     
-    const getEmployees  = async (employmentType = null) => {
+    const getEmployees = async (employmentType = null, startDate = null, endDate = null) => {
         let response = await axios.get('/api/personinfos/get-employees', {
             params: {
-                employment_type: employmentType
+                employment_type: employmentType,
+                start_date: startDate,
+                end_date: endDate
             }
         });
-        employees.value = response.data
-    }
+        employees.value = response.data;
+        console.log(employees.value);
+    };
 
-    const getPersonInfoChartData = async () => {
-        let response = await axios.get('/api/personinfos/get-chart-data');
-        personInfoChartData.value = response.data
-        console.log(response.data);
-    }
+    const getPersonInfoChartData = async (type = null, startDate = null, endDate = null) => {
+        const response = await axios.get('/api/personinfos/chart-employees', {
+            params: {
+                type,
+                start_date: startDate,
+                end_date: endDate
+            }
+        });
+
+        personInfoChartData.value = response.data;
+        employees.value = response.data.employees; // 👈 set from same response
+
+        return personInfoChartData.value;
+    };
+
+    const getEmployeeData = async (type = null, startDate = null, endDate = null) => {
+        const params = {
+            type: type === 'all' ? null : type,
+            start_date: startDate,
+            end_date: endDate
+        };
+
+        const response = await axios.get('/api/personinfos/get-employee-data', { params });
+        return response.data;
+    };
+
+
+
 
     const computeAge = (date, year = null) => {
         var today = year ? new Date('12-31-' + year) :  new Date();
@@ -219,6 +245,7 @@ export default function usePersonInfos() {
         employees,
         personInfoChartData,
         getPersonInfoChartData,
+        getEmployeeData,
         getEmployees,
         getPersonInfo,
         getPersonInfos,

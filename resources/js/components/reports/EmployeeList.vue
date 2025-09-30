@@ -9,41 +9,140 @@
                         <Tab value="1">Visualization</Tab>
                     </TabList>
                     <TabPanels>
-                        <TabPanel value="0">
-                            <div class="flex justify-end mb-2">
-                                <Select @change="onEmployeeTypeChange" size="small" v-model="selectedCity" :options="[{name: 'All', value: 'all'},{name: 'COS', value: 'cos'}, {name: 'Permanent', value: 'permanent'}]" optionLabel="name" placeholder="Filter Employee" class="w-full md:w-56" />
+                        <TabPanel value="0" >
+                            <div class="flex justify-end mb-2 gap-3">
+                                <Select 
+                                    @change="onEmployeeTypeChange" 
+                                    size="small"  
+                                    :options="[{name: 'All', value: 'all'},{name: 'COS', value: 'cos'}, {name: 'Permanent', value: 'permanent'}]" 
+                                    optionLabel="name" 
+                                    optionValue="value"
+                                    placeholder="Filter Employee" 
+                                    class="w-full md:w-56"
+                                    v-model="selectedEmploymentType"
+                                />
+                               <DatePicker
+                                    v-model="dateRange"
+                                    selectionMode="range"
+                                    dateFormat="yy-mm-dd"
+                                    placeholder="Select Date Range"
+                                    class="w-full md:w-72"
+                                    @update:modelValue="onDateRangeChange"
+                                    showIcon
+                                />
+                                <Button
+                                    icon="pi pi-times"
+                                    label="Clear Range"
+                                    severity="secondary"
+                                    size="small"
+                                    class="p-button-outlined"
+                                    @click="clearDateRange"
+                                    :disabled="!dateRange">
+                                </Button>
+                                <Button
+                                    icon="pi pi-print"
+                                    label="Print"
+                                    class="p-button-success mb-4"
+                                    size="small"
+                                    @click="printPage"
+                                />
                             </div>
-                            <DataTable :value="employees" tableStyle="min-width: 50rem" showGridlines >
+                            <div id="print-section">
+                            <p class="text-sm text-gray-500 mt-1">{{selectedEmploymentTypeLabel }} {{ formattedDateRange }}</p>
+                            <DataTable
+                                class="mb-4"
+                                :value="employees"
+                                tableStyle="min-width: 50rem"
+                                showGridlines>                                   
                                 <Column header="Name">
-                                    <template #body="{ data }">
-                                        {{ data.lastname }}, {{ data.firstname }} {{ data.middlename }} 
+                                        <template #body="{ data }">
+                                            {{ data.lastname }}, {{ data.firstname }} {{ data.middlename }} 
+                                        </template>
+                                    </Column>
+                                    <Column field="position" header="Position"></Column>
+                                    <Column field="education_level" header="Education Level">
+                                        <template #body="{ data }">
+                                            {{ data.education_level.toUpperCase().replace(/_/g, ' ') }}
+                                        </template>
+                                    </Column>
+                                    <Column field="civil_status" header="Civil Status">
+                                        <template #body="{ data }">
+                                            {{ data.civil_status.toUpperCase() }}
+                                        </template>
+                                    </Column>
+                                    <Column field="employment_type" header="Employee Type">
+                                        <template #body="{ data }">
+                                            {{ data.employment_type.toUpperCase() }}
+                                        </template>
+                                    </Column>
+                                    <Column field="employment_status" header="Employee Status">
+                                        <template #body="{ data }">
+                                            {{ data.employment_status.toUpperCase() }}
+                                        </template>
+                                    </Column>
+                                    <Column header="Gender">
+                                        <template #body="{ data }">
+                                            {{ data.gender.toUpperCase() }}
+                                        </template>
+                                    </Column>
+                                    <Column header="Address">
+                                        <template #body="{ data }">
+                                            {{ data.municipality_name }}
+                                        </template>
+                                    </Column>
+                                    <Column header="Age">
+                                        <template #body="{ data }">{{ computeAge(data.birthdate) }}</template>
+                                    </Column>
+                                    <template #empty>
+                                        <div class="w-full flex justify-center items-center text-gray-500 text-lg">
+                                            No records found.
+                                        </div>
                                     </template>
-                                </Column>
-                                <Column field="position" header="Position"></Column>
-                                <Column field="employment_type" header="Employee Type">
-                                    <template #body="{ data }">
-                                        {{ data.employment_type.toUpperCase() }}
-                                    </template>
-                                </Column>
-                                <Column field="employment_status" header="Employee Status">
-                                    <template #body="{ data }">
-                                        {{ data.employment_status.toUpperCase() }}
-                                    </template>
-                                </Column>
-                                <Column header="Gender">
-                                    <template #body="{ data }">
-                                        {{ data.gender.toUpperCase() }}
-                                    </template>
-                                </Column>
-                                <Column header="Address">
-                                    <template #body="{ data }">
-                                        {{ data.barangay_name }}, {{ data.municipality_name }}, {{ data.province_name }}
-                                    </template>
-                                </Column>
-                                <Column header="Age">
-                                    <template #body="{ data }">{{ computeAge(data.birthdate) }}</template>
-                                </Column>
-                            </DataTable>
+                                </DataTable>
+                            <div class="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4 print:grid-cols-4">
+                                <Panel header="Employees by Gender">
+                                    <ul>
+                                        <li v-for="item in genderSummary" :key="item.name">
+                                            {{ capitalizeFirstLetter(item.name) }}: {{ item.total }}
+                                        </li>
+                                         <li class="font-semibold">
+                                            Total: {{ genderSummary.reduce((sum, item) => sum + item.total, 0) }}
+                                        </li>
+                                    </ul>
+                                </Panel>
+                                <Panel header="Employees by Employment Status">
+                                    <ul>
+                                        <li v-for="item in empTypeSummary" :key="item.name">
+                                            {{ capitalizeFirstLetter(item.name) }}: {{ item.total }}
+                                        </li>
+                                         <li class="font-semibold">
+                                            Total: {{ empTypeSummary.reduce((sum, item) => sum + item.total, 0) }}
+                                        </li>
+                                    </ul>
+                                </Panel>
+                                <Panel header="Permanent Employees by Gender">
+                                    <ul>
+                                        <li v-for="item in permanentGenderSummary" :key="item.name">
+                                            {{ capitalizeFirstLetter(item.name) }}: {{ item.total }}
+                                        </li>
+                                         <li class="font-semibold">
+                                            Total: {{ permanentGenderSummary.reduce((sum, item) => sum + item.total, 0) }}
+                                        </li>
+                                    </ul>
+                                </Panel>
+
+                                <Panel header="COS Employees by Gender">
+                                    <ul>
+                                        <li v-for="item in cosGenderSummary" :key="item.name">
+                                            {{ capitalizeFirstLetter(item.name) }}: {{ item.total }}
+                                        </li>
+                                         <li class="font-semibold">
+                                            Total: {{ cosGenderSummary.reduce((sum, item) => sum + item.total, 0) }}
+                                        </li>
+                                    </ul>
+                                </Panel>
+                            </div>
+                            </div>
                         </TabPanel>
                         <TabPanel value="1">
                             <div class="grid grid-cols-5 gap-4">
@@ -69,7 +168,7 @@
 </template>
 
 <script setup>
-    import { onMounted, ref } from 'vue';
+    import { onMounted, ref, computed } from 'vue';
     import usePersonInfos from '../../composables/personinfos';
     import Tabs from 'primevue/tabs';
     import TabList from 'primevue/tablist';
@@ -82,9 +181,13 @@
     import Select from 'primevue/select';
     import Chart from 'primevue/chart';
     import Panel from 'primevue/panel';
+    import DatePicker from 'primevue/DatePicker';
+    import Button from 'primevue/button';
+    import { useCommonUtils } from '@/composables/commonutils';
 
+    const { capitalizeFirstLetter } = useCommonUtils();
     const { employees, getEmployees, personInfoChartData, getPersonInfoChartData, computeAge } = usePersonInfos();
-
+    const selectedEmploymentType = ref(null);
     onMounted(() => {
         initialize();
         
@@ -95,6 +198,10 @@
     const permanentByGenderData = ref();
     const cosByGenderData = ref();
     const chartOptions = ref();
+    const genderSummary = ref([]);
+    const permanentGenderSummary = ref([]);
+    const cosGenderSummary = ref([]);
+    const empTypeSummary = ref([]);
 
     const setPieChartData = (data) => {
         const documentStyle = getComputedStyle(document.body);
@@ -138,21 +245,130 @@
             }
         };
     };
-
+   
     async function initialize() {
-        await getEmployees(null);
-        await getPersonInfoChartData();
-        empByGenderData.value = setPieChartData(personInfoChartData.value?.employees_by_gender);
-        empByEmpTypeData.value = setPieChartData(personInfoChartData.value?.employees_by_emp_type);
-        permanentByGenderData.value = setPieChartData(personInfoChartData.value?.permanent_by_gender);
-        cosByGenderData.value = setPieChartData(personInfoChartData.value?.cos_by_gender);
+        await fetchFilteredEmployees();
         chartOptions.value = setChartOptions();
     }
 
-    function onEmployeeTypeChange(value) {
-        getEmployees(value.value.value);
+    function onEmployeeTypeChange() {
+        fetchFilteredEmployees();
+    }
+    
+    function onDateRangeChange() {
+        const [start, end] = dateRange.value || [];
+        if (start && end) {
+            fetchFilteredEmployees();
+        }
     }
 
 
+    const dateRange = ref(null);
+    async function fetchFilteredEmployees() {
+        const [start, end] = dateRange.value || [];
+        const formattedStart = start ? formatLocalDate(start) : null;
+        const formattedEnd = end ? formatLocalDate(end) : null;
+        const employmentType = selectedEmploymentType.value === 'all' ? null : selectedEmploymentType.value;
+        console.log({ employmentType, formattedStart, formattedEnd });
+        await getEmployees(employmentType, formattedStart, formattedEnd);
+
+        const chartData = await getPersonInfoChartData(employmentType, formattedStart, formattedEnd);
+
+        // Clear all summaries initially
+        permanentGenderSummary.value = [];
+        cosGenderSummary.value = [];
+        genderSummary.value = [];
+        empTypeSummary.value = [];
+
+        // Helper to zero out gender summary (dynamic gender types)
+        const zeroGenderSummary = (base = []) => base.map(g => ({ name: g.name, total: 0 }));
+
+        if (employmentType === 'cos') {
+            cosGenderSummary.value = chartData.cos_by_gender || [];
+            genderSummary.value = chartData.cos_by_gender || [];
+            empTypeSummary.value = [{ name: 'COS', total: cosGenderSummary.value.reduce((sum, g) => sum + g.total, 0) }];
+            permanentGenderSummary.value = zeroGenderSummary(cosGenderSummary.value);
+        } else if (employmentType === 'permanent') {
+            permanentGenderSummary.value = chartData.permanent_by_gender || [];
+            genderSummary.value = chartData.permanent_by_gender || [];
+            empTypeSummary.value = [{ name: 'Permanent', total: permanentGenderSummary.value.reduce((sum, g) => sum + g.total, 0) }];
+            cosGenderSummary.value = zeroGenderSummary(permanentGenderSummary.value);
+        } else {
+            permanentGenderSummary.value = chartData.permanent_by_gender || [];
+            cosGenderSummary.value = chartData.cos_by_gender || [];
+            genderSummary.value = chartData.employees_by_gender || [];
+            empTypeSummary.value = chartData.employees_by_emp_type || [];
+        }
+
+        // Update pie charts to reflect active summary data
+        empByGenderData.value = setPieChartData(genderSummary.value);
+        empByEmpTypeData.value = setPieChartData(empTypeSummary.value);
+        permanentByGenderData.value = setPieChartData(permanentGenderSummary.value);
+        cosByGenderData.value = setPieChartData(cosGenderSummary.value);
+
+    }
+
+    function formatLocalDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    function clearDateRange() {
+        dateRange.value = null;
+        fetchFilteredEmployees();
+    }
+
+    function printPage() {
+        window.print();
+    }
+
+    const formattedDateRange = computed(() => {
+        const [start, end] = dateRange.value || [];
+        if (!start || !end) return '';
+        return ` ${formatLocalDate(start)} to ${formatLocalDate(end)}`;
+    });
+
+    const selectedEmploymentTypeLabel = computed(() => {
+        const map = {
+            all: '',
+            cos: 'COS',
+            permanent: 'Permanent',
+        };
+
+        const value = selectedEmploymentType.value ?? ''; // fallback to 'all' if null
+        return map[value] || '';
+    });
+
+
 </script>
+
+<style>
+@media print {
+    @page {
+        size: landscape;
+        margin: 1cm; /* Optional: Adjust margins */
+    }
+
+    body * {
+        visibility: hidden;
+    }
+
+    #print-section, #print-section * {
+        visibility: visible;
+    }
+
+    #print-section {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+}
+</style>
 

@@ -109,6 +109,11 @@
                                         {{ __('Committee List') }}
                                     </x-dropdown-link>
                                     @endcan
+                                    @can('viewTrainingReport', App\Models\Training::class)
+                                    <x-dropdown-link :href="route('report.trainings', ['office_id' => Auth::user()->office_id])">
+                                        {{ __('Training List') }}
+                                    </x-dropdown-link>
+                                    @endcan
                                 </x-slot>
                             </x-dropdown>
                         </div>

@@ -103,4 +103,11 @@ class TrainingPolicy
             return $role->encoderPermissions->contains('permission', EncoderPermission::PERMISSION['Training']);
         });
     }
+
+    public function viewTrainingReport(User $user): bool    {
+        //
+        return $user->roles->contains(function($role) {
+            return $role->role_type == 'encoder' || $role->role_type == 'viewer';
+        });
+    }
 }
