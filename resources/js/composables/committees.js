@@ -186,8 +186,6 @@ export default function useCommittees() {
         }
     }
         
-
-
     return {
         errors,
         committee,

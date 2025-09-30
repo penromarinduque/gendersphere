@@ -19,20 +19,33 @@
 
     <div class="mb-2">
         <Panel header="Summary">
-            <div class="grid grid-cols-3">
+            <div class="grid grid-cols-5">
                 <div >
-                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Gender</h6>
-                    <p >Male : {{ committeeSummary.total_males }}</p>
-                    <p >Female : {{ committeeSummary.total_females }}</p>
-                    <p >LGBTQIA+ : {{ committeeSummary.total_lgbtqiaplus }}</p>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Permanent Employees</h6>
+                    <p >Male : {{ committeeSummary.total_permanents_male }}</p>
+                    <p >Female : {{ committeeSummary.total_permanents_female }}</p>
+                    <p >LGBTQIA+ : {{ committeeSummary.total_permanents_lgbtqiaplus }}</p>
+                </div>
+                <div >
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">COS Employees</h6>
+                    <p >Male : {{ committeeSummary.total_cos_male }}</p>
+                    <p >Female : {{ committeeSummary.total_cos_female }}</p>
+                    <p >LGBTQIA+ : {{ committeeSummary.total_cos_lgbtqiaplus }}</p>
                 </div>
                 <div>
-                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Employment Type</h6>
-                    <p >Permanent : {{ committeeSummary.total_permanents }}</p>
-                    <p >COS : {{ committeeSummary.total_cos }}</p>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Males</h6>
+                    <p >Permanent : {{ committeeSummary.total_permanents_male }}</p>
+                    <p >COS : {{ committeeSummary.total_cos_male }}</p>
                 </div>
                 <div>
-                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Total Members : {{ committeeSummary.total_employees }}</h6>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Females</h6>
+                    <p >Permanent : {{ committeeSummary.total_permanents_female }}</p>
+                    <p >COS : {{ committeeSummary.total_cos_female }}</p>
+                </div>
+                <div>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">LGBTQIA+</h6>
+                    <p >Permanent : {{ committeeSummary.total_permanents_lgbtqiaplus }}</p>
+                    <p >COS : {{ committeeSummary.total_cos_lgbtqiaplus }}</p>
                 </div>
             </div>
         </Panel>
