@@ -649,7 +649,7 @@ const routes = [
         name: 'report.employees',
         component: EmployeeList,
         meta: {
-            title: 'Report-Employees'
+            title: 'Employee Report'
         }
     },
     {
@@ -658,7 +658,7 @@ const routes = [
     component: TrainingList,
     props: true,
     meta: {
-        title: 'Report-Training'
+        title: 'Training Report'
     }
     },
     {
