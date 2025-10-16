@@ -66,6 +66,7 @@ import useAuth from "../composables/auth";
 import PlanBudgetsAttrProgramCreate from "../components/planbudgets/PlanBudgetsAttrProgramCreate.vue";
 import PlanBudgetsAttrProgramEdit from "../components/planbudgets/PlanBudgetsAttrProgramEdit.vue";
 import SignatoryIndex from "../components/signatories/SignatoryIndex.vue";
+import TrainingList from "../components/reports/TrainingList.vue";
 
 const routes = [
     // Dashboard
@@ -648,17 +649,26 @@ const routes = [
         name: 'report.employees',
         component: EmployeeList,
         meta: {
-            title: 'Reports'
+            title: 'Employee Report'
         }
     },
-     {
+    {
+    path: '/report/trainings/:id',
+    name: 'report.trainings.show',
+    component: TrainingList,
+    props: true,
+    meta: {
+        title: 'Training Report'
+    }
+    },
+    {
         path: '/error/403',
         name: 'unauthorized',
         component: Unauthorized,
         meta: {
             title: 'Unauthorized'
         }
-     },
+    },
 
     //  Signatories
     {

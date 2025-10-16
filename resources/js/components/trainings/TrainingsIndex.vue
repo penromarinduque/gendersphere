@@ -119,11 +119,8 @@
             <thead>
             <tr>
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Title of Learning and Development Interventions/Training Programs (Write in full)</span>
+                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Title of Learning and Development Interventions/Training Programs</span>
                 </th>
-          <!--       <th class="border border-slate-300 px-6 py-1 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Inclusive Dates of attendance (mm/dd/yyyy)</span>
-                </th> -->
                 <th class="border border-slate-300 px-6 py-1 bg-gray-50">
                     <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">From</span>
                 </th>
@@ -169,7 +166,7 @@
                             <span class="capitalize">{{ training.training_end }}</span>
                         </td>
                         <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">
-                            <span>{{ training.duration_hours }}</span>
+                            <span>{{ Math.floor(training.duration_hours) }}</span>
                         </td>
                         <td class="border border-slate-300 px-6 py-2 text-md text-center leading-5 text-gray-900 w-max">
                             <span>{{ training.learning_description_type.charAt(0).toUpperCase() + training.learning_description_type.slice(1) }}</span>
@@ -257,23 +254,26 @@ const fetchFilters = async () => {
   try {
     // Training Titles
     const trainingTitleRes = await axios.get('/api/traininglist');
-    trainingTitleOptions.value = trainingTitleRes.data.data.map(t => ({
+    trainingTitleOptions.value = [{ label: 'All', value: 'all' },
+    ...trainingTitleRes.data.data.map(t => ({
       label: t,
       value: t
-    }));
+    }))];
 
     // Employees
     const employeeRes = await axios.get('/api/officeemployees');
-    employeeOptions.value = employeeRes.data.data.map(emp => ({
+    employeeOptions.value = [{ label: 'All', value: 'all' },
+    ...employeeRes.data.data.map(emp => ({
       label: emp.name,
       value: emp.id
-    }));
+    }))];
     // Years (e.g., from 2020 to current year)
     const currentYear = new Date().getFullYear();
-    yearOptions.value = Array.from({ length: 6 }, (_, i) => {
+    yearOptions.value = [{ label: 'All', value: 'all' }, 
+    ...Array.from({ length: 6 }, (_, i) => {
       const y = currentYear - i;
       return { label: y.toString(), value: y };
-    });
+    })];
 
   } catch (err) {
     console.error('Error loading filters', err);
@@ -290,7 +290,23 @@ const applyFilters = async () => {
     training_nature: filters.trainingNature,
   };
 
-  await getTrainings(1, null, query); // Assuming you pass filters via 3rd param
+    if (filters.year && filters.year !== 'all') {
+        query.year = filters.year;
+    }
+    if (filters.trainingTitle && filters.trainingTitle !== 'all') {
+        query.title = filters.trainingTitle;
+    }
+    if (filters.employee && filters.employee !== 'all') {
+        query.employee_id = filters.employee;
+    }
+    if (filters.trainingType && filters.trainingType !== 'all') {
+        query.type = filters.trainingType;
+    }
+    if (filters.trainingNature && filters.trainingNature !== 'all') {
+        query.training_nature = filters.trainingNature;
+    }
+    
+    await getTrainings(1, null, query); // Assuming you pass filters via 3rd param
 };
 
 const clearFilters = async () => {

@@ -17,8 +17,9 @@ export default function useTrainings() {
     const employeeOptions = ref([]);
     const suggestions = ref([]);
     const trainingNatureOptions = ref([
-    { label: 'Attended', value: 'attended' },
-    { label: 'Conducted', value: 'conducted' }
+        { label: 'All', value: 'all' },
+        { label: 'Attended', value: 'attended' },
+        { label: 'Conducted', value: 'conducted' }
     ]);
     const toaster = createToaster({ 
         position: "top"
@@ -152,7 +153,7 @@ export default function useTrainings() {
     const loadTrainingTypeOptions = async () => {
         try {
             const res = await axios.get('/api/trainings/trainingtypes');
-            trainingTypes.value = res.data;
+            trainingTypes.value = [ { label: 'All', value: 'all' }, ...res.data];
         } catch (err) {
             console.error("Failed to load training types", err);
         }

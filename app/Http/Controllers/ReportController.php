@@ -7,6 +7,8 @@ use App\Models\Committee;
 use Illuminate\Http\Request;
 use App\Models\PersonInfo;
 use App\Models\PlanBudget;
+use App\Models\Training;
+use App\Models\TrainingInstance;
 use App\Models\FrontlineServiceType;
 use App\Models\PermitType;
 use App\Models\FrontlineService;
@@ -639,4 +641,53 @@ class ReportController extends Controller
             'years' => Committee::yearList()
         ]);
     }
+
+    public function trainings(Request $request) {
+        $_training = new Training;
+        Gate::authorize('viewTrainingReport', Training::class);
+        $user = auth()->user();
+        $officeId = $user->office_id;
+
+        $query = TrainingInstance::with(['training', 'attendees']);
+
+        // Normalize request inputs
+        $filters = [
+            'type' => is_array($request->type) ? ($request->type['value'] ?? $request->type[0] ?? null) : $request->type,
+            'title' => is_array($request->title) ? ($request->title['value'] ?? $request->title[0] ?? null) : $request->title,
+            'employeeId' => is_array($request->employee_id) ? ($request->employee_id['value'] ?? $request->employee_id[0] ?? null) : $request->employee_id,
+            'trainingNature' => is_array($request->training_nature) ? ($request->training_nature['value'] ?? $request->training_nature[0] ?? null) : $request->training_nature,
+            'year' => is_array($request->year) ? ($request->year['value'] ?? $request->year[0] ?? null) : $request->year,
+        ];
+
+        if (!$user?->is_super_admin) {
+            $query->where('office_id', $officeId);
+        }
+
+        if ($filters['year'] && $filters['year'] !== 'all') {
+            $query->whereYear('training_start', $filters['year']);
+        }
+
+        if ($filters['title'] && $filters['title'] !== 'all') {
+            $query->whereHas('training', fn($q) => $q->where('training_title', 'like', '%' . $filters['title'] . '%'));
+        }
+
+        if ($filters['employeeId'] && $filters['employeeId'] !== 'all') {
+            $query->whereHas('attendees', fn($q) => $q->where('person_info_id', $filters['employeeId']));
+        }
+
+        if ($filters['trainingNature'] && $filters['trainingNature'] !== 'all') {
+            $query->whereHas('training', fn($q) => $q->where('training_nature', $filters['trainingNature']));
+        }
+
+        if ($filters['type'] && $filters['type'] !== 'all') {
+            $query->whereHas('training', fn($q) => $q->where('learning_description_type', $filters['type']));
+        }
+
+        $trainings = $query->paginate(10);
+
+        return view('pages.reports.trainings', compact('trainings', 'filters'));
+    }
+
 }
+
+

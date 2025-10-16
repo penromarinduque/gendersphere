@@ -65,6 +65,12 @@
                                         type="password"
                                         name="password"
                                         required autocomplete="current-password" />
+                                                <!-- Show/hide password toggle button -->
+                        <button type="button" id="togglePassword" class="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 text-gray-500 focus:outline-none">
+                             <div id="eye-icon" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
+                                <!-- JavaScript will inject SVG here -->
+                            </div>
+                        </button>
                     </div>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
                 </div>
@@ -82,3 +88,116 @@
         </div>
     </div>
 </x-guest-layout>
+
+<script>
+  const eyeIcon = document.getElementById('eye-icon');
+  const passwordInput = document.getElementById('password');
+  let isPasswordVisible = false;
+
+function renderEye(open) {
+    if (!open) {
+        eyeIcon.innerHTML = `
+        <svg class="eye-svg blink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <defs>
+            <linearGradient id="animatedGradientOpen" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#8B5CF6">
+                <animate attributeName="stop-color" values="#8B5CF6;#EC4899;#8B5CF6" dur="3s" repeatCount="indefinite" />
+                </stop>
+                <stop offset="100%" stop-color="#EC4899">
+                <animate attributeName="stop-color" values="#EC4899;#8B5CF6;#EC4899" dur="3s" repeatCount="indefinite" />
+                </stop>
+            </linearGradient>
+            </defs>
+
+            <path stroke="url(#animatedGradientOpen)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke="url(#animatedGradientOpen)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5
+                    c4.478 0 8.268 2.943 9.542 7
+                    -1.274 4.057-5.064 7-9.542 7
+                    -4.477 0-8.268-2.943-9.542-7z" />
+            <rect class="eyelid" x="0" y="0" width="24" height="24" fill="white" />
+        </svg>
+        `;
+    } else {
+    // CLOSED eye with 5 eyelashes and animated gradient
+        eyeIcon.innerHTML = `
+        <svg class="eye-svg blink" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <defs>
+            <linearGradient id="animatedGradientOpen" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8B5CF6">
+                <animate attributeName="stop-color" values="#8B5CF6;#EC4899;#8B5CF6" dur="3s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stop-color="#EC4899">
+                <animate attributeName="stop-color" values="#EC4899;#8B5CF6;#EC4899" dur="3s" repeatCount="indefinite" />
+            </stop>
+            </linearGradient>
+        </defs>
+
+        <!-- Pupil -->
+        <path stroke="url(#animatedGradientOpen)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+
+        <!-- Eye outline -->
+        <path stroke="url(#animatedGradientOpen)" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M2.458 12C3.732 7.943 7.523 5 12 5
+                c4.478 0 8.268 2.943 9.542 7
+                -1.274 4.057-5.064 7-9.542 7
+                -4.477 0-8.268-2.943-9.542-7z" />
+
+        <!-- Slash line across the eye -->
+        <line x1="4" y1="4" x2="20" y2="20"
+            stroke="url(#animatedGradientOpen)"
+            stroke-width="2"
+            stroke-linecap="round" />
+
+        <!-- Blinking eyelid -->
+        <rect class="eyelid" x="0" y="0" width="24" height="24" fill="white" />
+        </svg>
+        `;
+    }
+  }
+
+  // Initialize with closed eye
+  renderEye(false);
+
+  // Toggle on click
+  eyeIcon.addEventListener('click', () => {
+    isPasswordVisible = !isPasswordVisible;
+    passwordInput.type = isPasswordVisible ? 'text' : 'password';
+    renderEye(isPasswordVisible);
+  });
+</script>
+
+<style>
+  .eye-svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    position: relative;
+  }
+
+  .eye-svg .eyelid {
+    animation: blink 3s infinite;
+    transform-origin: center top;
+    transform: scaleY(0);
+    opacity: 0;
+  }
+
+  @keyframes blink {
+    0%, 97%, 100% {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+    98% {
+      transform: scaleY(1);
+      opacity: 0.9;
+    }
+    99% {
+      transform: scaleY(0);
+      opacity: 0;
+    }
+  }
+</style>
+
+
+
