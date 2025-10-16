@@ -13,6 +13,26 @@
                             <div class="flex justify-end mb-2">
                                 <Select @change="onEmployeeTypeChange" size="small" v-model="selectedCity" :options="[{name: 'All', value: 'all'},{name: 'COS', value: 'cos'}, {name: 'Permanent', value: 'permanent'}]" optionLabel="name" placeholder="Filter Employee" class="w-full md:w-56" />
                             </div>
+                            <div class="mb-2">
+                                <Panel header="Summary">
+                                    <div class="grid grid-cols-3">
+                                        <div >
+                                            <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Gender</h6>
+                                            <p >Male : {{ summary.total_males }}</p>
+                                            <p >Female : {{ summary.total_females }}</p>
+                                            <p >LGBTQIA+ : {{ summary.total_lgbtqiaplus }}</p>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Employment Type</h6>
+                                            <p >Permanent : {{ summary.total_permanents }}</p>
+                                            <p >COS : {{ summary.total_cos }}</p>
+                                        </div>
+                                        <div>
+                                            <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Total Employees : {{ summary.total_employees }}</h6>
+                                        </div>
+                                    </div>
+                                </Panel>
+                            </div>
                             <DataTable :value="employees" tableStyle="min-width: 50rem" showGridlines >
                                 <Column header="Name">
                                     <template #body="{ data }">
@@ -83,7 +103,7 @@
     import Chart from 'primevue/chart';
     import Panel from 'primevue/panel';
 
-    const { employees, getEmployees, personInfoChartData, getPersonInfoChartData, computeAge } = usePersonInfos();
+    const { employees, getEmployees, personInfoChartData, getPersonInfoChartData, computeAge, getPersonInfoSummary, summary } = usePersonInfos();
 
     onMounted(() => {
         initialize();
@@ -147,6 +167,7 @@
         permanentByGenderData.value = setPieChartData(personInfoChartData.value?.permanent_by_gender);
         cosByGenderData.value = setPieChartData(personInfoChartData.value?.cos_by_gender);
         chartOptions.value = setChartOptions();
+        await getPersonInfoSummary();
     }
 
     function onEmployeeTypeChange(value) {

@@ -213,30 +213,38 @@ class PersonInfoController extends Controller
     public function summary(Request $request){
         $user = auth()->user();
         $office_id = $user->office_id; 
-         $total_employees = PersonInfo::query()->where("person_type", 1)->count();
-            $total_cos = PersonInfo::query()->where('employment_type', 'cos')->where("person_type", 1)->count();
-            $total_permanents = PersonInfo::query()->where('employment_type', 'permanent')->where("person_type", 1)->count();
-            $total_males = PersonInfo::query()->where('gender', 'male')->where("person_type", 1)->count();
-            $total_females = PersonInfo::query()->where('gender', 'female')->where("person_type", 1)->count();
-            $total_lgbtqiaplus = PersonInfo::query()->where('gender', 'lgbtqia+')->where("person_type", 1)->count();
-    
-        if(!$user?->is_super_admin) {
-           
-            $total_employees = PersonInfo::query()->where('office_id', $office_id)->where("person_type", 1)->count();
-            $total_cos = PersonInfo::query()->where('employment_type', 'cos')->where('office_id', $office_id)->where("person_type", 1)->count();
-            $total_permanents = PersonInfo::query()->where('employment_type', 'permanent')->where('office_id', $office_id)->where("person_type", 1)->count();
-            $total_males = PersonInfo::query()->where('gender', 'male')->where('office_id', $office_id)->where("person_type", 1)->count();
-            $total_females = PersonInfo::query()->where('gender', 'female')->where('office_id', $office_id)->where("person_type", 1)->count();
-            $total_lgbtqiaplus = PersonInfo::query()->where('gender', 'lgbtqia+')->where('office_id', $office_id)->where("person_type", 1)->count();
-        }
-        return (object)[
-            "total_employees" => $total_employees,
-            "total_cos" => $total_cos,
-            "total_permanents" => $total_permanents,
-            "total_males" => $total_males,
-            "total_females" => $total_females,
-            "total_lgbtqiaplus" => $total_lgbtqiaplus,
+
+        $data = [
+            'total_employees' => 0,
+            "total_cos" => 0,
+            "total_permanents" => 0,
+            "total_males" => 0,
+            "total_females" => 0,
+            "total_lgbtqiaplus" => 0
         ];
+
+        if($user?->is_super_admin) {
+            $data = [
+                'total_employees' => PersonInfo::query()->where("person_type", 1)->count(),
+                "total_cos" => PersonInfo::query()->where('employment_type', 'cos')->where("person_type", 1)->count(),
+                "total_permanents" => PersonInfo::query()->where('employment_type', 'permanent')->where("person_type", 1)->count(),
+                "total_males" => PersonInfo::query()->where('gender', 'male')->where("person_type", 1)->count(),
+                "total_females" => PersonInfo::query()->where('gender', 'female')->where("person_type", 1)->count(),
+                "total_lgbtqiaplus" => PersonInfo::query()->where('gender', 'lgbtqia+')->where("person_type", 1)->count(),
+            ];
+        }
+        else {
+            $data = [
+                "total_employees" => PersonInfo::query()->where('office_id', $office_id)->where("person_type", 1)->count(),
+                "total_cos" => PersonInfo::query()->where('employment_type', 'cos')->where('office_id', $office_id)->where("person_type", 1)->count(),
+                "total_permanents" => PersonInfo::query()->where('employment_type', 'permanent')->where('office_id', $office_id)->where("person_type", 1)->count(),
+                "total_males" => PersonInfo::query()->where('gender', 'male')->where('office_id', $office_id)->where("person_type", 1)->count(),
+                "total_females" => PersonInfo::query()->where('gender', 'female')->where('office_id', $office_id)->where("person_type", 1)->count(),
+                "total_lgbtqiaplus" => PersonInfo::query()->where('gender', 'lgbtqia+')->where('office_id', $office_id)->where("person_type", 1)->count()
+            ];
+        }
+
+        return (object)$data;
     }
 
     //

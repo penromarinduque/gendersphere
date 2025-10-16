@@ -170,6 +170,7 @@ const filterCommittees = async () => {
 const paginate = async (page) => {
     await getCommittees(page, selectedYear.value, selectedEmpStatus.value);
 }
+
 const showRsoDialog = () => {
     rsoDialogVisible.value = true;
 }
