@@ -5,7 +5,6 @@
         <div class="p-4 ">
             <section>
                 <header>
-                    </div>
                     <h2 class="text-lg font-medium text-gray-900">
                         {{ __('ANNUAL GENDER AND DEVELOPMENT (GAD) ACCOMPLISHMENT REPORT '.$year) }}
                     </h2>

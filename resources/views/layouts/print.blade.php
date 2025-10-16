@@ -12,7 +12,8 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/my.js'])
+        {{-- @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/my.js']) --}}
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100" id="app">
@@ -22,6 +23,7 @@
             </main>
         </div>
     </body>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/printThis/1.15.0/printThis.min.js"></script>
     @yield('script-extra')
 </html>
