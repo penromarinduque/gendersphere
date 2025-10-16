@@ -10,7 +10,7 @@
                     </TabList>
                     <TabPanels>
                         <TabPanel value="0" >
-                            <div class="flex justify-end mb-2 gap-3">
+                            <div class="flex justify-end align-start mb-2 gap-3">
                                 <Select 
                                     @change="onEmployeeTypeChange" 
                                     size="small"  
