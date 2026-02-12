@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\FrontlineServiceTypeResource;
 use App\Models\FrontlineServiceType;
+use App\Models\PermitType;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class FrontlineServiceTypeController extends Controller
 {
@@ -55,7 +57,9 @@ class FrontlineServiceTypeController extends Controller
             'fs_status.required' => 'The status field is required.'
         ]);
 
-        $frontlineservicetype_updated = FrontlineServiceType::find($id)->update([
+        $frontlineservicetype = FrontlineServiceType::find($id);
+        Gate::authorize('update', $frontlineservicetype);
+        $frontlineservicetype->update([
             'service' => $request->service,
             'fs_status' => $request->fs_status,
         ]);
@@ -70,7 +74,13 @@ class FrontlineServiceTypeController extends Controller
      */
     public function destroy($id)
     {
-        $frontlineservicetype = FrontlineServiceType::find($id)->delete();
+        $frontlineservicetype = FrontlineServiceType::find($id);
+        $isUsed = PermitType::where('frontline_service_type_id', $frontlineservicetype->id)->exists();
+        if($isUsed) {
+            return response()->json(['message' => 'This frontline service type is used in a permit type therefore it cannot be deleted.'], 403);
+        }
+        Gate::authorize('delete', $frontlineservicetype);
+        $frontlineservicetype->delete();
  
         return response()->noContent();
     }

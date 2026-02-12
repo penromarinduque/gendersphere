@@ -44,15 +44,37 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
                 <div class="pb-1">
-                    <label for="usertype" class="block text-md font-medium text-gray-700">Role</label>
+                    <label for="user_role" class="block text-md font-medium text-gray-700">Role</label>
                     <div class="mt-1">
-                        <select name="usertype" id="usertype" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                        v-model="form.usertype">
+                        <select name="user_role" id="user_role" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                        v-model="form.user_role">
                             <option value="">-Select Role-</option>
-                            <option value="2">Encoder</option>
-                            <option value="3">Viewer</option>
+                            <option value="encoder">Encoder</option>
+                            <option value="viewer">Viewer</option>
                         </select>
-                        <span class="text-sm text-red-600" v-if="errors?.usertype">{{ errors.usertype[0] }}</span>
+                        <span class="text-sm text-red-600" v-if="errors?.user_role">{{ errors.user_role[0] }}</span>
+                    </div>
+                </div>
+                <div class="pb-1" v-if="form.user_role === 'encoder'">
+                    <label for="user_role" class="block text-md font-medium text-gray-700">Encoder Permissions</label>
+                    <div class="mt-0 align-top ">
+                        <MultiSelect v-model="form.encoder_permissions" 
+                                    :options="[
+                                        { name: 'Personnel', value: 'PersonInfo' },
+                                        { name: 'GADFPS Committee', value: 'Committee' },
+                                        { name: 'Frontline Service', value: 'FrontlineService' },
+                                        { name: 'GAD Plan and Budget', value: 'PlanBudget' },
+                                        { name: 'GAD Related Trainings', value: 'Training' },
+                                    ]" 
+                                     option-label="name"
+                                     option-value="value"
+                                     placeholder="Select Encoder Permissions"
+                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-[42px]"
+                                     :show-clear="true"
+                                     :filter="true"
+                                     :filter-placeholder="'Search Encoder Permissions'">
+                        </MultiSelect>
+                        <span class="text-sm text-red-600" v-if="errors?.encoder_permissions">{{ errors.encoder_permissions[0] }}</span>
                     </div>
                 </div>
             </div>
@@ -70,16 +92,20 @@
  
 <script setup>
 import useUsers from '../../composables/users'
-import { reactive, onMounted } from 'vue'
+import useAuth from '../../composables/auth'
+import { reactive, onMounted } from 'vue';
+import MultiSelect from 'primevue/multiselect';
  
 const form = reactive({
     person_info_id: '',
     email: '',
     password: '',
-    usertype: ''
+    user_role: '',
+    encoder_permissions: []
 })
  
-const { errors, personinfos, storeUser, generatePassword, getPersonInfos, getPersonEmail } = useUsers()
+const { errors, personinfos, storeUser, generatePassword, getPersonInfos, getPersonEmail } = useUsers();
+const { user: authUser, getUser } = useAuth();
  
 const saveUser = async () => {
     await storeUser({ ...form })
@@ -102,7 +128,12 @@ const generatePass = async (chkbox_fld) => {
     }
 }
 
-onMounted(getPersonInfos)
+onMounted(async () => {
+    await getUser();
+    await getPersonInfos({
+        office_id: authUser.value.office_id
+    });
+});
 
 const showPass = async (chkbox_fld, passw_fld) => {
     let chkbox = document.getElementById(chkbox_fld);

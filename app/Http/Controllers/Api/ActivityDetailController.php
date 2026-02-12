@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ActivityDetailResource;
 use App\Models\ActivityDetail;
 use App\Models\Attendee;
+use App\Models\GadActivity;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ActivityDetailController extends Controller
 {
@@ -39,6 +41,10 @@ class ActivityDetailController extends Controller
         ], [
             'responsible_unit.required' => 'Responsible Unit/Office field is required.'
         ]);
+
+        $gadActivity = GadActivity::find($request->gad_activity_id);
+
+        Gate::authorize('create', [ActivityDetail::class, $gadActivity]);
 
         $activitydetail = ActivityDetail::create([
             'gad_activity_id' => $request->gad_activity_id,
@@ -102,7 +108,9 @@ class ActivityDetailController extends Controller
             'responsible_unit.required' => 'Responsible Unit/Office field is required.'
         ]);
 
-        $activitydetail_update = ActivityDetail::find($id)->update([
+        $activitydetail = ActivityDetail::find($id);
+        Gate::authorize('update', $activitydetail);
+        $activitydetail->update([
             'gad_activity_id' => $request->gad_activity_id,
             'sub_activity' => $request->sub_activity,
             'targets' => $request->targets,
@@ -123,7 +131,9 @@ class ActivityDetailController extends Controller
      */
     public function destroy($id)
     {
-        $activitydetail = ActivityDetail::find($id)->delete();
+        $activitydetail = ActivityDetail::find($id);
+        Gate::authorize('delete', $activitydetail);
+        $activitydetail->delete();
  
         return response()->noContent();
     }
@@ -141,7 +151,9 @@ class ActivityDetailController extends Controller
 
         $attendees = Attendee::where('activity_detail_id', $id)->with('personInfo')->get();
 
-        $activitydetail_update = ActivityDetail::find($id)->update([
+        $activitydetail = ActivityDetail::find($id);
+        Gate::authorize('update', $activitydetail);
+        $activitydetail->update([
             'gad_budget' => $request->gad_budget,
             'actual_result' => $request->actual_result,
             'actual_men' => $attendees->where('personInfo.gender', 'male')->count(),

@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\GadActivityController;
 use App\Http\Controllers\Api\ActivityDetailController;
 use App\Http\Controllers\Api\AttendeeController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProvinceController;
 use App\Http\Controllers\Api\MunicipalityController;
 use App\Http\Controllers\Api\BarangayController;
@@ -20,10 +21,18 @@ use App\Http\Controllers\Api\GenderIssueController;
 use App\Http\Controllers\Api\CauseGenderIssueController;
 use App\Http\Controllers\Api\ObjectiveController;
 use App\Http\Controllers\Api\FrontlineServiceController;
+use App\Http\Controllers\Api\TrainingController;
 use App\Http\Controllers\Api\FrontlineServiceTypeController;
 use App\Http\Controllers\Api\PermitTypeController;
 use App\Http\Controllers\Api\EmployeeSalaryController;
+use App\Http\Controllers\Api\OfficeController;
+use App\Http\Controllers\Api\RoleController;
+use App\Http\Controllers\CommitteeRsoAttachmentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RegionController;
+use App\Http\Controllers\Api\TrainingInstanceController;
+use App\Http\Controllers\SignatoryController;
+use App\Models\Activity;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,25 +44,49 @@ use App\Http\Controllers\DashboardController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
+    
 Route::middleware('auth:sanctum')->group( function () {
     Route::prefix('dashboard')->group(function () {
         Route::get('summary', [DashboardController::class, 'summary']);
     });
-    
+/*     Route::get('/user', function (Request $request) {
+        return $request->user();
+    }); */
     Route::prefix('frontlineservices')->group(function () {
         Route::get('summary', [FrontlineServiceController::class, 'summary']);
     });
 
+    Route::prefix('trainings')->group(function () {
+        Route::get('summary', [TrainingController::class, 'summary']);
+        Route::get('suggestions', [TrainingController::class, 'suggestTitles']);
+
+        // Attendees routes
+        Route::get('{id}/attendees', [TrainingController::class, 'attendees']);
+        Route::post('{id}/attendees', [TrainingController::class, 'addAttendees']);
+        Route::delete('{training}/attendees/{user}', [TrainingController::class, 'removeAttendee']);
+        Route::delete('{training}/attendees', [TrainingController::class, 'removeAllAttendees']);
+        Route::get('{trainingId}/certificate/{attendeeId}', [TrainingController::class, 'getCertificate']);
+        Route::post('{trainingId}/certificate/{attendeeId}', [TrainingController::class, 'uploadCertificate']);
+        Route::delete('{trainingId}/certificate/{attendeeId}', [TrainingController::class, 'deleteCertificate']);
+        // Specific training title by ID
+        Route::post('{id}/update', [TrainingController::class, 'updateFromInstance']);
+        Route::get('instance/{id}', [TrainingController::class, 'showByInstance']);
+        Route::get('{id}/training_title', [TrainingController::class, 'getTrainingTitle']);
+        Route::get('/trainingtypes', [TrainingController::class, 'getTrainingTypes']);
+    });
+
+    Route::prefix('traininginstances')->group(function () {
+        Route::get('/{id}/trainingtitle', [TrainingInstanceController::class, 'getTrainingTitle']);
+    /*  Route::get('/{id}', [TrainingInstanceController::class, 'show']);
+        Route::post('/', [TrainingInstanceController::class, 'store']);
+        Route::put('/{id}', [TrainingInstanceController::class, 'update']); */
+        Route::delete('/{id}', [TrainingInstanceController::class, 'destroy']);
+    });
     Route::prefix('personinfos')->group(function () {
         Route::get('summary', [PersonInfoController::class, 'summary']);
         Route::get('get-employees', [PersonInfoController::class, 'getEmployees']);
-        Route::get('get-chart-data', [PersonInfoController::class, 'getChartData']);
+        Route::get('chart-employees', [PersonInfoController::class, 'getChartEmployeeData']);
+        Route::get('all/persons', [PersonInfoController::class, 'all']);
     });
 
     Route::prefix('committees')->group(function () {
@@ -66,8 +99,42 @@ Route::middleware('auth:sanctum')->group( function () {
 
     Route::prefix('users')->group(function () {
         Route::get('get-auth', [UserController::class, 'getAuth']);
+        Route::post('store-admin', [UserController::class, 'storeAdmin']);
     });
-    
+
+    Route::prefix('regions')->group(function () {
+        Route::get('all', [RegionController::class, 'all']);
+    });
+
+    Route::prefix('barangays')->group(function () {
+        Route::get('search/{name}', [BarangayController::class, 'search']);
+    });
+
+    Route::prefix('offices')->group(function () {
+        Route::get('{id}', [OfficeController::class, 'findById']);
+    });
+
+    Route::prefix('auth')->group(function () {
+        Route::get('user', [AuthController::class, 'user']);
+    });
+
+    Route::prefix('auth')->group(function () {
+    Route::get('can-access', [AuthController::class, 'canAccess']); 
+    });
+
+    Route::prefix('committee_rso_attachments')->group(function () {
+        Route::get('view/{year}', [CommitteeRsoAttachmentController::class, 'show']);
+    });
+
+    Route::prefix("planbudgets")->group(function () {
+        Route::post('add-attributed-program', [PlanBudgetController::class, 'storeAttributedProgram']);
+        Route::put('update-attributed-program/{id}', [PlanBudgetController::class, 'updateAttributedProgram']);
+    });
+
+    Route::prefix("signatories")->group(function () {
+        Route::post('store-gpb-signatory', [SignatoryController::class, 'storeGpbSignatory']);        
+    });
+
     Route::apiResources([
         'personinfos' => PersonInfoController::class,
         'users' => UserController::class,
@@ -90,18 +157,23 @@ Route::middleware('auth:sanctum')->group( function () {
         'frontlineservicetypes' => FrontlineServiceTypeController::class,
         'permittypes' => PermitTypeController::class,
         'employeesalaries' => EmployeeSalaryController::class,
-
+        'trainings' => TrainingController::class,
+        'traininginstances' => TrainingInstanceController::class,
+        'offices' => OfficeController::class,
+        'roles' => RoleController::class,
+        'committee_rso_attachments' => CommitteeRsoAttachmentController::class,
+        'signatories' => SignatoryController::class
     ]);
-    // PersonInfo
-    Route::prefix('personinfos')->group(function () {
-        Route::get('all/persons', [PersonInfoController::class, 'all']);
-    });
+
     Route::get('yearlist', [CommitteeController::class, 'yearlist']);
     Route::get('genderissuebyyear/{year}', [GenderIssueController::class, 'genderIssueByYear']);
     Route::get('permittypebystatus/{status}', [PermitTypeController::class, 'getPermitTypeByStatus']);
     Route::post('updateaccom/{id}', [ActivityDetailController::class, 'updateAccom']);
-
-    
+    Route::get('officeemployees', [PersonInfoController::class, 'getEmployeeList']);
+    Route::get('traininglist', [TrainingController::class, 'getTrainingList']);
+    Route::get('authuser/officeid', function (Request $request) {
+        return response()->json([
+            'office_id' => $request->user()->office_id,
+        ]);
+    });
 });
-
-// Route::apiResource('personinfos', PersonInfoController::class);

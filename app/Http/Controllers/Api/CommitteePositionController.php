@@ -4,17 +4,23 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CommitteePositionResource;
+use App\Models\Committee;
 use App\Models\CommitteePosition;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class CommitteePositionController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $committeePositions = CommitteePosition::all();
+        $query = CommitteePosition::query();
+        if($request->has('office_id')) {
+            $query->where('office_id', $request->office_id);
+        }
+        $committeePositions = $query->get();
         return CommitteePositionResource::collection($committeePositions);
     }
 
@@ -29,7 +35,8 @@ class CommitteePositionController extends Controller
 
         $committeePosition = CommitteePosition::create([
             'position_title' => $request->position_title,
-            'is_active_position' => 1
+            'is_active_position' => 1,
+            'office_id' => auth()->user()->office_id
         ]);
 
         return new CommitteePositionResource($committeePosition);
@@ -55,7 +62,11 @@ class CommitteePositionController extends Controller
             'is_active_position.required' => 'The status field is required.'
         ]);
 
-        $committeePosition_updated = CommitteePosition::find($id)->update([
+        $committeePosition = CommitteePosition::find($id);
+
+        Gate::authorize('update', $committeePosition);
+
+        $committeePosition->update([
             'position_title' => $request->position_title,
             'is_active_position' => $request->is_active_position,
         ]);
@@ -70,7 +81,16 @@ class CommitteePositionController extends Controller
      */
     public function destroy($id)
     {
-        $committeePosition = CommitteePosition::find($id)->delete();
+        $committeePosition = CommitteePosition::find($id);
+
+        $isUsed = Committee::where('committee_position_id', $committeePosition->id)->exists();
+        if($isUsed) {
+            return response()->json(['message' => 'This position is used in a committee.'], 403);
+        }
+        
+        Gate::authorize('update', $committeePosition);
+        
+        $committeePosition->delete();
  
         return response()->noContent();
     }

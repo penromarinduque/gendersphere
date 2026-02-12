@@ -8,6 +8,7 @@ Alpine.start();
 
 import { createApp } from 'vue';
 import router from './router';
+import ToastService from 'primevue/toastservice';
 
 /* import the fontawesome core */
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -16,7 +17,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
+import { faSortAlphaUp, faUserSecret } from '@fortawesome/free-solid-svg-icons'
 
 /* add icons to the library */
 library.add(faUserSecret)
@@ -28,6 +29,10 @@ import PrimeVue from "primevue/config";
 import Aura from '@primevue/themes/aura';
 import Lara from '@primevue/themes/lara';
 import { definePreset } from "@primevue/themes";
+
+// services
+import ConfirmationService from 'primevue/confirmationservice';
+import { ConfirmPopup } from 'primevue';
 
 const MyPreset = definePreset(Lara, {
     primitive: {
@@ -692,13 +697,11 @@ const MyPreset = definePreset(Lara, {
     }
 });
 
-const app = createApp({
-    components: {
-        App
-    }
-})
-.use(router)
+const app = createApp({});
+
+app.use(router)
 .use(PrimeVue, {
+    ripple: true,
     theme: {
         preset: MyPreset,
         options: {
@@ -706,5 +709,11 @@ const app = createApp({
         }
     }
 })
-.mount('#app');
+.use(ToastService)
+.use(ConfirmationService)
+
+app.component('ConfirmPopup', ConfirmPopup);
+app.component('App', App);
+app.mount('#app');
+
 

@@ -5,16 +5,22 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ObjectiveResource;
 use App\Models\Objective;
+use App\Models\PlanBudget;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class ObjectiveController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $objectives = Objective::all();
+        $query = Objective::query();
+        if($request->has('office_id')) {
+            $query->where('office_id', $request->office_id);
+        }
+        $objectives = $query->get();
         return ObjectiveResource::collection($objectives);
     }
 
@@ -29,7 +35,8 @@ class ObjectiveController extends Controller
 
         $objective = Objective::create([
             'gad_objective' => $request->gad_objective,
-            'is_active_objective' => 1
+            'is_active_objective' => 1,
+            'office_id' => auth()->user()->office_id
         ]);
 
         return new ObjectiveResource($objective);
@@ -55,7 +62,9 @@ class ObjectiveController extends Controller
             'is_active_objective.required' => 'The status field is required.'
         ]);
 
-        $objective_updated = Objective::find($id)->update([
+        $objective = Objective::find($id);
+        Gate::authorize('update', $objective);
+        $objective->update([
             'gad_objective' => $request->gad_objective,
             'is_active_objective' => $request->is_active_objective,
         ]);
@@ -70,7 +79,13 @@ class ObjectiveController extends Controller
      */
     public function destroy($id)
     {
-        $objective = Objective::find($id)->delete();
+        $objective = Objective::find($id);
+        $isUsed = PlanBudget::where('objective_id', $objective->id)->exists();
+        if($isUsed) {
+            return response()->json(['message' => 'This objective is used in a plan budget therefore it cannot be deleted.'], 403);
+        }
+        Gate::authorize('delete', $objective);
+        $objective->delete();
  
         return response()->noContent();
     }

@@ -11,5 +11,5 @@ class Goal extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['goal_no', 'gad_goal', 'is_active_goal'];
+    protected $fillable = ['goal_no', 'gad_goal', 'is_active_goal', 'office_id'];
 }

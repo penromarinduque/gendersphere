@@ -11,5 +11,5 @@ class GenderIssue extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['mandate_year', 'gender_issue_mandate', 'is_active_gender_issue'];
+    protected $fillable = ['mandate_year', 'gender_issue_mandate', 'is_active_gender_issue', 'office_id'];
 }

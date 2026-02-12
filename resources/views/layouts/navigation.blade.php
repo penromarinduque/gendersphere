@@ -17,109 +17,188 @@
                     </x-nav-link>
                     
                     <!-- Data Entry -->
-                    <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
+                     @php
+                        $can_view_data_entry = Auth::user()->can('viewAny', App\Models\PersonInfo::class) 
+                        || Auth::user()->can('viewAny', App\Models\Committee::class)
+                        || Auth::user()->can('viewAny', App\Models\PlanBudget::class)
+                        || Auth::user()->can('viewAny', App\Models\FrontlineService::class);
+                    @endphp
+                    @if ($can_view_data_entry)
+                    <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300 whitespace-nowrap">
                         <x-dropdown align="right" width="48">
                             <x-slot name="trigger">
                                 <button class="inline-flex items-center px-1 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                                     <div>Data Entry</div>
 
-                                    <div class="ms-1">
-                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </button>
-                            </x-slot>
+                                        <div class="ms-1">
+                                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </x-slot>
 
-                            <x-slot name="content">
-                                <x-dropdown-link :href="route('personinfos')">
-                                    {{ __('Personnel') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('committees')">
-                                    {{ __('GADFPS Committee') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('planbudgets')">
-                                    {{ __('GAD Plan and Budget') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('frontlineservices')">
-                                    {{ __('Frontline Services') }}
-                                </x-dropdown-link>
-                            </x-slot>
-                        </x-dropdown>
-                    </div>
+                                <x-slot name="content">
+                                    @can('viewAny', App\Models\PersonInfo::class)
+                                        <x-dropdown-link :href="route('personinfos')">
+                                            {{ __('Personnel') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\Committee::class)
+                                        <x-dropdown-link :href="route('committees')">
+                                            {{ __('GADFPS Committee') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\PlanBudget::class)
+                                        <x-dropdown-link :href="route('planbudgets')">
+                                            {{ __('GAD Plan and Budget') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\FrontlineService::class)
+                                        <x-dropdown-link :href="route('frontlineservices')">
+                                            {{ __('Frontline Services') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    <x-dropdown-link :href="route('trainings')">
+                                        {{ __('Personnel Trainings') }}
+                                    </x-dropdown-link>
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+                    @endif
 
                     <!-- Reports Dropdown -->
-                    <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
-                        <x-dropdown align="right" width="48">
-                            <x-slot name="trigger">
-                                <button class="inline-flex items-center px-1 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                    <div>Reports</div>
+                    @php
+                        $can_view_reports = Auth::user()->can('viewEmployeeReport', App\Models\PersonInfo::class) 
+                        || Auth::user()->can('viewAccomplishmentReport', App\Models\PlanBudget::class)
+                        || Auth::user()->can('viewSexAggregatedDataReport', App\Models\FrontlineService::class);
+                    @endphp
+                    @if ($can_view_reports)
+                        <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
+                            <x-dropdown align="right" width="48">
+                                <x-slot name="trigger">
+                                    <button class="inline-flex items-center px-1 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                        <div>Reports</div>
 
-                                    <div class="ms-1">
-                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </button>
-                            </x-slot>
+                                        <div class="ms-1">
+                                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </x-slot>
 
-                            <x-slot name="content">
-                                <x-dropdown-link :href="route('report.employees')">
-                                    {{ __('PENRO Employees') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('report.gadplanbudgets')">
-                                    {{ __('Annual GAD Plan and Budget') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('report.sexaggregated')">
-                                    {{ __('Sex Dis-Aggregated Data') }}
-                                </x-dropdown-link>
-                            </x-slot>
-                        </x-dropdown>
-                    </div>
+                                <x-slot name="content">
+                                    @can('viewEmployeeReport', App\Models\PersonInfo::class)
+                                        <x-dropdown-link :href="route('report.employees')">
+                                            {{ __('PENRO Employees') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAccomplishmentReport', App\Models\PlanBudget::class)
+                                        <x-dropdown-link :href="route('report.gadplanbudgets')">
+                                            {{ __('Annual GAD Plan and Budget') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewSexAggregatedDataReport', App\Models\FrontlineService::class)
+                                        <x-dropdown-link :href="route('report.sexaggregated', ['office_id' => Auth::user()->office_id])">
+                                            {{ __('Sex Dis-Aggregated Data') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewCommitteeReport', App\Models\Committee::class)
+                                    <x-dropdown-link :href="route('report.getCommittees', ['office_id' => Auth::user()->office_id])">
+                                        {{ __('Committee List') }}
+                                    </x-dropdown-link>
+                                    @endcan
+                                    @can('viewTrainingReport', App\Models\Training::class)
+                                    <x-dropdown-link :href="route('report.trainings', ['office_id' => Auth::user()->office_id])">
+                                        {{ __('Training List') }}
+                                    </x-dropdown-link>
+                                    @endcan
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+                    @endif
 
                     <!-- Maintenance Dropdown -->
-                    <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
-                        <x-dropdown align="right" width="48">
-                            <x-slot name="trigger">
-                                <button class="inline-flex items-center px-1 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                    <div>Maintenance</div>
+                    @php
+                        $can_view_maintenance = Auth::user()->can('viewAny', App\Models\Office::class) 
+                        || Auth::user()->can('viewAny', App\Models\Goal::class)
+                        || Auth::user()->can('viewAny', App\Models\GenderIssue::class)
+                        || Auth::user()->can('viewAny', App\Models\CauseGenderIssue::class)
+                        || Auth::user()->can('viewAny', App\Models\Objective::class)
+                        || Auth::user()->can('viewAny', App\Models\FrontlineServiceType::class)
+                        || Auth::user()->can('viewAny', App\Models\PermitType::class)
+                        || Auth::user()->can('viewAny', App\Models\CommitteePosition::class)
+                        || Auth::user()->is_super_admin;
+                    @endphp
+                    @if ($can_view_maintenance)
+                        <div class="hidden sm:flex sm:items-center sm:ms-6 border-b-2 border-transparent hover:border-gray-300">
+                            <x-dropdown align="right" width="48">
+                                <x-slot name="trigger">
+                                    <button class="inline-flex items-center px-1 py-2 border border-transparent text-md leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                        <div>Maintenance</div>
 
-                                    <div class="ms-1">
-                                        <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </button>
-                            </x-slot>
+                                        <div class="ms-1">
+                                            <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </x-slot>
 
-                            <x-slot name="content">
-                                <x-dropdown-link :href="route('users')">
-                                    {{ __('Users') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('maintenance.committeepositions')">
-                                    {{ __('GADFPS Committee Positions') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('maintenance.goals')">
-                                    {{ __('GAD Goals') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('maintenance.genderissues')">
-                                    {{ __('Gender Issues/GAD Mandates') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('maintenance.causegenderissues')">
-                                    {{ __('Causes of Gender Issues') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('maintenance.objectives')">
-                                    {{ __('GAD Result Statement/ GAD Objectives') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('maintenance.frontlineservicetypes')">
-                                    {{ __('Frontline Services Type') }}
-                                </x-dropdown-link>
-                                <x-dropdown-link :href="route('maintenance.permittypes')">
-                                    {{ __('Permit Types') }}
-                                </x-dropdown-link>
-                            </x-slot>
-                        </x-dropdown>
-                    </div>
+                                <x-slot name="content">
+                                    @can('viewAny', App\Models\Office::class)
+                                        <x-dropdown-link :href="route('maintenance.offices')">
+                                            {{ __('Offices') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    <x-dropdown-link :href="route('users')">
+                                        {{ __('Users') }}
+                                    </x-dropdown-link>
+                                    @can('viewAny', App\Models\CommitteePosition::class)
+                                        <x-dropdown-link :href="route('maintenance.committeepositions')">
+                                            {{ __('GADFPS Committee Positions') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\Goal::class)
+                                        <x-dropdown-link :href="route('maintenance.goals')">
+                                            {{ __('GAD Goals') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\GenderIssue::class)
+                                        <x-dropdown-link :href="route('maintenance.genderissues')">
+                                            {{ __('Gender Issues/GAD Mandates') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\CauseGenderIssue::class)
+                                        <x-dropdown-link :href="route('maintenance.causegenderissues')">
+                                            {{ __('Causes of Gender Issues') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\Objective::class)
+                                        <x-dropdown-link :href="route('maintenance.objectives')">
+                                            {{ __('GAD Result Statement/ GAD Objectives') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\FrontlineServiceType::class)
+                                        <x-dropdown-link :href="route('maintenance.frontlineservicetypes')">
+                                            {{ __('Frontline Services Type') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    @can('viewAny', App\Models\PermitType::class)
+                                        <x-dropdown-link :href="route('maintenance.permittypes')">
+                                            {{ __('Permit Types') }}
+                                        </x-dropdown-link>
+                                    @endcan
+                                    {{-- @can('viewAny', App\Models\PermitType::class) --}}
+                                        <x-dropdown-link :href="route('maintenance.signatories')">
+                                            {{ __('Signatories') }}
+                                        </x-dropdown-link>
+                                    {{-- @endcan --}}
+                                </x-slot>
+                            </x-dropdown>
+                        </div>
+                    @endif
                 </div>
             </div>
 

@@ -12,7 +12,7 @@
     
     <div>
         <Select @change="handleYearChange" v-model="selectedYear" :options="yearlist" optionLabel="year" optionValue="year"  placeholder="Filter Year"  class="w-full md:w-56 mb-2 me-2" size="small" />
-        <Select @change="getFrontlineServices" v-model="selectedPermitType" :options="permittypes" optionLabel="permit_type" optionValue="id"  placeholder="Filter Permit Type" class="w-full md:w-56 mb-2" size="small" />
+        <Select @change="getFrontlineServices(undefined, {office_id: authUser.office_id})" v-model="selectedPermitType" :options="permittypes" optionLabel="permit_type" optionValue="id"  placeholder="Filter Permit Type" class="w-full md:w-56 mb-2" size="small" />
     </div>
 
     <Panel class="mb-3" header="Summary">
@@ -56,40 +56,46 @@
             </thead>
  
             <tbody class="bg-white divide-y divide-gray-200 divide-solid">
-            <template v-for="item in frontlineservices.data" :key="item.id">
-                <tr class="bg-white">
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.service+' - '+item.permit_type }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.permit_no }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.client_name }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.gender }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.barangay_name+', '+item.municipality_name }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.date_applied }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.date_released }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <router-link :to="{ name: 'frontlineservices.edit', params: { id: item.id } }" class="inline-flex items-center mr-2 px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
-                        <button @click="deleteFrontlineService(item.id)" class="inline-flex items-center px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
-                            Delete
-                        </button>
+            <template v-if="frontlineservices.data && frontlineservices.data.length">
+                <template v-for="item in frontlineservices.data" :key="item.id">
+                    <tr class="bg-white">
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.service+' - '+item.permit_type }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.permit_no }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.client_name }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.gender }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.barangay_name+', '+item.municipality_name }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.date_applied }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.date_released }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <router-link :to="{ name: 'frontlineservices.edit', params: { id: item.id } }" class="inline-flex items-center mr-2 px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
+                            <button @click="deleteFrontlineService(item.id)" class="inline-flex items-center px-2 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                </template>
+            </template>
+            <template v-else>
+                <tr>
+                    <td colspan="7" class="text-center text-gray-500 py-4">
+                        No records found.
                     </td>
                 </tr>
             </template>
-            <tr v-if="!frontlineservices.length && frontlineservices.length < 1">
-                <td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found </td>
-            </tr>
             </tbody>
         </table>
     </div>
@@ -103,6 +109,7 @@
 import useFrontlineServices from '../../composables/frontlineservices';
 import useFrontlineServiceTypes from '../../composables/frontlineservicetypes';
 import usePermitTypes from '../../composables/permittypes';
+import useAuth from '../../composables/auth';
 import { onMounted } from 'vue'
 import Select from 'primevue/select';
 import Paginator from 'primevue/paginator';
@@ -113,6 +120,7 @@ import Panel from 'primevue/panel';
 const { frontlineservices, selectedYear, yearlist, selectedPermitType, frontlineServiceSummary, getFrontlineServices, destroyFrontlineService, getYearlist, getFrontlineServiceSummary } = useFrontlineServices();
 const { getFrontlineServiceTypes, frontlineservicetypes } = useFrontlineServiceTypes();
 const { permittypes, getPermitTypes } = usePermitTypes();
+const { user:authUser, getUser } = useAuth();
 
 const deleteFrontlineService = async (id) => {
     // console.log(id);
@@ -120,20 +128,29 @@ const deleteFrontlineService = async (id) => {
         return
     }
     await destroyFrontlineService(id)
-    await getFrontlineServices()
+    await getFrontlineServices(undefined, {
+        office_id: authUser.value.office_id
+    })
 }
 
 const handleYearChange = () => {
-    getFrontlineServices();
+    getFrontlineServices(undefined, {
+        office_id: authUser.value.office_id
+    });
     getFrontlineServiceSummary();
 }
 
-onMounted(() => {
-    getFrontlineServices();
+onMounted(async () => {
+    await getUser();
+    getFrontlineServices(undefined, {
+        office_id: authUser.value.office_id
+    });
     getFrontlineServiceTypes();
     getYearlist();
     getPermitTypes();
-    getFrontlineServiceSummary();
+    getFrontlineServiceSummary({
+        office_id: authUser.value.office_id
+    });
 });
 
 </script>

@@ -12,7 +12,7 @@ class PersonInfo extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['user_id', 'lastname', 'firstname', 'middlename', 'extname', 'gender', 'civil_status', 'birthdate', 'age', 'height', 'weight', 'blood_type', 'barangay_id', 'municipality_id', 'province_id', 'address_full', 'education_level', 'contact_no', 'email_add', 'employment_type', 'employment_status', 'position', 'organization', 'person_type'];
+    protected $fillable = ['user_id', 'lastname', 'firstname', 'middlename', 'extname', 'gender', 'civil_status', 'birthdate', 'age', 'height', 'weight', 'blood_type', 'barangay_id', 'municipality_id', 'province_id', 'address_full', 'education_level', 'contact_no', 'email_add', 'employment_type', 'employment_status', 'position', 'organization', 'person_type', 'office_id'];
 
     public function educationalLevel($lvl = null)
     {
@@ -23,5 +23,31 @@ class PersonInfo extends Model implements Auditable
             'college' => 'College',
             'graduate_studies' => 'Graduate Studies',
         ];
+    }
+
+    public function barangay() {
+        return $this->belongsTo(Barangay::class);
+    }
+
+    public function trainingInstances() {
+        return $this->belongsToMany(TrainingInstance::class, 'training_instance_attendee', 'person_info_id', 'training_instance_id')
+            ->withPivot('certificate_path')
+            ->withTimestamps();
+    }
+    
+    public function getFullNameAttribute()
+    {
+       return $this->firstname . ' ' . substr($this->middlename, 0, 1) . '. ' . ' ' . $this->lastname  . $this->extname;
+
+    }
+
+    public function getAddressAttribute()
+    {
+        return $this->barangay->barangay_name . ', ' . $this->barangay->municipality->municipality_name . ', ' . $this->barangay->municipality->province->province_name;
+    }
+
+    public function age()
+    {
+        return \Carbon\Carbon::parse($this->birthdate)->age;
     }
 }

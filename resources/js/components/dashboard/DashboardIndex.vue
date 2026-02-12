@@ -12,7 +12,7 @@
         <Select size="small" @change="fetchSummary" v-model="selectedYear" :options="yearlist" optionLabel="year" optionValue="year"  placeholder="Year"  class="w-fit md:w-56 mb-2 me-2" ></Select>   
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         <Card>
             <template #content>
                 <h1 class="text-3xl font-extrabold">{{ summary && summary.totals.users }}</h1>
@@ -35,6 +35,12 @@
             <template #content>
                 <h1 class="text-3xl font-extrabold">{{ summary && summary.totals.frontlineServices }}</h1>
                 <h5>Frontline Services</h5>
+            </template>
+        </Card>
+        <Card>
+            <template #content>
+                <h1 class="text-3xl font-extrabold">{{ summary && summary.totals.trainings }}</h1>
+                <h5>Trainings</h5>
             </template>
         </Card>
     </div>

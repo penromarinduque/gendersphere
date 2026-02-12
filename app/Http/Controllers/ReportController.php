@@ -2,25 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ActivityDetail;
+use App\Models\Committee;
 use Illuminate\Http\Request;
 use App\Models\PersonInfo;
 use App\Models\PlanBudget;
+use App\Models\Training;
+use App\Models\TrainingInstance;
 use App\Models\FrontlineServiceType;
 use App\Models\PermitType;
 use App\Models\FrontlineService;
+use App\Models\Signatory;
+use Illuminate\Support\Facades\Gate;
 
 class ReportController extends Controller
 {
-    public function employees($type='permanent')
+    public function employees(Request $request, $type='permanent')
     {
-        $employees = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')
-        // , 'barangays.barangay_name', 'municipalities.municipality_name, provinces.province_name'
-            ->join('provinces', 'provinces.id', 'person_infos.province_id')
-            ->join('municipalities', 'municipalities.id', 'person_infos.municipality_id')
-            ->join('barangays', 'barangays.id', 'person_infos.barangay_id')
-            ->where('person_type',1)
-            ->where('employment_type', $type)
-            ->get();
+        $user = auth()->user();
+        $office_id = $user->office_id; 
+        $employees = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')->join('provinces', 'provinces.id', 'person_infos.province_id')->join('municipalities', 'municipalities.id', 'person_infos.municipality_id')->join('barangays', 'barangays.id', 'person_infos.barangay_id')->where('person_type',1)->where('employment_type', $type)->get();
+        if(!$user->is_super_admin){
+            $employees = PersonInfo::select('person_infos.*', 'provinces.province_name', 'municipalities.municipality_name', 'barangays.barangay_name')->join('provinces', 'provinces.id', 'person_infos.province_id')->join('municipalities', 'municipalities.id', 'person_infos.municipality_id')->join('barangays', 'barangays.id', 'person_infos.barangay_id')->where('person_type',1)->where('employment_type', $type)->where('person_infos.office_id', $office_id)->get();
+        }
         return view('pages.reports.employees', [
             'employees' => $employees,
             'type' => $type
@@ -30,10 +34,17 @@ class ReportController extends Controller
     public function gadPlanBudgets(Request $request)
     {
         $_planbudget = new PlanBudget;
-
+        Gate::authorize('viewAccomplishmentReport', PlanBudget::class);
+        $user = auth()->user();
+        $office_id = $user->office_id; 
         $year = ($request->year) ? $request->year : date('Y');
         $goals = $_planbudget->getPlanBudgetGoals($year);
         $planbudgets = $_planbudget->getPlanBudgetByYear($year);
+        
+        if(!$user->is_super_admin){
+            $goals = $_planbudget->getPlanBudgetGoals($year);
+            $planbudgets = $_planbudget->getPlanBudgetByYear($year);
+        }
 
         $str = '';
         $str = '<table border="1" style="border-collapse: collapse;">
@@ -243,11 +254,246 @@ class ReportController extends Controller
         </table>';
 
         // return $str;
+        $signatories = Signatory::with('committeePosition.committees.personInfo')->where('report', 'gpb')->get();
 
         return view('pages.reports.gadplanbudgets', [
             'year' => $year,
             'goals' => $goals,
             'planbudgets' => $planbudgets,
+            'signatories' => $signatories,
+        ]);
+    }
+
+    public function printGadPlanBudgets(Request $request)
+    {
+        $_planbudget = new PlanBudget;
+        Gate::authorize('viewAccomplishmentReport', PlanBudget::class);
+        $user = auth()->user();
+        $office_id = $user->office_id; 
+        $year = ($request->year) ? $request->year : date('Y');
+        $goals = $_planbudget->getPlanBudgetGoals($year);
+        $planbudgets = $_planbudget->getPlanBudgetByYear($year);
+        
+        if(!$user->is_super_admin){
+            $goals = $_planbudget->getPlanBudgetGoals($year);
+            $planbudgets = $_planbudget->getPlanBudgetByYear($year);
+        }
+
+        $str = '';
+        $str = '<table border="1" style="border-collapse: collapse;">
+            <thead>
+                <tr>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Gender Issue/GAD Mandate</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Cause of Gender Issue</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Result Statement/ GAD Objective</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Relevant Organization MFO/PAP or PPA</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Activity</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Performance Indicators /Targets</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Actual Results/ Outputs and Outcomes </span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Budget</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Actual Cost / Cost Expenditure</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Remarks</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="10">
+                        CLIENT-FOCUSED ACTIVITIES
+                    </td>
+                </tr>';
+        foreach ($goals as $goal) {
+            if($goal->focus=='client') {
+            $str .= '<tr>
+                    <td colspan="10">GAD Goal '.$goal->goal_no.' : '.$goal->gad_goal.'</td>
+                </tr>';
+            }
+
+            if (!empty($planbudgets)) {
+                foreach ($planbudgets as $planbudget) {
+                    if($goal->focus=='client' && $goal->goal_id == $planbudget->goal_id && $planbudget->focus=='client'){
+                        $ga_countc = count($planbudget->gad_activities);
+                        // echo '<br>';
+                        $ad_countc = 0;
+                        $ad_colc = 1;
+                        if (!empty($planbudget->gad_activities)) {
+                            foreach ($planbudget->gad_activities as $gad_act) {
+                                $ads_countc = count($gad_act->activity_details);
+                                // echo '<br>';
+                                if (!empty($gad_act->activity_details)) {
+                                    foreach ($gad_act->activity_details as $activity_detail) {
+                                        // $ad_col = ($ad_count > 1) ? 6 : 1;
+                                        if ($ads_countc == 1 && $activity_detail->sub_activity==NULL) {
+                                            $ad_colc = 1;
+                                            $ad_countc = 0;
+                                        } elseif ( ($ads_countc == 1 && $activity_detail->sub_activity!=NULL) || $ads_countc > 1 ) {
+                                            $ad_colc = 6;
+                                            $ad_countc = $ads_countc + 1;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // echo $ad_countc;
+                        $rowspanc = $ga_countc + $ad_countc;
+                        $str .= '<tr valign="top">
+                                <td rowspan="'.$rowspanc.'">'.$planbudget->gender_issue_mandate.'</td>
+                                <td rowspan="'.$rowspanc.'">'.$planbudget->cause_gender_issue.'</td>
+                                <td rowspan="'.$rowspanc.'">'.$planbudget->gad_objective.'</td>
+                                <td rowspan="'.$rowspanc.'">'.$planbudget->relevant_org.'</td>';
+                                if (!empty($planbudget->gad_activities)) {
+                                    foreach ($planbudget->gad_activities as $gad_act) {
+                                        if($ga_countc > 1){ $str .= '</tr><tr>'; }
+                                        $str .= '<td colspan="'.$ad_colc.'">'.$gad_act->id.'>'.$gad_act->main_activity.'</td>';
+                                        if (!empty($gad_act->activity_details)) {
+                                            foreach ($gad_act->activity_details as $activity_detail) {
+                                                if (($ad_countc == 1 && $activity_detail->sub_activity!=NULL) || $ad_countc > 1) { $str .= '</tr><tr>'; }
+                                                if($ad_countc > 1){
+                                                $str .= '<td>'.$activity_detail->sub_activity.'</td>';    
+                                                }
+                                                $str .= '<td>'.$activity_detail->targets.'</td>';
+                                                $str .= '<td>'.$activity_detail->actual_result.'</td>';
+                                                $str .= '<td align="right">'.$activity_detail->gad_budget.'</td>';
+                                                $str .= '<td align="right">'.$activity_detail->gad_cost.'</td>';
+                                                $str .= '<td>'.$activity_detail->remarks.'</td>';
+                                                if (($ad_countc == 1 && $activity_detail->sub_activity!=NULL) || $ad_countc > 1) { $str .= '</tr>'; }
+                                            }
+                                        } else {
+                                            $str .= '
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            ';
+                                        }
+                                        if($ga_countc > 1){ $str .= '</tr>'; }
+                                    }
+                                    
+                                }
+                        $str .= '</tr>';
+                        
+                    }
+
+                }
+            }
+        }
+
+        $str .= '<tr>
+                    <td colspan="10">
+                        ORGANIZATIONAL FOCUSED
+                    </td>
+                </tr>';
+        foreach ($goals as $goal) {
+            if($goal->focus=='organizational') {
+            $str .= '<tr>
+                    <td colspan="10">GAD Goal '.$goal->goal_no.' : '.$goal->gad_goal.'</td>
+                </tr>';
+            }
+
+            if (!empty($planbudgets)) {
+                foreach ($planbudgets as $planbudget) {
+                    if($goal->focus=='organizational' && $goal->goal_id == $planbudget->goal_id && $planbudget->focus=='organizational'){
+                        $ga_count = count($planbudget->gad_activities);
+                        $ad_count = 0;
+                        $ad_col = 1;
+                        if (!empty($planbudget->gad_activities)) {
+                            foreach ($planbudget->gad_activities as $gad_act) {
+                                $ads_count = count($gad_act->activity_details);
+                                // echo '<br>';
+                                if (!empty($gad_act->activity_details)) {
+                                    foreach ($gad_act->activity_details as $activity_detail) {
+                                        // $ad_col = ($ad_count > 1) ? 6 : 1;
+                                        if ($ads_count == 1 && $activity_detail->sub_activity==NULL) {
+                                            $ad_col = 1;
+                                            $ad_count = 0;
+                                        } elseif ( ($ads_count == 1 && $activity_detail->sub_activity!=NULL) || $ads_count > 1 ) {
+                                            $ad_col = 6;
+                                            $ad_count = $ads_count + 1;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // echo $ad_count;
+                        $rowspan = $ga_count + $ad_count;
+                        $str .= '<tr valign="top">
+                                <td rowspan="'.$rowspan.'">'.$planbudget->gender_issue_mandate.'</td>
+                                <td rowspan="'.$rowspan.'">'.$planbudget->cause_gender_issue.'</td>
+                                <td rowspan="'.$rowspan.'">'.$planbudget->gad_objective.'</td>
+                                <td rowspan="'.$rowspan.'">'.$planbudget->relevant_org.'</td>';
+                                if (!empty($planbudget->gad_activities)) {
+                                    foreach ($planbudget->gad_activities as $gad_act) {
+                                        if($ga_count > 1){ $str .= '</tr><tr>'; }
+                                        $str .= '<td colspan="'.$ad_col.'">'.$gad_act->id.'>'.$gad_act->main_activity.'</td>';
+                                        if (!empty($gad_act->activity_details)) {
+                                            foreach ($gad_act->activity_details as $activity_detail) {
+                                                if (($ad_count == 1 && $activity_detail->sub_activity!=NULL) || $ad_count > 1) { $str .= '</tr><tr>'; }
+                                                if($ad_count > 1){
+                                                $str .= '<td>'.$activity_detail->sub_activity.'</td>';    
+                                                }
+                                                $str .= '<td>'.$activity_detail->targets.'</td>';
+                                                $str .= '<td>'.$activity_detail->actual_result.'</td>';
+                                                $str .= '<td align="right">'.$activity_detail->gad_budget.'</td>';
+                                                $str .= '<td align="right">'.$activity_detail->gad_cost.'</td>';
+                                                $str .= '<td>'.$activity_detail->remarks.'</td>';
+                                                if (($ad_count == 1 && $activity_detail->sub_activity!=NULL) || $ad_count > 1) { $str .= '</tr>'; }
+                                            }
+                                        } else {
+                                            $str .= '
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            ';
+                                        }
+                                        if($ga_count > 1){ $str .= '</tr>'; }
+                                    }
+                                    
+                                }
+                        $str .= '</tr>';
+                        
+                    }
+
+                }
+            }
+        }
+
+        $str .= '</tbody>
+        </table>';
+
+        // return $str;
+        $signatories = Signatory::with('committeePosition.committees.personInfo')->where('report', 'gpb')->get();
+
+        return view('pages.reports.print.gadplanbudgets', [
+            'year' => $year,
+            'goals' => $goals,
+            'planbudgets' => $planbudgets,
+            'signatories' => $signatories
         ]);
     }
 
@@ -267,21 +513,28 @@ class ReportController extends Controller
         $_permittype = new PermitType;
         $_frontlinservice = new FrontlineService;
 
+        Gate::authorize('viewSexAggregatedDataReport', FrontlineService::class);
+
         $year = ($request->year) ? $request->year : date('Y');
         $frontline_service_type_id = ($request->frontline_service_type_id) ? $request->frontline_service_type_id : 0;
         $permit_type_id = $request->permit_type_id ? $request->permit_type_id : 1;
+
+        $office_query = $request->has('office_id') ? ['office_id' => $request->office_id] : [];
+        // $year_query = ;
 
         $counts = [
             "frontline_service_type" => [],
             "permit_type" => [],
             "gender" => [
                 "male" => FrontlineService::where([
-                            "gender" => "male"
+                            "gender" => "male",
+                            ...$office_query
                         ])
                         ->whereYear('date_released', $year)
                         ->count(),
                 "female" => FrontlineService::where([
-                            "gender" => "female"
+                            "gender" => "female",
+                            ...$office_query
                         ])
                         ->whereYear('date_released', $year)
                         ->count(),
@@ -292,7 +545,7 @@ class ReportController extends Controller
         foreach($permit_types as $ptype){
             $counts["permit_type"][] = [
                 "name" => $ptype->permit_type,
-                "count" => FrontlineService::where("permit_type_id", $ptype->id)->count()
+                "count" => FrontlineService::where(["permit_type_id" => $ptype->id, ...$office_query])->whereYear('date_released', $year)->count()
             ];
         }
 
@@ -303,13 +556,13 @@ class ReportController extends Controller
             ])->pluck("id");
             $counts["frontline_service_type"][] = [
                 "name" => $ftype->service,
-                "count" => FrontlineService::whereIn("permit_type_id", $ptype_ids)->count()
+                "count" => FrontlineService::whereIn("permit_type_id", $ptype_ids)->where([...$office_query])->whereYear('date_released', $year)->count()
             ];
         }
 
         $frontlineservicetypes = $_frontlineservicetype->getFrontlineServiceType(1);
         $permittypes = $_permittype->getPermitTypes($frontline_service_type_id);
-        $frontlineservices = $_frontlinservice->getFrontlineServicesByPermitType($permit_type_id, $year);
+        $frontlineservices = $_frontlinservice->getFrontlineServicesByPermitType($permit_type_id, $year, $request->has('office_id') ? $request->office_id : null);
         $permit_type = ($permit_type_id!=0) ? $_permittype->getPermitType($permit_type_id) : [];
         $report_heading = "";
         if (!empty($permit_type)) {
@@ -345,4 +598,96 @@ class ReportController extends Controller
         $permittypes = $_permittype->getPermitTypes($frontlineservicetype_id);
         return $permittypes;
     }
+
+    public function gadBudgetBudgetExpenses(Request $request){
+        $start_year = ($request->start_year) ? $request->start_year : date('Y');
+        $end_year = ($request->end_year) ? $request->end_year : date('Y');
+        if($start_year > $end_year){
+            return redirect()->back()->with('error', 'Start Year must be less than or equal to End Year.');
+        }
+
+        $clientFocus = ActivityDetail::query()->with(['gad_activity.plan_budget'])->whereHas('gad_activity', function($q) use($start_year, $end_year){
+            $q->whereHas('plan_budget', function($q) use($start_year, $end_year){
+                $q->whereBetween('year', [$start_year, $end_year])
+                ->where(['focus' => 'organizational', 'office_id' => auth()->user()->office_id]);
+            });
+        })->get();
+        $organizationalFocus = ActivityDetail::query()->with(['gad_activity.plan_budget'])->whereHas('gad_activity', function($q) use($start_year, $end_year){
+            $q->whereHas('plan_budget', function($q) use($start_year, $end_year){
+                $q->whereBetween('year', [$start_year, $end_year])
+                ->where(['focus' => 'organizational', 'office_id' => auth()->user()->office_id]);
+            });
+        })->get();
+        $attributedProgramFocus = PlanBudget::where(['focus' => 'attributed program', 'office_id' => auth()->user()->office_id])->whereBetween('year', [$start_year, $end_year])->get();
+
+        return view('pages.reports.gadbudgetexpense', [
+            'clientFocus' => $clientFocus,
+            'organizationalFocus' => $organizationalFocus,
+            'attributedProgramFocus' => $attributedProgramFocus,
+            'years' => Committee::yearList()
+        ]);
+    }
+
+    public function committees(Request $request){
+        $year = $request->has('year') ? $request->year : date('Y');
+        $office_id = auth()->user()->office_id;
+
+        $query = Committee::query()->with(['personInfo', 'committeePosition']);
+        $query->where('office_id', $office_id);
+        $query->whereYear('created_at', $year);
+
+        return view('pages.reports.committee', [
+            'committees' => $query->get(),
+            'years' => Committee::yearList()
+        ]);
+    }
+
+    public function trainings(Request $request) {
+        $_training = new Training;
+        Gate::authorize('viewTrainingReport', Training::class);
+        $user = auth()->user();
+        $officeId = $user->office_id;
+
+        $query = TrainingInstance::with(['training', 'attendees']);
+
+        // Normalize request inputs
+        $filters = [
+            'type' => is_array($request->type) ? ($request->type['value'] ?? $request->type[0] ?? null) : $request->type,
+            'title' => is_array($request->title) ? ($request->title['value'] ?? $request->title[0] ?? null) : $request->title,
+            'employeeId' => is_array($request->employee_id) ? ($request->employee_id['value'] ?? $request->employee_id[0] ?? null) : $request->employee_id,
+            'trainingNature' => is_array($request->training_nature) ? ($request->training_nature['value'] ?? $request->training_nature[0] ?? null) : $request->training_nature,
+            'year' => is_array($request->year) ? ($request->year['value'] ?? $request->year[0] ?? null) : $request->year,
+        ];
+
+        if (!$user?->is_super_admin) {
+            $query->where('office_id', $officeId);
+        }
+
+        if ($filters['year'] && $filters['year'] !== 'all') {
+            $query->whereYear('training_start', $filters['year']);
+        }
+
+        if ($filters['title'] && $filters['title'] !== 'all') {
+            $query->whereHas('training', fn($q) => $q->where('training_title', 'like', '%' . $filters['title'] . '%'));
+        }
+
+        if ($filters['employeeId'] && $filters['employeeId'] !== 'all') {
+            $query->whereHas('attendees', fn($q) => $q->where('person_info_id', $filters['employeeId']));
+        }
+
+        if ($filters['trainingNature'] && $filters['trainingNature'] !== 'all') {
+            $query->whereHas('training', fn($q) => $q->where('training_nature', $filters['trainingNature']));
+        }
+
+        if ($filters['type'] && $filters['type'] !== 'all') {
+            $query->whereHas('training', fn($q) => $q->where('learning_description_type', $filters['type']));
+        }
+
+        $trainings = $query->paginate(10);
+
+        return view('pages.reports.trainings', compact('trainings', 'filters'));
+    }
+
 }
+
+

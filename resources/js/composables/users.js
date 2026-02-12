@@ -2,7 +2,9 @@ import { ref } from 'vue'
 // import axios from 'axios'
 import axios from '../utils/axios'
 import { useRouter } from 'vue-router'
-import { createToaster } from '@meforma/vue-toaster'
+import { createToaster } from '@meforma/vue-toaster';
+import { useToast } from 'primevue/usetoast'
+import { error } from 'jquery';
 
 export default function useUsers() {
     const user = ref([]);
@@ -19,6 +21,7 @@ export default function useUsers() {
         position: "top"
         // max:
      });
+     const toast = useToast();
 
     const getYearlist = async () => {
         let response = await axios.get('/api/yearlist')
@@ -26,8 +29,11 @@ export default function useUsers() {
         yearlist.value = response.data
     }
 
-    const getUsers = async () => {
-        let response = await axios.get('/api/users')
+    const getUsers = async (data = {}) => {
+        let response = await axios.get('/api/users', {
+            params: data
+        })
+        console.log("assdsdf", response.data.data)
         users.value = response.data.data
     }
 
@@ -49,9 +55,20 @@ export default function useUsers() {
         try {
             await axios.post('/api/users', data)
             await router.push({ name: 'users.index' })
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'User successfully saved',
+                life: 3000
+            })
         } catch (e) {
             console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            });
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -61,14 +78,53 @@ export default function useUsers() {
  
     }
 
+    const storeAdmin = async (data) => {
+        errors.value = ''
+        try {
+            await axios.post('/api/users/store-admin', data)
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'User successfully saved',
+                life: 3000
+            })
+            await router.push({ name: 'users.index' })
+            return true;
+        } catch (e) {
+            console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
+            if (e.response.status === 422) {
+                for (const key in e.response.data.errors) {
+                    errors.value = e.response.data.errors
+                }
+            }
+            return false;
+        }
+    }
+
     const updateUser = async (id) => {
         errors.value = ''
         try {
             await axios.patch(`/api/users/${id}`, user.value)
             await router.push({ name: 'users.index' })
-            toaster.success(`Successfully Saved!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'User successfully updated',
+                life: 3000
+            })
         } catch (e) {
-            console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
             if (e.response.status === 422) {
                 for (const key in e.response.data.errors) {
                     errors.value = e.response.data.errors
@@ -80,15 +136,28 @@ export default function useUsers() {
     const destroyUser = async (id) => {
         try {
             await axios.delete(`/api/users/${id}`)
-            toaster.info(`Deleted!`);
+            toast.add({
+                severity: 'success',
+                summary: 'Success',
+                detail: 'User successfully deleted',
+                life: 3000
+            })
         } catch (e) {
             console.log(e);
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: e.response.data.message,
+                life: 3000
+            })
         }
         
     }
 
-    const getPersonInfos = async () => {
-        let response = await axios.get('/api/personinfos/all/persons')
+    const getPersonInfos = async (query = {}) => {
+        let response = await axios.get('/api/personinfos/all/persons', {
+            params: query
+        })
         personinfos.value = response.data.data
         console.log(personinfos.value);
     }
@@ -130,6 +199,7 @@ export default function useUsers() {
         generatePassword,
         getPersonInfos,
         getPersonEmail,
-        getAuthenticatedUser
+        getAuthenticatedUser,
+        storeAdmin
     }
 }

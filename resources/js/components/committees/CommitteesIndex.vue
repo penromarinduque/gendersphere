@@ -3,10 +3,11 @@
         <div class="col-span-1">
             <h3 class="text-lg"><b>List of GADFPS Committees</b></h3>
         </div>
-        <div class="col-span-4 flex justify-end">
-            <button class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
-                <router-link :to="{ name: 'committees.create' }" class="text-sm font-medium">Add New</router-link>
-            </button>
+        <div class="col-span-4 flex justify-end gap-2">
+            <Button size="small" variant="outlined" @click="showRsoDialog()">RSO</Button>
+            <Button asChild v-slot="props" size="small">
+                <router-link :to="{ name: 'committees.create' }" :class="props.class">Add New</router-link>
+            </Button>
         </div>
     </div>
 
@@ -18,20 +19,33 @@
 
     <div class="mb-2">
         <Panel header="Summary">
-            <div class="grid grid-cols-3">
+            <div class="grid grid-cols-5">
                 <div >
-                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Gender</h6>
-                    <p >Male : {{ committeeSummary.total_males }}</p>
-                    <p >Female : {{ committeeSummary.total_females }}</p>
-                    <p >LGBTQIA+ : {{ committeeSummary.total_lgbtqiaplus }}</p>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Permanent Employees</h6>
+                    <p >Male : {{ committeeSummary.total_permanents_male }}</p>
+                    <p >Female : {{ committeeSummary.total_permanents_female }}</p>
+                    <p >LGBTQIA+ : {{ committeeSummary.total_permanents_lgbtqiaplus }}</p>
+                </div>
+                <div >
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">COS Employees</h6>
+                    <p >Male : {{ committeeSummary.total_cos_male }}</p>
+                    <p >Female : {{ committeeSummary.total_cos_female }}</p>
+                    <p >LGBTQIA+ : {{ committeeSummary.total_cos_lgbtqiaplus }}</p>
                 </div>
                 <div>
-                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Employment Type</h6>
-                    <p >Permanent : {{ committeeSummary.total_permanents }}</p>
-                    <p >COS : {{ committeeSummary.total_cos }}</p>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Males</h6>
+                    <p >Permanent : {{ committeeSummary.total_permanents_male }}</p>
+                    <p >COS : {{ committeeSummary.total_cos_male }}</p>
                 </div>
                 <div>
-                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Total Members : {{ committeeSummary.total_employees }}</h6>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">Females</h6>
+                    <p >Permanent : {{ committeeSummary.total_permanents_female }}</p>
+                    <p >COS : {{ committeeSummary.total_cos_female }}</p>
+                </div>
+                <div>
+                    <h6 class="text-sm font-bold leading-4 tracking-wider text-left text-gray-700 uppercase">LGBTQIA+</h6>
+                    <p >Permanent : {{ committeeSummary.total_permanents_lgbtqiaplus }}</p>
+                    <p >COS : {{ committeeSummary.total_cos_lgbtqiaplus }}</p>
                 </div>
             </div>
         </Panel>
@@ -106,6 +120,9 @@
          <TailwindPagination :data="committees" @pagination-change-page="paginate" />
      </div>
     </div>
+
+    <RSO :yearlist="yearlist" :rsoDialogVisible="rsoDialogVisible" @close="rsoDialogVisible = false"></RSO>
+
 </template>
 
 <script setup>
@@ -113,17 +130,22 @@ import { ref } from 'vue';
 import { TailwindPagination } from 'laravel-vue-pagination';
 import useCommittees from '@/composables/committees';
 import Select from 'primevue/select';
+import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
 import { onMounted } from 'vue';
 import Panel from 'primevue/panel';
 import usePersonInfos from '../../composables/personinfos';
+import useAuth from '../../composables/auth';
+import RSO from './RSO.vue';
 
 const { committees, getCommittees, destroyCommittee, getCommitteeSummary, committeeSummary, getYearlist, yearlist, selectedYear } = useCommittees();
 const { computeAge } = usePersonInfos();
-
-
+const { user: authUser, getUser } = useAuth();
 
 const selectedEmpStatus = ref('all');
 const selectedGender= ref('all');
+
+const rsoDialogVisible = ref(false);
 
 const deleteCommittee = async (id) => {
     if (!window.confirm('You sure you want to delete this record?')) {
@@ -131,13 +153,14 @@ const deleteCommittee = async (id) => {
     }
     
     await destroyCommittee(id);
-    await getCommittees();
+    await getCommittees(1, selectedYear.value, selectedEmpStatus.value, selectedGender.value, authUser.value.office_id);
     // console.log(1);
 }
 
 const getByYear = async (event) => {
     let get_year = event.value;
-    await getCommittees(1, get_year, selectedEmpStatus.value, selectedGender.value);
+    
+    await getCommittees(1, get_year, selectedEmpStatus.value, selectedGender.value, authUser.value.office_id);
 }
 
 const filterCommittees = async () => {
@@ -148,9 +171,15 @@ const paginate = async (page) => {
     await getCommittees(page, selectedYear.value, selectedEmpStatus.value);
 }
 
+const showRsoDialog = () => {
+    rsoDialogVisible.value = true;
+}
+
 // We get the companies immediately
-onMounted(()=>{
-    getCommittees();
+onMounted(async()=>{
+    await getUser();
+    await getCommittees(undefined, selectedYear.value, undefined, undefined, authUser.value.office_id);
+    // console.log("committees : ", committees.value);
     getYearlist();
 })
 

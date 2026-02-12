@@ -11,5 +11,5 @@ class Objective extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['gad_objective', 'is_active_objective'];
+    protected $fillable = ['gad_objective', 'is_active_objective', 'office_id'];
 }

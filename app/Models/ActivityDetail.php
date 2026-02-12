@@ -32,4 +32,9 @@ class ActivityDetail extends Model implements Auditable
     {
         return $this->hasMany(Attendee::class);
     }
+
+    public function gad_activity()
+    {
+        return $this->belongsTo(GadActivity::class);
+    }
 }

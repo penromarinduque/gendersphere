@@ -10,12 +10,14 @@
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://printjs-4de6.kxcdn.com/print.min.css" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100" id="app">
+            
             @include('layouts.navigation')
 
             <!-- Page Heading -->
@@ -34,6 +36,8 @@
         </div>
     </body>
 
+    <script src="https://printjs-4de6.kxcdn.com/print.min.js"></script>
+    
     @if (isset($jscript))
        {{$jscript}}
     @endif

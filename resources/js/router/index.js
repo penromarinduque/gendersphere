@@ -54,6 +54,19 @@ import EmployeeSalariesCreate from "../components/employeesalaries/EmployeeSalar
 import EmployeeSalariesEdit from "../components/employeesalaries/EmployeeSalariesEdit.vue";
 import DashboardIndex from "../components/dashboard/DashboardIndex.vue";
 import EmployeeList from "../components/reports/EmployeeList.vue";
+import OfficesIndex from "../components/offices/OfficesIndex.vue";
+import OfficesCreate from "../components/offices/OfficesCreate.vue";
+import OfficesEdit from "../components/offices/OfficesEdit.vue";
+import AdminCreate from "../components/users/AdminCreate.vue";
+import Unauthorized from "../components/errors/Unauthorized.vue";
+import TrainingsIndex from "../components/trainings/TrainingsIndex.vue";
+import TrainingsCreate from "../components/trainings/TrainingsCreate.vue";
+import TrainingsEdit from "../components/trainings/TrainingsEdit.vue";
+import useAuth from "../composables/auth";
+import PlanBudgetsAttrProgramCreate from "../components/planbudgets/PlanBudgetsAttrProgramCreate.vue";
+import PlanBudgetsAttrProgramEdit from "../components/planbudgets/PlanBudgetsAttrProgramEdit.vue";
+import SignatoryIndex from "../components/signatories/SignatoryIndex.vue";
+import TrainingList from "../components/reports/TrainingList.vue";
 
 const routes = [
     // Dashboard
@@ -163,6 +176,23 @@ const routes = [
         component: PlanBudgetsCreate,
         meta: {
             title: 'Add GAD Plan and Budget'
+        }
+    },
+    {
+        path: '/planbudgets/create-attr-program',
+        name: 'planbudgets.createAttrProgram',
+        component: PlanBudgetsAttrProgramCreate,
+        meta: {
+            title: 'Add GAD Plan and Budget Attributed Program'
+        }
+    },
+    {
+        path: '/planbudgets/:id/update-attr-program',
+        name: 'planbudgets.updateAttrProgram',
+        component: PlanBudgetsAttrProgramEdit,
+        props: true,
+        meta: {
+            title: 'Update GAD Plan and Budget Attributed Program'
         }
     },
     {
@@ -323,6 +353,33 @@ const routes = [
         }
     },
 
+      // Trainings
+    {
+        path: '/trainings',
+        name: 'trainings.index',
+        component: TrainingsIndex,
+        meta: {
+            title: 'Training Data'
+        }
+    },
+    {
+        path: '/trainings/create',
+        name: 'trainings.create',
+        component: TrainingsCreate,
+        meta: {
+            title: 'Add Training Data'
+        }
+    },
+    {
+        path: '/trainings/:id/edit',
+        name: 'trainings.edit',
+        component: TrainingsEdit,
+        props: true,
+        meta: {
+            title: 'Edit Training Data'
+        }
+    },
+   
     // Users
     {
         path: '/users',
@@ -338,6 +395,34 @@ const routes = [
         component: UsersCreate,
         meta: {
             title: 'Add User'
+        },
+        beforeEnter : async (to, from, next) => {
+            const auth = useAuth();
+            await auth.getUser();
+            if(auth.user.value.is_super_admin == 1){
+                next({
+                    name: 'unauthorized'
+                });
+            }
+            next();
+        }
+    },
+    {
+        path: '/users/create-admin',
+        name: 'users.create-admin',
+        component: AdminCreate,
+        meta: {
+            title: 'Add Admin User'
+        },
+        beforeEnter : async (to, from, next) => {
+            const auth = useAuth();
+            await auth.getUser();
+            if(auth.user.value.is_super_admin != 1){
+                next({
+                    name: 'unauthorized'
+                });
+            }
+            next();
         }
     },
     {
@@ -529,15 +614,71 @@ const routes = [
         }
     },
 
+    // Maintenance Offices
+    {
+        path: '/maintenance/offices',
+        name: 'offices.index',
+        component: OfficesIndex,
+        props: true,
+        meta: {
+            title: 'Offices'
+        }
+    },
+    {
+        path: '/maintenance/offices/create',
+        name: 'offices.create',
+        component: OfficesCreate,
+        props: true,
+        meta: {
+            title: 'Offices'
+        }
+    },
+    {
+        path: '/maintenance/offices/edit/:id',
+        name: 'offices.edit',
+        component: OfficesEdit,
+        props: true,
+        meta: {
+            title: 'Offices'
+        }
+    },
+
     // reports
     {
         path: '/report/employees',
         name: 'report.employees',
         component: EmployeeList,
         meta: {
-            title: 'Reports'
+            title: 'Employee Report'
         }
+    },
+    {
+    path: '/report/trainings/:id',
+    name: 'report.trainings.show',
+    component: TrainingList,
+    props: true,
+    meta: {
+        title: 'Training Report'
     }
+    },
+    {
+        path: '/error/403',
+        name: 'unauthorized',
+        component: Unauthorized,
+        meta: {
+            title: 'Unauthorized'
+        }
+    },
+
+    //  Signatories
+    {
+        path: '/maintenance/signatories',
+        name: 'signatories.index',
+        component: SignatoryIndex,
+        meta: {
+            title: 'Signatories'
+        }
+    },
 
 ];
 
@@ -546,8 +687,10 @@ const router = createRouter({
     routes
 });
 
-router.beforeEach((to, from, next) => {
-    document.title = `${to.meta.title} | GenderSphere`;
+router.beforeEach(async (to, from, next) => {
+
+    document.title = `${to.meta.title ? to.meta.title : ''} | GenderSphere`;
+
     next();
 });
 

@@ -36,7 +36,7 @@
                         <span class="text-sm text-red-600" v-if="errors?.focus">{{ errors.focus[0] }}</span>
                     </div>
                 </div>
-                <div class="pb-1 col-span-3">
+                <div class="pb-1 col-span-3" >
                     <label for="goal_id" class="block text-md font-medium text-gray-700">Goal <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <select name="goal_id" id="goal_id" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
@@ -116,6 +116,7 @@ import useGoals from '../../composables/goals'
 import useGenderIssues from '../../composables/genderissues'
 import useCauseGenderIssues from '../../composables/causegenderissues'
 import useObjectives from '../../composables/objectives'
+import useAuth from '../../composables/auth'
 import { reactive, onMounted } from 'vue'
 
 const form = reactive({
@@ -133,11 +134,22 @@ const { goals, getGoals } = useGoals()
 const { genderissuesbyyear, getGenderIssuesByYear } = useGenderIssues()
 const { causegenderissues, getCauseGenderIssues } = useCauseGenderIssues()
 const { objectives, getObjectives } = useObjectives()
+const { user:authUser, getUser } = useAuth();
 
-onMounted(getYearlist)
-onMounted(getGoals)
-onMounted(getCauseGenderIssues)
-onMounted(getObjectives)
+
+onMounted(async()=>{
+    await getUser();
+    getYearlist()
+    getGoals({
+        office_id: authUser.value.office_id
+    })
+    getCauseGenderIssues({
+        office_id: authUser.value.office_id
+    })
+    getObjectives({
+        office_id: authUser.value.office_id
+    })
+})
 
 const savePlanBudget  = async () => {
     await storePlanBudget({ ...form })

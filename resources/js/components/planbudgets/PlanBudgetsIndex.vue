@@ -22,95 +22,164 @@
                 </div>
             </div>
         </div>
-
-        <div class="col-span-1 flex mb-4 place-content-end">
-            <button class="inline-flex items-center mr-1 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
-                <router-link :to="{ name: 'planbudgets.create' }" class="text-sm font-medium">Add New</router-link>
-            </button>
-        </div>
     </div>
-    <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-md">
-        <table class="hover:table-auto min-w-full w-full border-collapse border border-slate-400 divide-y divide-gray-200">
+    <div class="flex mb-4 place-content-end gap-2">
+        <button class="inline-flex items-center mr-1 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
+            <router-link :to="{ name: 'planbudgets.create' }" class="text-sm font-medium">Add New Plan & Budget</router-link>
+        </button>
+        <button class="inline-flex items-center mr-1 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">
+            <router-link :to="{ name: 'planbudgets.createAttrProgram' }" class="text-sm font-medium">Add New Attributed Program</router-link>
+        </button>
+    </div>
+
+    <!-- CLIENT AND ORGANIZATIONAL FOCUS -->
+    <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-md mb-5">
+        <i>Client and Organizational Focus</i>
+        <table class="hover:table-auto min-w-full w-full border-collapse border border-slate-400 divide-y divide-gray-200" >
             <thead>
-            <tr>
-                <th class="border border-slate-300 px-2 py-2 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Year</span>
-                </th>
-                <th class="border border-slate-300 px-2 py-2 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Focus</span>
-                </th>
-                <th class="border border-slate-300 px-2 py-2 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Gender Issue/GAD Mandate</span>
-                </th>
-                <th class="border border-slate-300 px-2 py-2 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Cause of Gender Issue</span>
-                </th>
-                <th class="border border-slate-300 px-2 py-2 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Result Statement/ GAD Objective</span>
-                </th>
-                <th class="border border-slate-300 px-2 py-2 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Relevant Organization MFO/PAP or PPA</span>
-                </th>
-                <th class="border border-slate-300 px-2 py-2 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Activity</span>
-                </th>
-                <th class="border border-slate-300 px-2 py-2 bg-gray-50">
-                    <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Actions</span>
-                </th>
-            </tr>
+                <tr>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Year</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Focus</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Gender Issue/GAD Mandate</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Cause of Gender Issue</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Result Statement/ GAD Objective</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Relevant Organization MFO/PAP or PPA</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">GAD Activity</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Actions</span>
+                    </th>
+                </tr>
             </thead>
 
             <tbody class="bg-white divide-y divide-gray-200 divide-solid">
-            <template v-for="item in planbudgets" :key="item.id">
-                <tr class="align-text-top bg-white odd:bg-white even:bg-slate-50">
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.year }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ item.focus }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span>{{ item.gender_issue_mandate }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span>{{ item.cause_gender_issue }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span>{{ item.gad_objective }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span>{{ item.relevant_org }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-5 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span v-if="item.gad_activities.length==0" class="text-red-500">No activity/ies added yet</span>
-                        <ol class="list-decimal">
-                            <template v-for="item_ga in item.gad_activities">
-                                <li>
-                                    <router-link :to="{ name: 'activitydetails.index', params: { ga_id: item_ga.id } }" title="VIEW DETAILS"><span>{{ item_ga.main_activity }}</span></router-link>
-                                </li>
-                            </template>
-                        </ol>
-                        <br>
-                        <!-- <router-link :to="{ name: 'gadactivities.create', params: { planbudget_id: item.id } }" class="inline-flex items-center mr-2 px-1 py-0 text-lg font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25"><span title="Add Activity">+</span></router-link> -->
-                        <button @click="openModal(), putId($event)"
-                        class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 float-end" :value="item.id">
-                        Add</button> 
-                    </td>
-                    <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <router-link :to="{ name: 'planbudgets.edit', params: { id: item.id } }" class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
-                        <button @click="deletePlanBudget(item.id)"
-                        class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
-                        Delete</button>
-                    </td>
-                </tr>
-            </template>
-            <template v-if="!planbudgets.length">
+                <template v-for="item in planbudgets" :key="item.id">
+                    <tr class="align-text-top bg-white odd:bg-white even:bg-slate-50" v-if="['client', 'organizational'].includes(item.focus)">
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.year }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.focus }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ item.gender_issue_mandate }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ item.cause_gender_issue }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ item.gad_objective }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ item.relevant_org }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-5 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span v-if="item.gad_activities.length==0" class="text-red-500">No activity/ies added yet</span>
+                            <ol class="list-decimal">
+                                <template v-for="item_ga in item.gad_activities">
+                                    <li>
+                                        <router-link :to="{ name: 'activitydetails.index', params: { ga_id: item_ga.id } }" title="VIEW DETAILS"><span>{{ item_ga.main_activity }}</span></router-link>
+                                    </li>
+                                </template>
+                            </ol>
+                            <br>
+                            <!-- <router-link :to="{ name: 'gadactivities.create', params: { planbudget_id: item.id } }" class="inline-flex items-center mr-2 px-1 py-0 text-lg font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25"><span title="Add Activity">+</span></router-link> -->
+                            <button @click="openModal(), putId($event)"
+                            class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25 float-end" :value="item.id">
+                            Add</button> 
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <router-link :to="{ name: 'planbudgets.edit', params: { id: item.id } }" class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
+                            <button @click="deletePlanBudget(item.id)"
+                            class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
+                            Delete</button>
+                        </td>
+                    </tr>
+                </template>
+                <template v-if="!planbudgets.some(item => ['client', 'organizational'].includes(item.focus))">
+                    <tr>
+                        <td colspan="9" class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            No records found
+                        </td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ATTRIBUTED PROGRAMS -->
+    <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-md">
+        <i>Attributed Programs</i>
+        <table class="hover:table-auto min-w-full w-full border-collapse border border-slate-400 divide-y divide-gray-200">
+            <thead>
                 <tr>
-                    <td colspan="9" class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        No records found
-                    </td>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Year</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Focus</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Program Name</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Relevant Organization MFO/PAP or PPA</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Budget</span>
+                    </th>
+                    <th class="border border-slate-300 px-2 py-2 bg-gray-50">
+                        <span class="text-sm font-medium leading-4 tracking-wider text-left text-gray-700 uppercase">Actions</span>
+                    </th>
                 </tr>
-            </template>
+            </thead>
+
+            <tbody class="bg-white divide-y divide-gray-200 divide-solid">
+                <template v-for="item in planbudgets" :key="item.id">
+                    <tr class="align-text-top bg-white odd:bg-white even:bg-slate-50" v-if="['attributed program'].includes(item.focus)">
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.year }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ item.focus }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ item.attr_program_name }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-5 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ item.relevant_org }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-5 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ item.attr_program_budget }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <router-link :to="{ name: 'planbudgets.updateAttrProgram', params: { id: item.id } }" class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-indigo-800 border border-transparent rounded-md hover:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:border-indigo-900 focus:ring ring-gray-300 disabled:opacity-25">Edit</router-link> 
+                            <button @click="deletePlanBudget(item.id)" class="inline-flex items-center px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-red-800 border border-transparent rounded-md hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-gray-300 disabled:opacity-25">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                </template>
+                <template v-if="!planbudgets.some(item => ['attributed program'].includes(item.focus))">
+                    <tr>
+                        <td colspan="9" class="border border-slate-300 px-2 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            No records found
+                        </td>
+                    </tr>
+                </template>
             </tbody>
         </table>
     </div>
@@ -125,7 +194,8 @@
                         <div class="mt-1">
                             <textarea name="main_activity" id="main_activity"
                                     class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                    v-model="form.main_activity" rows="5"></textarea>
+                                    v-model="form.main_activity" rows="5">
+                            </textarea>
                             <span class="text-sm text-red-600" v-if="errors?.main_activity">{{ errors.main_activity[0] }}</span>
                         </div>
                     </div>
@@ -146,6 +216,7 @@
 // Here we're using a Composable file, its code is above
 import usePlanBudgets from '@/composables/planbudgets'
 import useGadActivities from '@/composables/gadactivities'
+import useAuth from '@/composables/auth'
 import BaseModal from '@/components/modals/BaseModal.vue'
 import Select from 'primevue/select';
 
@@ -155,6 +226,7 @@ import { onMounted, ref, reactive } from 'vue';
 // We need only two things from the useCompanies() composable
 const { planbudgets, getPlanBudgets, destroyPlanBudget, yearlist, getYearlist } = usePlanBudgets();
 const { errors, planbudget_id, isModalOpened, storeGadActivity, putPlanBudgetId, openModal, closeModal } = useGadActivities();
+const {user:authUser, getUser} = useAuth();
 
 let curr_year = new Date().getFullYear();
 const selectedYear = ref(curr_year)
@@ -170,13 +242,16 @@ const deletePlanBudget = async (id) => {
     }
     
     await destroyPlanBudget(id)
-    await getPlanBudgets()
+    await getPlanBudgets(selectedYear.value, {
+        office_id: authUser.value.office_id
+    })
     // console.log(1);
 }
 
 // We get the companies immediately
-onMounted(() => {
+onMounted(async () => {
     // getPlanBudgets();
+    await getUser();
     getYearlist();
     getByYear();
 })
@@ -188,12 +263,15 @@ const saveActivity = async () => {
 const putId = async (event) => {
     let pb_id = event.target.value;
     // console.log(pb_id)
-    putPlanBudgetId(pb_id)
+    putPlanBudgetId(pb_id);
 }
 
 const getByYear = async (event) => {
     let get_year = event ? event.value : new Date().getFullYear();
-    console.log(get_year);
-    await getPlanBudgets(get_year);
+    console.log(authUser.value.office_id);
+    await getPlanBudgets(get_year, {
+        office_id: authUser.value.office_id
+    });
+    console.log(planbudgets.value);
 }
 </script>

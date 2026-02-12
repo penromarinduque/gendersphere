@@ -82,49 +82,52 @@
             </thead>
  
             <tbody class="bg-white divide-y divide-gray-200 divide-solid">
-            <template v-for="personinfo in personinfos.data" :key="personinfo.id">
-                <tr class="bg-white">
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ personinfo.lastname+', '+personinfo.firstname+' '+personinfo.middlename+' ' }}</span><span v-if="personinfo.extname!==null">{{ personinfo.extname }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ personinfo.gender }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span style="text-transform: capitalize;">{{ personinfo.civil_status }}</span>
-                    </td>
-                    <!-- <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span>{{ personinfo.birthdate }}</span>
-                    </td> -->
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap text-center">
-                        <span>{{ computeAge(personinfo.birthdate) }}</span>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <span>{{ personinfo.barangay_name+', '+personinfo.municipality_name+', '+personinfo.province_name }}</span>
-                    </td>
-                    <!-- <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ personinfo.height.toFixed(2) }}
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        {{ personinfo.blood_type }}
-                    </td> -->
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap text-center">
-                        <Badge :severity="setEmpTypeSeverityColor(personinfo.employment_type)" style="text-transform: uppercase;">{{ personinfo.employment_type }}</Badge>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap text-center">
-                        <Badge :severity="setEmpStatusSeverityColor(personinfo.employment_status)" style="text-transform: uppercase;">{{ personinfo.employment_status }}</Badge>
-                    </td>
-                    <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
-                        <Button class="me-2" @click="$router.push({ name: 'personinfos.edit', params: { id: personinfo.id } })" size="small" variant="outlined" severity="primary">Edit</Button> 
-                        
-                        <Button @click="deletePersonInfo(personinfo.id)" size="small" variant="outlined" severity="danger">Delete</Button>
+                <template v-for="personinfo in personinfos.data" :key="personinfo.id">
+                    <tr class="bg-white">
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ personinfo.lastname+', '+personinfo.firstname+' '+personinfo.middlename+' ' }}</span><span v-if="personinfo.extname!==null">{{ personinfo.extname }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ personinfo.gender }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span style="text-transform: capitalize;">{{ personinfo.civil_status }}</span>
+                        </td>
+                        <!-- <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ personinfo.birthdate }}</span>
+                        </td> -->
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap text-center">
+                            <span>{{ computeAge(personinfo.birthdate) }}</span>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            <span>{{ personinfo.barangay_name+', '+personinfo.municipality_name+', '+personinfo.province_name }}</span>
+                        </td>
+                        <!-- <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            {{ personinfo.height.toFixed(2) }}
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                            {{ personinfo.blood_type }}
+                        </td> -->
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap text-center">
+                            <Badge :severity="setEmpTypeSeverityColor(personinfo.employment_type)" style="text-transform: uppercase;">{{ personinfo.employment_type }}</Badge>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap text-center">
+                            <Badge :severity="setEmpStatusSeverityColor(personinfo.employment_status)" style="text-transform: uppercase;">{{ personinfo.employment_status }}</Badge>
+                        </td>
+                        <td class="border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">
+                        <!--    <Button class="me-2" size="small" variant="outlined" severity="info">View Trainings</Button> -->
+ 
+                            <Button class="me-2" @click="$router.push({ name: 'personinfos.edit', params: { id: personinfo.id } })" size="small" variant="outlined" severity="primary">Edit</Button> 
+                            
+                            <Button @click="deletePersonInfo(personinfo.id)" size="small" variant="outlined" severity="danger">Delete</Button>
 
-                        <!-- <Button @click="deletePersonInfo(personinfo.id)" type="submit" label="DELETE" :loading="loading" severity="danger" size="small" /> -->
+                            <!-- <Button @click="deletePersonInfo(personinfo.id)" type="submit" label="DELETE" :loading="loading" severity="danger" size="small" /> -->
 
-                        <!-- <router-link :to="{ name: 'employeesalaries.index', params: { person_info_id: personinfo.id } }" class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25">Salary</router-link>  -->
-                    </td>
-                </tr>
-            </template>
+                            <!-- <router-link :to="{ name: 'employeesalaries.index', params: { person_info_id: personinfo.id } }" class="inline-flex items-center mr-2 px-4 py-1 text-xs font-semibold tracking-widest text-white uppercase transition duration-150 ease-in-out bg-gray-800 border border-transparent rounded-md hover:bg-gray-700 active:bg-gray-900 focus:outline-none focus:border-gray-900 focus:ring ring-gray-300 disabled:opacity-25">Salary</router-link>  -->
+                        </td>
+                    </tr>
+                </template>
+                <template v-if="personinfos.data && personinfos.data.length == 0"><tr><td colspan="9" class="text-center border border-slate-300 px-6 py-2 text-md leading-5 text-gray-900 whitespace-no-wrap">No records found</td></tr></template>
                 <!-- <tr v-if="personinfos.data">
                     <td colspan="9" class="text-center text-red-600">No results found!</td>
                 </tr> -->
@@ -146,15 +149,17 @@ import Select from 'primevue/select';
 import InputText from 'primevue/inputtext';
 import Panel from 'primevue/panel';
 import Badge from 'primevue/badge';
-
+import { ref } from 'vue'
 // Here we're using a Composable file, its code is above
-import usePersonInfos from '@/composables/personinfos'
+import usePersonInfos from '@/composables/personinfos';
+import useAuth from '@/composables/auth';
 
 // onMounted will define what method to "fire" automatically
 import { onMounted } from 'vue';
 
 // We need only two things from the useCompanies() composable
 const { personinfos, getPersonInfos, destroyPersonInfo, loading, genderFilter, employmentStatusFilter, getPersonInfoSummary, summary, computeAge, setEmpStatusSeverityColor, setEmpTypeSeverityColor } = usePersonInfos();
+const { user:authUser, getUser } = useAuth();
 
 const deletePersonInfo = async (id) => {
     if (!window.confirm('You sure you want to delete this record?')) {
@@ -162,23 +167,43 @@ const deletePersonInfo = async (id) => {
     }
     
     await destroyPersonInfo(id);
-    await getPersonInfos();
+    await getPersonInfos(
+        undefined,
+        undefined,
+        {
+            office_id: authUser.value.office_id
+        }
+    );
     // console.log(1);
 }
-
+const searchkey = ref('');
 const searchKey = async (event) => {
     let search_key = event.target.value;
-    await getPersonInfos(1, search_key);
+    await getPersonInfos(1, search_key, {
+        office_id: authUser.value.office_id
+    });
 }
 
 const filterEmployees = async () => {
-    await getPersonInfos(1, "");
+    await getPersonInfos(1, "", {
+            office_id: authUser.value.office_id
+        });
 }
 
 // We get the companies immediately
-onMounted(() => {
-    getPersonInfos();
-    getPersonInfoSummary();
+onMounted(async () => {
+    await getUser();
+    await getPersonInfos(
+        undefined,
+        undefined,
+        {
+            office_id: authUser.value.office_id
+        }
+    );
+    console.log("personinfos : ", personinfos.value);
+    getPersonInfoSummary({
+        office_id: authUser.value.office_id
+    });
 });
 
 </script>

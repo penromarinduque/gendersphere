@@ -68,7 +68,9 @@ const props = defineProps({
     }
 })
 
-onMounted(() => getGenderIssue(props.id))
+onMounted(() => {
+    getGenderIssue(props.id)
+});
 onMounted(getYearlist)
 
 const editGenderIssue = async () => {

@@ -11,5 +11,5 @@ class CauseGenderIssue extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['cause', 'is_active_cause'];
+    protected $fillable = ['cause', 'is_active_cause', 'office_id'];
 }

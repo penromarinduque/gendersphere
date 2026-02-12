@@ -14,7 +14,7 @@
                 </div>
             </div> --}}
             <div class="p-2">
-                <router-view /> 
+                <app />
             </div>
         </div>
     </div>

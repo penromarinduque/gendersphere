@@ -26,4 +26,9 @@ class Attendee extends Model implements Auditable
     {
         return $this->belongsTo(PersonInfo::class);
     }
+
+    public function activityDetail()
+    {
+        return $this->belongsTo(ActivityDetail::class);
+    }
 }

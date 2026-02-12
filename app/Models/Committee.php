@@ -11,5 +11,24 @@ class Committee extends Model implements Auditable
     use HasFactory;
     use \OwenIt\Auditing\Auditable;
 
-    protected $fillable = ['person_info_id', 'year_covered', 'committee_position_id'];
+    protected $fillable = ['person_info_id', 'year_covered', 'committee_position_id', 'office_id'];
+
+    public function personInfo() {
+        return $this->belongsTo(PersonInfo::class, 'person_info_id', 'id');
+    }
+
+    public function committeePosition() {
+        return $this->belongsTo(CommitteePosition::class, 'committee_position_id', 'id');
+    }
+
+    public static function yearlist()
+    {
+        $years = [];
+        for ($i=date('Y') + 3; $i >= 2016 ; $i--) { 
+            $years[] = ['year'=>$i];
+        }
+        return $years;
+    }
+
+    
 }

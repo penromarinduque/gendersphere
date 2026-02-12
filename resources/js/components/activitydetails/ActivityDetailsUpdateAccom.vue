@@ -3,39 +3,40 @@
         <div class="space-y-4 rounded-md">
             <h3><b>UPDATE GAD Activity Accomplishment: <u>{{ activitydetail.main_activity }}</u></b></h3>
             <hr>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 xl:grid-cols-6 gap-4">
-                <div class="pb-1 col-span-3">
-                    <label for="actual_result" class="block text-md font-medium text-gray-700">Actual Result<span class="text-red-500">*</span></label>
-                    <div class="mt-1">
-                        <!-- <textarea name="actual_result" id="actual_result" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="activitydetail.actual_result"></textarea> -->
-                        <Editor v-model="activitydetail.actual_result" :init="{promotion: false, branding: false, license_key: 'gpl', height: '200px', skin: 'oxide', skin_url: 'default', menubar: false }" ></Editor>
-                        <span class="text-sm text-red-600" v-if="errors?.actual_result">{{ errors.actual_result[0] }}</span>
-                    </div>
+            <div class="pb-1 col">
+                <label for="actual_result" class="block text-md font-medium text-gray-700">Actual Result<span class="text-red-500">*</span></label>
+                <div class="mt-1">
+                    <!-- <textarea name="actual_result" id="actual_result" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            v-model="activitydetail.actual_result"></textarea> -->
+                    <Editor v-model="activitydetail.actual_result" :init="{promotion: false, branding: false, license_key: 'gpl', height: '200px', skin: 'oxide', skin_url: 'default', menubar: false }" ></Editor>
+                    <span class="text-sm text-red-600" v-if="errors?.actual_result">{{ errors.actual_result[0] }}</span>
                 </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 <div class="pb-1 col-span-1">
-                    <label for="actual_men" class="block text-md font-medium text-gray-700">Actual Accomplished Men <small>(Put zero (0) if not available)</small> <span class="text-red-500">*</span></label>
+                    <label for="actual_men" class="block text-md font-medium text-gray-700">Actual Accomplished Men  <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="number" name="actual_men" id="actual_men" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="activitydetail.actual_men" readonly>
+                        <small>(Put zero (0) if not available)</small>
                         <span class="text-sm text-red-600" v-if="errors?.actual_men">{{ errors.actual_men[0] }}</span>
                     </div>
                 </div>
                 <div class="pb-1 col-span-1">
-                    <label for="actual_women" class="block text-md font-medium text-gray-700">Actual Accomplished Women <small>(Put zero (0) if not available)</small> <span class="text-red-500">*</span></label>
+                    <label for="actual_women" class="block text-md font-medium text-gray-700">Actual Accomplished Women  <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="number" name="actual_women" id="actual_women" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="activitydetail.actual_women" readonly>
+                        <small>(Put zero (0) if not available)</small>
                         <span class="text-sm text-red-600" v-if="errors?.actual_women">{{ errors.actual_women[0] }}</span>
                     </div>
                 </div>
                 <div class="pb-1 col-span-1">
-                    <label for="actual_lgbtq" class="block text-md font-medium text-gray-700">Actual Accomplished LGBTQ <small>(Put zero (0) if not available)</small> <span class="text-red-500">*</span></label>
+                    <label for="actual_lgbtq" class="block text-md font-medium text-gray-700">Actual Accomplished LGBTQ  <span class="text-red-500">*</span></label>
                     <div class="mt-1">
                         <input type="number" name="actual_lgbtq" id="actual_lgbtq" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" v-model="activitydetail.actual_lgbtq" readonly>
+                        <small>(Put zero (0) if not available)</small>
                         <span class="text-sm text-red-600" v-if="errors?.actual_lgbtq">{{ errors.actual_lgbtq[0] }}</span>
                     </div>
                 </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
                 <div class="pb-1 col-span-1">
                     <label for="gad_budget" class="block text-md font-medium text-gray-700">GAD Budget<span class="text-red-500">*</span></label>
                     <div class="mt-1">
@@ -50,22 +51,15 @@
                         <span class="text-sm text-red-600" v-if="errors?.actual_cost">{{ errors.actual_cost[0] }}</span>
                     </div>
                 </div>
-                <div class="pb-1 col-span-2">
-                    <label for="remarks" class="block text-md font-medium text-gray-700">Remarks</label>
-                    <div class="mt-1">
-                        <!-- <textarea name="remarks" id="remarks"
-                                class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                v-model="activitydetail.remarks"></textarea> -->
-                        <Editor v-model="activitydetail.remarks" :init="{promotion: false, branding: false, license_key: 'gpl', height: '200px', skin: 'oxide', skin_url: 'default', menubar: false }" ></Editor>
-                        <span class="text-sm text-red-600" v-if="errors?.remarks">{{ errors.remarks[0] }}</span>
-                    </div>
-                </div>
-                <div class="pb-1 col-span-2">
-                    <!-- <label for="mov_file" class="block text-md font-medium text-gray-700">MOV File</label>
-                    <div class="mt-1">
-                        <input type="file" name="mov_file" id="mov_file" class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" accept="image/*" ref="photo" v-onchange="activitydetail.mov_file">
-                        <span class="text-sm text-red-600" v-if="errors?.mov_file">{{ errors.mov_file[0] }}</span>
-                    </div> -->
+            </div>
+            <div class="pb-1 ">
+                <label for="remarks" class="block text-md font-medium text-gray-700">Remarks</label>
+                <div class="mt-1">
+                    <!-- <textarea name="remarks" id="remarks"
+                            class="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                            v-model="activitydetail.remarks"></textarea> -->
+                    <Editor v-model="activitydetail.remarks" :init="{promotion: false, branding: false, license_key: 'gpl', height: '200px', skin: 'oxide', skin_url: 'default', menubar: false }" ></Editor>
+                    <span class="text-sm text-red-600" v-if="errors?.remarks">{{ errors.remarks[0] }}</span>
                 </div>
             </div>
 

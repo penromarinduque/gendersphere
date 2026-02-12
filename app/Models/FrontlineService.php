@@ -9,15 +9,20 @@ class FrontlineService extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['permit_type_id', 'permit_no', 'client_name', 'gender', 'date_applied', 'date_released', 'barangay_id'];
+    protected $fillable = ['permit_type_id', 'permit_no', 'client_name', 'gender', 'date_applied', 'date_released', 'barangay_id', 'office_id'];
 
-    public function getFrontlineServicesByPermitType($permit_type_id, $year)
+    public function getFrontlineServicesByPermitType($permit_type_id, $year, $office_id = null)
     {
-        return $this->select('permit_no', 'client_name', 'gender', 'date_applied', 'date_released', 'barangay_name', 'municipality_name')
+        $query = $this->select('permit_no', 'client_name', 'gender', 'date_applied', 'date_released', 'barangay_name', 'municipality_name')
             ->join('barangays', 'barangays.id', 'frontline_services.barangay_id')
             ->join('municipalities', 'municipalities.id', 'barangays.municipality_id')
             ->where('frontline_services.permit_type_id', $permit_type_id)
-            ->where('date_released', 'LIKE', "%{$year}%")
-            ->get();
+            ->where('date_released', 'LIKE', "%{$year}%");
+
+        if($office_id){
+            $query->where('frontline_services.office_id', $office_id);
+        }
+            
+        return $query->get();
     }
 }
