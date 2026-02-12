@@ -26,12 +26,12 @@
     "src": "node_modules/primeicons/fonts/primeicons.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-N8xe5VrM.css",
+    "file": "assets/app-Dl32KESc.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-BqgEN7qL.js",
+    "file": "assets/app-CyKDNj2h.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
