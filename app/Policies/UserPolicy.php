@@ -18,6 +18,7 @@ class UserPolicy
     public function viewAny(User $user): bool
     {
         //
+        return $user->is_super_admin || $user->roles->contains('role_type', 'admin');
     }
 
     /**
@@ -34,7 +35,7 @@ class UserPolicy
     public function create(User $user): bool
     {
         //
-        return !$user->is_super_admin && $user->roles->contains('role_type', 'admin');
+        return !$user->is_super_admin || $user->roles->contains('role_type', 'admin');
     }
 
     /**

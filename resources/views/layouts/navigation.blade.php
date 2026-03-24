@@ -152,9 +152,11 @@
                                             {{ __('Offices') }}
                                         </x-dropdown-link>
                                     @endcan
-                                    <x-dropdown-link :href="route('users')">
-                                        {{ __('Users') }}
-                                    </x-dropdown-link>
+                                    @can('viewAny', App\Models\User::class)
+                                            <x-dropdown-link :href="route('users')">
+                                                {{ __('Users') }}
+                                            </x-dropdown-link>
+                                    @endcan
                                     @can('viewAny', App\Models\CommitteePosition::class)
                                         <x-dropdown-link :href="route('maintenance.committeepositions')">
                                             {{ __('GADFPS Committee Positions') }}
@@ -190,11 +192,11 @@
                                             {{ __('Permit Types') }}
                                         </x-dropdown-link>
                                     @endcan
-                                    {{-- @can('viewAny', App\Models\PermitType::class) --}}
+                                    @can('viewAny', App\Models\Signatory::class)
                                         <x-dropdown-link :href="route('maintenance.signatories')">
                                             {{ __('Signatories') }}
                                         </x-dropdown-link>
-                                    {{-- @endcan --}}
+                                    @endcan
                                 </x-slot>
                             </x-dropdown>
                         </div>
