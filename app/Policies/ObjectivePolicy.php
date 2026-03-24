@@ -14,7 +14,7 @@ class ObjectivePolicy
     public function viewAny(User $user): bool
     {
         //
-        return $user->roles->contains('role_type', 'admin');
+        return $user->roles->contains('role_type', 'admin') || $user->roles->contains('role_type', 'encoder');
     }
 
     /**
@@ -40,7 +40,7 @@ class ObjectivePolicy
     {
         //
         return $user->roles->contains(function ($role) use ($objective) {
-            return $role->role_type === 'admin' && $role->office_id === $objective->office_id;
+            return ($role->role_type === 'admin' || $role->role_type == 'encoder') && $role->office_id === $objective->office_id;
         });
     }
 
@@ -51,7 +51,7 @@ class ObjectivePolicy
     {
         //
         return $user->roles->contains(function ($role) use ($objective) {
-            return $role->role_type === 'admin' && $role->office_id === $objective->office_id;
+            return ($role->role_type === 'admin' || $role->role_type == 'encoder') && $role->office_id === $objective->office_id;
         });
     }
 

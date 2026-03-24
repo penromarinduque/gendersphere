@@ -14,7 +14,7 @@ class GoalPolicy
     public function viewAny(User $user): bool
     {
         //
-        return $user->roles->contains('role_type', 'admin');
+        return $user->roles->contains('role_type', 'admin') || $user->roles->contains('role_type', 'encoder');
     }
 
     /**
@@ -41,7 +41,7 @@ class GoalPolicy
     {
         //
         return $user->roles->contains(function ($role) use($goal) {
-            return $role->role_type === 'admin' && $role->office_id === $goal->office_id;
+            return ($role->role_type === 'admin' || $role->role_type == 'encoder') && $role->office_id === $goal->office_id;
         });
     }
 
@@ -52,7 +52,7 @@ class GoalPolicy
     {
         //
         return $user->roles->contains(function ($role) use($goal) {
-            return $role->role_type === 'admin' && $role->office_id === $goal->office_id;
+            return ($role->role_type === 'admin' || $role->role_type == 'encoder') && $role->office_id === $goal->office_id;
         });
     }
 
