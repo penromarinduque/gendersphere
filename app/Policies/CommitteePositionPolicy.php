@@ -15,10 +15,10 @@ class CommitteePositionPolicy
     {
         //
         $roles = $user->roles;
-        if(!$roles->contains('role_type', 'admin')) {
-            return false;
+        if($roles->contains('role_type', 'admin') || $roles->contains('role_type', 'encoder')) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -44,7 +44,7 @@ class CommitteePositionPolicy
     {
         //
         return $user->roles->contains(function ($role) use ($committeePosition) {
-            return $role->role_type === 'admin' && $role->office_id === $committeePosition->office_id;
+            return ($role->role_type === 'admin' || $role->role_type == 'encoder' ) && $role->office_id === $committeePosition->office_id;
         });
     }
 
@@ -55,7 +55,7 @@ class CommitteePositionPolicy
     {
         //
         return $user->roles->contains(function ($role) use ($committeePosition) {
-            return $role->role_type === 'admin' && $role->office_id === $committeePosition->office_id;
+            return ($role->role_type === 'admin' || $role->role_type == 'encoder') && $role->office_id === $committeePosition->office_id;
         });
     }
 
